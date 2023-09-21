@@ -1,20 +1,19 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import { Routes, Route } from "react-router-dom"
+import PageSignIn from './pages/public/sign-in/PageSignIn'
+import PageHome from './pages/home/PageHome'
+import PageSignUp from "./pages/public/sign-up/PageSignUp"
 
-function App() {
-  const [count, setCount] = useState({
-    success: '',
-    status: ''
-  })
-  useEffect(() => {
-    fetch("http://localhost:5000/auth")
-      .then((res) => res.json())
-      .then((data) => setCount(data))
-    }, [])
 
+const  App:React.FC = () => {
   return (
     <>
-      <h1>{count.success} !!</h1>
+      <Routes>
+        <Route index element={<PageSignIn />} />
+        <Route path="/signup" element={<PageSignUp />} />
+        <Route path='/home' element={<PageHome/>}>
+          <Route index element={<>Home</>}/>
+        </Route>
+      </Routes>
     </>
   )
 }
