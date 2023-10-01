@@ -1,1 +1,3 @@
-export interface FormHeaderComponentProps { title: string }
+export interface FormHeaderComponentProps {
+  title: string;
+}
