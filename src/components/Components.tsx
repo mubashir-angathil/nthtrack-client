@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Card } from "@mui/material";
+import { Box, Typography, Card, Container } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import { FormHeaderComponentProps } from "./Helper";
 import { styled } from "@mui/system";
@@ -29,9 +29,8 @@ export const CustomCardComponent = styled(Card)(() => ({
   minHeight: "300px",
 }));
 
-export const OutletWrapper = styled(Box)(() => ({
+export const OutletWrapper = styled(Container)(() => ({
   height: "100vh",
-  width: "100%",
+  width: "100vw",
   paddingTop: "4.5rem",
-  paddingInline: "1.5rem",
 }));
