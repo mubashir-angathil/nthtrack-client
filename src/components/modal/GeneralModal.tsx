@@ -27,9 +27,7 @@ const GeneralModal: React.FC = () => {
           <Button variant="outlined" color="error">
             {negativeButton}
           </Button>
-          <Button variant="contained" color="success">
-            {positiveButton}
-          </Button>
+          <Button variant="contained">{positiveButton}</Button>
         </Box>
       </Box>
     </Modal>
