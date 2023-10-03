@@ -1,12 +1,15 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
 import { NavbarComponent } from "../../components/navbar/NavbarComponent";
+import { OutletWrapper } from "../../components/Components";
+import { Outlet } from "react-router-dom";
 
 const PageHome: React.FC = () => {
   return (
     <>
       <NavbarComponent />
-      <Outlet />
+      <OutletWrapper>
+        <Outlet />
+      </OutletWrapper>
     </>
   );
 };

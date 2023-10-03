@@ -33,7 +33,7 @@ export const NavbarComponent = () => {
   return (
     <AppBar position="fixed">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar disableGutters variant="dense" sx={{ p: "0.2em" }}>
           <AdbIcon sx={{ display: "flex", mr: 1 }} />
           <Typography
             variant="h5"

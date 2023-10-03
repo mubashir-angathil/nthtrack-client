@@ -28,3 +28,10 @@ export const CustomCardComponent = styled(Card)(() => ({
   minWidth: "350px",
   minHeight: "300px",
 }));
+
+export const OutletWrapper = styled(Box)(() => ({
+  height: "100vh",
+  width: "100%",
+  paddingTop: "4.5rem",
+  paddingInline: "1.5rem",
+}));
