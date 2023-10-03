@@ -2,17 +2,32 @@ import React from "react";
 import { Grid, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ProjectCardComponent from "../../../components/card/project-card/ProjectCardComponent";
+import { useModalContext } from "../../../utils/helpers/context/modal-context/ModalContext";
 
 const PageProjects: React.FC = () => {
+  const { setModal } = useModalContext();
+
   return (
     <Grid container gap={2}>
       <Grid item xs={12} display="flex" justifyContent="space-between">
-        <Button variant="contained" endIcon={<AddIcon />}>
+        <Button
+          variant="contained"
+          endIcon={<AddIcon />}
+          onClick={() =>
+            setModal({
+              open: true,
+              title: "New Project",
+              body: "",
+              negativeButton: "Close",
+              positiveButton: "Create",
+            })
+          }
+        >
           Create Project
         </Button>
         <input type="search" />
       </Grid>
-      <Grid xs={12}>
+      <Grid item xs={12}>
         <ProjectCardComponent
           projects={[
             {

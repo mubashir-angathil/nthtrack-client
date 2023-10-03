@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import {
   Badge,
   Box,
@@ -17,44 +17,51 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
 }) => {
   return (
     <>
-      {projects.map(({ projectTitle, numberOfIssues, description, status }) => {
-        return (
-          <Card sx={{ mt: 1 }}>
-            <Grid container spacing={1} p={3}>
-              <Grid item xs={12} display="flex" justifyContent="space-between">
-                <Typography variant="h5" fontWeight="550">
-                  {projectTitle}
-                </Typography>
-                <Box display="flex" gap={2}>
-                  <Tooltip title="No of open issue">
-                    <Badge
-                      badgeContent={numberOfIssues}
-                      variant="standard"
-                      color="warning"
-                    >
-                      <BugReportIcon />
-                    </Badge>
-                  </Tooltip>
-                  <Tooltip title="Status">
-                    <Chip
-                      variant="filled"
-                      label={status === "opened" ? "opened" : "closed"}
-                      color={status === "opened" ? "warning" : "default"}
-                      size="small"
-                    />
-                  </Tooltip>
-                </Box>
+      {projects.map(
+        ({ projectTitle, numberOfIssues, description, status }, index) => {
+          return (
+            <Card sx={{ mt: 1 }} key={projectTitle.concat(index.toString())}>
+              <Grid container spacing={1} p={3}>
+                <Grid
+                  item
+                  xs={12}
+                  display="flex"
+                  justifyContent="space-between"
+                >
+                  <Typography variant="h5" fontWeight="550">
+                    {projectTitle}
+                  </Typography>
+                  <Box display="flex" gap={2}>
+                    <Tooltip title="No of open issue">
+                      <Badge
+                        badgeContent={numberOfIssues}
+                        variant="standard"
+                        color="warning"
+                      >
+                        <BugReportIcon />
+                      </Badge>
+                    </Tooltip>
+                    <Tooltip title="Status">
+                      <Chip
+                        variant="filled"
+                        label={status === "opened" ? "opened" : "closed"}
+                        color={status === "opened" ? "warning" : "default"}
+                        size="small"
+                      />
+                    </Tooltip>
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider />
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography>{description}</Typography>
+                </Grid>
               </Grid>
-              <Grid item xs={12}>
-                <Divider />
-              </Grid>
-              <Grid item xs={12}>
-                <Typography>{description}</Typography>
-              </Grid>
-            </Grid>
-          </Card>
-        );
-      })}
+            </Card>
+          );
+        },
+      )}
     </>
   );
 };
