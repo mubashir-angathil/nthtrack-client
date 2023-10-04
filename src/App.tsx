@@ -8,6 +8,7 @@ import GeneralModal from "./components/modal/GeneralModal";
 import { ThemeProvider } from "@mui/system";
 import { theme } from "./utils/helpers/configs/Theme";
 import PageViewProject from "./pages/home/project/view-project/PageViewProject";
+import PageIssueView from "./pages/home/issue/PageIssueView";
 
 const App: React.FC = () => {
   return (
@@ -18,7 +19,10 @@ const App: React.FC = () => {
           <Route path="/signup" element={<PageSignUp />} />
           <Route path="/home" element={<PageHome />}>
             <Route index element={<PageProjects />} />
-            <Route path="project/:id" element={<PageViewProject />} />
+            <Route path="project/:id">
+              <Route index element={<PageViewProject />} />
+              <Route path="issue/:id" element={<PageIssueView />} />
+            </Route>
           </Route>
         </Routes>
         <GeneralModal />

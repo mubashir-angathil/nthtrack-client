@@ -3,12 +3,8 @@ import {
   Button,
   Grid,
   Typography,
-  Stack,
   Box,
   colors,
-  List,
-  ListItem,
-  ListItemButton,
   TextField,
   Select,
   MenuItem,
@@ -20,9 +16,11 @@ import PluseIcon from "@mui/icons-material/Add";
 import { issues } from "./Helper";
 import { useModalContext } from "../../../../utils/helpers/context/modal-context/ModalContext";
 import ManageIssueForm from "../../../../components/form/manage-issue/ManageIssueForm";
+import { useNavigate } from "react-router-dom";
 
 const PageViewProject: FC = () => {
   const { setModal } = useModalContext();
+  const navigate = useNavigate();
   return (
     <Grid container gap={2}>
       <Grid item xs={12} display="flex" justifyContent="space-between" mt={2}>
@@ -116,7 +114,7 @@ const PageViewProject: FC = () => {
                 mt: 2,
                 borderColor: issueStatus ? colors.red.A200 : colors.blue[500],
               }}
-              onClick={() => {}}
+              onClick={() => navigate("issue/".concat("1"))}
             >
               <Typography>#{id}</Typography>
               <Typography>{title}</Typography>
