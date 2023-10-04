@@ -18,8 +18,11 @@ import {
 import { FC } from "react";
 import PluseIcon from "@mui/icons-material/Add";
 import { issues } from "./Helper";
+import { useModalContext } from "../../../../utils/helpers/context/modal-context/ModalContext";
+import ManageIssueForm from "../../../../components/form/manage-issue/ManageIssueForm";
 
 const PageViewProject: FC = () => {
+  const { setModal } = useModalContext();
   return (
     <Grid container gap={2}>
       <Grid item xs={12} display="flex" justifyContent="space-between" mt={2}>
@@ -28,7 +31,19 @@ const PageViewProject: FC = () => {
           <Button variant="contained" color="error">
             Close Project
           </Button>
-          <Button variant="contained" startIcon={<PluseIcon />}>
+          <Button
+            variant="contained"
+            startIcon={<PluseIcon />}
+            onClick={() => {
+              setModal({
+                open: true,
+                body: <ManageIssueForm />,
+                positiveButton: "Create issue",
+                negativeButton: "close",
+                title: "Create Issue",
+              });
+            }}
+          >
             Create Issue
           </Button>
         </Box>
@@ -87,8 +102,10 @@ const PageViewProject: FC = () => {
           const issueStatus = status === "opened";
           return (
             <Card
+              component="div"
               key={id}
               elevation={0}
+              className="btn"
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -99,6 +116,7 @@ const PageViewProject: FC = () => {
                 mt: 2,
                 borderColor: issueStatus ? colors.red.A200 : colors.blue[500],
               }}
+              onClick={() => {}}
             >
               <Typography>#{id}</Typography>
               <Typography>{title}</Typography>

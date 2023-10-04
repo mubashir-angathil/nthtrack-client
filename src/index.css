@@ -14,7 +14,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-  --primary-color: #32a837;
+  --primary-color: rgb(50, 168, 55);
 }
 
 body {
@@ -40,4 +40,16 @@ body::-webkit-scrollbar {
 ::-webkit-scrollbar-thumb {
   border-radius: 6px;
   background-color: var(--primary-color);
+}
+
+.btn {
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: rgb(50, 168, 55, 0.009);
+}
+
+.btn:active {
+  transform: scale(0.99);
 }
