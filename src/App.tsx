@@ -10,13 +10,16 @@ const App: React.FC = () => {
     <ThemeProvider theme={theme}>
       <ModalContextProvider>
         <Routes>
-          <Route index element={routes.signin.element} />
-          <Route path={routes.signup.path} element={routes.signup.element} />
+          <Route index element={routes.signIn.element} />
+          <Route path={routes.signUp.path} element={routes.signUp.element} />
           <Route path={routes.home.path} element={routes.home.default}>
             <Route index element={routes.home.element} />
-            <Route path={routes.projects.path}>
+            <Route path={routes.projects.path.concat(":id")}>
               <Route index element={routes.projects.element} />
-              <Route path={routes.tasks.path} element={routes.tasks.element} />
+              <Route
+                path={routes.tasks.path.concat(":id")}
+                element={routes.tasks.element}
+              />
             </Route>
           </Route>
         </Routes>

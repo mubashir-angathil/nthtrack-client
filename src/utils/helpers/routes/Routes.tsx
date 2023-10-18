@@ -9,13 +9,13 @@ import { RouteConfigsType } from "./Helper";
 // Define your routes using the RouteConfigsType
 const routes: RouteConfigsType = {
   // Sign In Route
-  signin: {
+  signIn: {
     path: "/",
     element: <PageSignIn />, // React component to render
   },
 
   // Sign Up Route
-  signup: {
+  signUp: {
     path: "/sign-up",
     element: <PageSignUp />, // React component to render
   },
@@ -29,13 +29,13 @@ const routes: RouteConfigsType = {
 
   // Project Route
   projects: {
-    path: "/project/:id", // Dynamic parameter :id
+    path: "project/", // Dynamic parameter :id
     element: <PageViewProject />, // React component to render
   },
 
   // Task Route
   tasks: {
-    path: "/task/:id", // Dynamic parameter :id
+    path: "task/", // Dynamic parameter :id
     element: <PageTaskView />, // React component to render
   },
 };

@@ -17,6 +17,7 @@ import { issues } from "./Helper";
 import { useModalContext } from "../../../../utils/helpers/context/modal-context/ModalContext";
 import ManageIssueForm from "../../../../components/form/manage-issue/ManageIssueForm";
 import { useNavigate } from "react-router-dom";
+import routes from "../../../../utils/helpers/routes/Routes";
 
 const PageViewProject: FC = () => {
   const { setModal } = useModalContext();
@@ -96,7 +97,7 @@ const PageViewProject: FC = () => {
         />
       </Grid>
       <Grid item xs={12}>
-        {issues.map(({ id, title, status, description, createdAt }) => {
+        {issues.map(({ id, title, status, description, createdAt }, index) => {
           const issueStatus = status === "opened";
           return (
             <Card
@@ -114,7 +115,9 @@ const PageViewProject: FC = () => {
                 mt: 2,
                 borderColor: issueStatus ? colors.red.A200 : colors.blue[500],
               }}
-              onClick={() => navigate("issue/".concat("1"))}
+              onClick={() =>
+                navigate(routes.tasks.path.concat(index.toString()))
+              }
             >
               <Typography>#{id}</Typography>
               <Typography>{title}</Typography>

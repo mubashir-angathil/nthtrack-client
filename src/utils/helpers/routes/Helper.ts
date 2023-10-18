@@ -1,4 +1,4 @@
-type keys = "signin" | "signup" | "home" | "projects" | "tasks";
+type keys = "signIn" | "signUp" | "home" | "projects" | "tasks";
 
 export type RouteConfigsType = {
   // eslint-disable-next-line no-unused-vars

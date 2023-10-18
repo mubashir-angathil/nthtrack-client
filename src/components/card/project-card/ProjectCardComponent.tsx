@@ -12,6 +12,7 @@ import {
 import BugReportIcon from "@mui/icons-material/BugReport";
 import { ProjectCardComponentProps } from "./Helper";
 import { useNavigate } from "react-router-dom";
+import routes from "../../../utils/helpers/routes/Routes";
 
 const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
   projects,
@@ -33,7 +34,9 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                 m: 2,
               }}
               className="btn"
-              onClick={() => navigate("project/".concat(index.toString()))}
+              onClick={() =>
+                navigate(routes.projects.path.concat(index.toString()))
+              }
             >
               <Grid container p={3}>
                 <Grid
