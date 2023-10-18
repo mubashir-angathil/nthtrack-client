@@ -1,27 +1,22 @@
 import { Routes, Route } from "react-router-dom";
-import PageSignIn from "./pages/public/sign-in/PageSignIn";
-import PageHome from "./pages/home/PageHome";
-import PageSignUp from "./pages/public/sign-up/PageSignUp";
-import PageProjects from "./pages/home/project/PageProjects";
 import ModalContextProvider from "./utils/helpers/context/modal-context/ModalContextProvider";
 import GeneralModal from "./components/modal/GeneralModal";
 import { ThemeProvider } from "@mui/system";
 import { theme } from "./utils/helpers/configs/Theme";
-import PageViewProject from "./pages/home/project/view-project/PageViewProject";
-import PageIssueView from "./pages/home/issue/PageIssueView";
+import routes from "./utils/helpers/routes/Routes";
 
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <ModalContextProvider>
         <Routes>
-          <Route index element={<PageSignIn />} />
-          <Route path="/signup" element={<PageSignUp />} />
-          <Route path="/home" element={<PageHome />}>
-            <Route index element={<PageProjects />} />
-            <Route path="project/:id">
-              <Route index element={<PageViewProject />} />
-              <Route path="issue/:id" element={<PageIssueView />} />
+          <Route index element={routes.signin.element} />
+          <Route path={routes.signup.path} element={routes.signup.element} />
+          <Route path={routes.home.path} element={routes.home.default}>
+            <Route index element={routes.home.element} />
+            <Route path={routes.projects.path}>
+              <Route index element={routes.projects.element} />
+              <Route path={routes.tasks.path} element={routes.tasks.element} />
             </Route>
           </Route>
         </Routes>
