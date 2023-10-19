@@ -1,4 +1,4 @@
-import { useModalContext } from "../../utils/helpers/context/modal-context/ModalContext";
+import { useModalContext } from "../../../utils/helpers/context/modal-context/ModalContext";
 
 export const useModal = () => {
   const { modal, setModal } = useModalContext();

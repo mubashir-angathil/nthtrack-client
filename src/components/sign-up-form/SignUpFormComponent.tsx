@@ -1,16 +1,30 @@
 import React from "react";
 import { Box, FormControl, TextField } from "@mui/material";
-import SubmitButtonComponent from "../buttons/SubmitButtonComponent";
+import SubmitButtonComponent from "../common/buttons/SubmitButtonComponent";
+import { useSignUp } from "./Helper";
 
 const SignUpFormComponent: React.FC = () => {
+  const { handleSignUp } = useSignUp();
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleSignUp();
+  };
+
   return (
-    <Box component="form" p={2} display="grid" gap={2}>
+    <Box
+      component="form"
+      p={2}
+      display="grid"
+      gap={2}
+      onSubmit={handleFormSubmit}
+    >
       <FormControl fullWidth>
         <TextField
           label="Username"
           placeholder="jhon@gmail.com"
           type="email"
           size="small"
+          required
         />
       </FormControl>
 
@@ -20,6 +34,7 @@ const SignUpFormComponent: React.FC = () => {
           placeholder="password"
           type="password"
           size="small"
+          required
         />
       </FormControl>
 
@@ -29,14 +44,10 @@ const SignUpFormComponent: React.FC = () => {
           placeholder="password"
           type="password"
           size="small"
+          required
         />
       </FormControl>
-
-      <SubmitButtonComponent
-        title="Create Account"
-        sx={{ mt: 2 }}
-        onClick={() => {}}
-      />
+      <SubmitButtonComponent title="Create Account" sx={{ mt: 2 }} />
     </Box>
   );
 };

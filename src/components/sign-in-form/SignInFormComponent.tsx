@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, FormControl, TextField } from "@mui/material";
-import SubmitButtonComponent from "../buttons/SubmitButtonComponent";
 import { useNavigate } from "react-router-dom";
+import SubmitButtonComponent from "../common/buttons/SubmitButtonComponent";
 
 const SignInFormComponent: React.FC = () => {
   const navigate = useNavigate();

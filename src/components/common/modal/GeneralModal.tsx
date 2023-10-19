@@ -2,8 +2,8 @@ import React from "react";
 import Modal from "@mui/material/Modal";
 import { useModal } from "./Helper";
 import { Box, Button, Divider, Typography } from "@mui/material";
-import { useModalContext } from "../../utils/helpers/context/modal-context/ModalContext";
 import { modalStyle } from "./Style";
+import { useModalContext } from "../../../utils/helpers/context/modal-context/ModalContext";
 
 const GeneralModal: React.FC = () => {
   const styles = modalStyle;

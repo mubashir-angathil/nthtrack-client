@@ -1,8 +1,8 @@
 import React from "react";
-import { NavbarComponent } from "../../components/navbar/NavbarComponent";
-import { OutletWrapper } from "../../components/Components";
+import { NavbarComponent } from "../../components/common/navbar/NavbarComponent";
 import { Outlet, Navigate, useLocation } from "react-router-dom";
 import routes from "../../utils/helpers/routes/Routes";
+import { OutletContainer } from "../../components/common/container/OutletContainer";
 
 const PageHome: React.FC = () => {
   const auth = true;
@@ -12,12 +12,12 @@ const PageHome: React.FC = () => {
       {auth ? (
         <>
           <NavbarComponent />
-          <OutletWrapper>
+          <OutletContainer>
             <Outlet />
-          </OutletWrapper>
+          </OutletContainer>
         </>
       ) : (
-        <Navigate to={routes.signin.path} state={{ from: location }} replace />
+        <Navigate to={routes.signIn.path} state={{ from: location }} replace />
       )}
     </>
   );
