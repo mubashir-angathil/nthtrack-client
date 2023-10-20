@@ -13,5 +13,6 @@ export interface ApiError {
     message: string; //A descriptive message providing more details about the error.
     //Optional array of field-level errors, each represented as an object with keys and unknown values.
     fieldErrors?: Array<{ [key: string]: unknown }>;
+    error?: unknown;
   };
 }
