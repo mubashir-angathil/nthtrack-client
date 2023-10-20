@@ -1,18 +1,18 @@
 export interface AuthRequest {
-  user: {
-    username: string;
-    password: string;
-  };
+  username: string;
+  password: string;
 }
 
 export interface AuthResponse {
+  success: boolean;
   message: string;
-  user: {
+  fieldErrors?: Array<{ [key: string]: unknown }>;
+  authDetails: {
     id: number;
     username: string;
+    accessToken: string;
+    refreshToken: string;
   };
-  accessToken: string;
-  refreshToken: string;
 }
 
 export interface NewTokenResponse {

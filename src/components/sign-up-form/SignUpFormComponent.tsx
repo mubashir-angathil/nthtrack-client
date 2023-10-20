@@ -1,52 +1,73 @@
 import React from "react";
-import { Box, FormControl, TextField } from "@mui/material";
+import { Box, FormControl } from "@mui/material";
 import SubmitButtonComponent from "../common/buttons/SubmitButtonComponent";
 import { useSignUp } from "./Helper";
+import RhfTextfieldComponent from "../common/textfield/RhfTextFieldComponent";
 
+/**
+ * SignUpFormComponent
+ *
+ * This component represents the sign-up form. It utilizes the useSignUp custom hook
+ * for managing form state and handling submission logic. The form includes input fields
+ * for username, password, and confirm password, along with a submit button.
+ *
+ * Components:
+ * - RhfTextfieldComponent: A reusable component for rendering text input fields using
+ *   React Hook Form.
+ * - SubmitButtonComponent: A reusable button component for form submission.
+ *
+ * @returns {React.FC} SignUpFormComponent
+ */
 const SignUpFormComponent: React.FC = () => {
-  const { handleSignUp } = useSignUp();
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await handleSignUp();
-  };
+  // Destructure properties from the useSignUp hook
+  const { onSubmit, control, handleSubmit } = useSignUp();
 
   return (
     <Box
       component="form"
-      p={2}
+      p={1}
       display="grid"
       gap={2}
-      onSubmit={handleFormSubmit}
+      onSubmit={handleSubmit(onSubmit)}
     >
+      {/* Username Input */}
       <FormControl fullWidth>
-        <TextField
-          label="Username"
-          placeholder="jhon@gmail.com"
+        <RhfTextfieldComponent
+          required
           type="email"
-          size="small"
-          required
+          name="username"
+          label="Username"
+          control={control}
+          placeholder="jhon@gmail.com"
         />
       </FormControl>
 
+      {/* Password Input */}
       <FormControl fullWidth>
-        <TextField
+        <RhfTextfieldComponent
+          required
+          name="password"
+          type="password"
           label="Password"
+          control={control}
           placeholder="password"
-          type="password"
-          size="small"
-          required
         />
       </FormControl>
 
+      {/* Confirm Password Input */}
       <FormControl fullWidth>
-        <TextField
-          label="Confirm Password"
-          placeholder="password"
-          type="password"
-          size="small"
+        <RhfTextfieldComponent
           required
+          size="small"
+          type="password"
+          control={control}
+          placeholder="password"
+          name="confirmPassword"
+          label="Confirm Password"
         />
       </FormControl>
+
+      {/* Submit Button */}
       <SubmitButtonComponent title="Create Account" sx={{ mt: 2 }} />
     </Box>
   );

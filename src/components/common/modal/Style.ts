@@ -6,7 +6,7 @@ export const modalStyle = {
     borderRadius: "6px",
     transform: "translate(-50%, -50%)",
     width: "60vw",
-    bgcolor: "background.paper",
+    backgroundColor: "background.paper",
     color: "black",
     boxShadow: 24,
     p: 2,

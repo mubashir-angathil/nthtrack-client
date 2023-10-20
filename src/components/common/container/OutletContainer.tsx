@@ -1,5 +1,4 @@
-import { styled } from "@mui/material";
-import { Container } from "@mui/system";
+import { styled, Container } from "@mui/material";
 
 export const OutletContainer = styled(Container)(() => ({
   height: "100vh",

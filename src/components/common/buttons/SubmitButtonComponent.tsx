@@ -1,22 +1,15 @@
 import React from "react";
-import { Button } from "@mui/material";
 import { CustomButtonComponentProps } from "./Helper";
+import { LoadingButton } from "@mui/lab";
 
 const SubmitButtonComponent: React.FC<CustomButtonComponentProps> = ({
   title,
-  onClick,
-  sx,
+  ...reset
 }) => {
   return (
-    <Button
-      sx={sx}
-      type="submit"
-      color="success"
-      variant="contained"
-      onClick={onClick}
-    >
+    <LoadingButton type="submit" color="success" variant="contained" {...reset}>
       {title}
-    </Button>
+    </LoadingButton>
   );
 };
 

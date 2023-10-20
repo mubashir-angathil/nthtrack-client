@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import authenticationServices from "../../services/auth-services/AuthServices";
 import { SubmitHandler } from "react-hook-form";
 import { InferType, object, string } from "yup";
@@ -7,53 +8,55 @@ import cookieServices from "../../services/storage-services/CookieServices";
 import { useAuthContext } from "../../utils/helpers/context/auth-context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import routes from "../../utils/helpers/routes/Routes";
-import { useEffect } from "react";
 import { ApiError } from "../../services/Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 
-// Define the validation schema for the sign-up form
-export const signUpFormSchema = object({
+// Define the validation schema for the sign-in form
+export const signInFormSchema = object({
   username: string().email().required(),
   password: string().min(4).required(),
-  confirmPassword: string().min(4).required(),
 }).required();
 
 // Define the type for the form inputs based on the schema
-export type SignUpFormInputs = InferType<typeof signUpFormSchema>;
+export type SignInFormInputs = InferType<typeof signInFormSchema>;
 
 // Custom hook for handling sign-up logic
-export const useSignUp = () => {
+export const useSignIn = () => {
+  const [isLoading, setIsLoading] = useState(false);
   // Initialize the React Hook Form with validation resolver and default values
-  const { handleSubmit, control, setError } = useForm<SignUpFormInputs>({
-    resolver: yupResolver(signUpFormSchema),
+  const { handleSubmit, control, setError } = useForm<SignInFormInputs>({
+    resolver: yupResolver(signInFormSchema),
     defaultValues: {
       username: "",
       password: "",
-      confirmPassword: "",
     },
   });
+
   const {
     setAuthDetails,
     authDetails: { auth },
   } = useAuthContext();
+
   const navigate = useNavigate();
 
   // Handle form submission
-  const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
-    await handleSignUp(data);
+  const onSubmit: SubmitHandler<SignInFormInputs> = async (data) => {
+    setIsLoading(true);
+    await handleSignIn(data);
+    setIsLoading(false);
   };
 
-  // Function to handle sign-up logic
-  const handleSignUp = async (props: SignUpFormInputs) => {
+  // Function to handle sign-in logic
+  const handleSignIn = async (props: SignInFormInputs) => {
     try {
-      // Call the sign-up API from authenticationServices
-      const { authDetails } = await authenticationServices.doSignUp({
+      // Call the sign-in API from authenticationServices
+      const { authDetails, success } = await authenticationServices.doSignUp({
         username: props.username,
         password: props.password,
       });
 
-      // If sign-up is successful, set authentication details in cookies
-      if (authDetails) {
+      // If sign-in is successful, set authentication details in cookies
+      if (success && authDetails) {
         cookieServices.setAuthDetails(authDetails);
         setAuthDetails({
           auth: true,
@@ -61,17 +64,16 @@ export const useSignUp = () => {
         });
       }
     } catch (error) {
-      // Handle errors from the sign-up API
+      // Handle errors from the sign-ip API
       generalFunctions.fieldErrorsHandler(error as ApiError, setError);
 
-      console.error("SignUp:", error);
+      console.error("SignIn:", error);
     }
   };
-
   useEffect(() => {
     if (auth) navigate(routes.home.path, { replace: true });
   }, [auth, navigate]);
 
   // Return the necessary properties for the form
-  return { control, handleSubmit, onSubmit };
+  return { isLoading, control, handleSubmit, onSubmit };
 };

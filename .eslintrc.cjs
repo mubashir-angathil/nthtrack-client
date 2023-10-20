@@ -15,7 +15,7 @@ module.exports = {
       { allowConstantExport: true },
     ],
     // General ESLint Rules
-    "no-console": "warn",
+    "no-console": ["warn", { allow: ["error"] }],
     "no-unused-vars": "warn",
 
     // TypeScript Rules

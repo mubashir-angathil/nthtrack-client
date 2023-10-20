@@ -1,32 +1,71 @@
-import { AxiosResponse } from "axios";
 import axios from "../api-instance/AuthenticationInstance";
 import { AuthRequest, AuthResponse, NewTokenResponse } from "./Helper";
+import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 
+/**
+ * Authentication Services Module
+ *
+ * This module provides functions for interacting with authentication-related APIs.
+ * It includes methods for user sign-up, sign-in, and refreshing access tokens.
+ *
+ * Functions:
+ * - doSignUp: Handles user registration (sign-up) and returns an AuthResponse.
+ * - doSignIn: Handles user authentication (sign-in) and returns an AuthResponse.
+ * - getNewToken: Requests a new access token using a refresh token and returns a NewTokenResponse.
+ *
+ * Each function includes error handling using the generalFunctions module to transform
+ * Axios errors into standardized API error formats.
+ *
+ * @exports {Object} authenticationServices
+ */
 const authenticationServices = {
-  doSignUp: async (props: AuthRequest) => {
-    return axios
-      .post<AxiosResponse<AuthResponse>>("/sign-up", props)
+  /**
+   * Handles user registration (sign-up) and returns an AuthResponse.
+   *
+   * @param {AuthRequest} props - User registration details.
+   * @returns {Promise<AuthResponse>} User authentication response.
+   */
+  doSignUp: async (props: AuthRequest): Promise<AuthResponse> => {
+    return await axios
+      .post<AuthResponse>("/sign-up", props)
       .then((response) => response.data)
       .catch((error) => {
-        throw error.response; // Re-throw the error to propagate it
+        // Re-throw the error with the custom error type
+        throw generalFunctions.customError(error);
       });
   },
-  doSignIn: async (props: AuthRequest) => {
-    return axios
-      .post<AxiosResponse<AuthResponse>>("/sign-in", props)
+
+  /**
+   * Handles user authentication (sign-in) and returns an AuthResponse.
+   *
+   * @param {AuthRequest} props - User authentication details.
+   * @returns {Promise<AuthResponse>} User authentication response.
+   */
+  doSignIn: async (props: AuthRequest): Promise<AuthResponse> => {
+    return await axios
+      .post<AuthResponse>("/sign-in", props)
       .then((response) => response.data)
       .catch((error) => {
-        throw error.response; // Re-throw the error to propagate it
+        // Re-throw the error with the custom error type
+        throw generalFunctions.customError(error);
       });
   },
-  getNewToken: async (refreshToken: string) => {
-    return axios
-      .post<AxiosResponse<NewTokenResponse>>("/token", {
+
+  /**
+   * Requests a new access token using a refresh token and returns a NewTokenResponse.
+   *
+   * @param {string} refreshToken - The refresh token.
+   * @returns {Promise<NewTokenResponse>} New access token response.
+   */
+  getNewToken: async (refreshToken: string): Promise<NewTokenResponse> => {
+    return await axios
+      .post<NewTokenResponse>("/token", {
         refreshToken: refreshToken,
       })
       .then((response) => response.data)
       .catch((error) => {
-        throw error.response; // Re-throw the error to propagate it
+        // Re-throw the error with the custom error type
+        throw generalFunctions.customError(error);
       });
   },
 };
