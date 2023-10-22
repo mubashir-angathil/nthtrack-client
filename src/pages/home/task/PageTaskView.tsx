@@ -14,13 +14,11 @@ const PageTaskView: FC = () => {
           {task.id === 0 ? <Skeleton width={30} height={40} /> : task.id}
         </Typography>
         {/* Button to close task, disabled if task is not in "Opened" status */}
-        <Button
-          variant="contained"
-          size="small"
-          disabled={task.status.name !== "Opened"}
-        >
-          {task.status.name === "Closed" ? "Closed" : "Close task"}
-        </Button>
+        {task.status.name === "Opened" ? (
+          <Button variant="contained" size="small">
+            Close task
+          </Button>
+        ) : undefined}
       </Grid>
 
       {/* Task Details */}
