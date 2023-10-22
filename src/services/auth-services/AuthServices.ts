@@ -1,4 +1,4 @@
-import axios from "../api-instance/AuthenticationInstance";
+import axios from "../api-instance/AuthInstance";
 import { AuthRequest, AuthResponse, NewTokenResponse } from "./Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 
