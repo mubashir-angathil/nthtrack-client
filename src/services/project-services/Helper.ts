@@ -55,4 +55,10 @@ export interface GetProjectByIdResponse {
   message: string;
   data: Project;
 }
+export interface GetTaskByIdResponse {
+  success: boolean;
+  message: string;
+  data: Task;
+}
+
 // Comments provide explanations for each interface, making the code more readable and understandable.

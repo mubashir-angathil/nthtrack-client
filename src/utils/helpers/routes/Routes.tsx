@@ -1,5 +1,5 @@
 import PageHome from "../../../pages/home/PageHome";
-import PageTaskView from "../../../pages/home/issue/PageIssueView";
+import PageTaskView from "../../../pages/home/task/PageTaskView";
 import PageProjects from "../../../pages/home/project/PageProjects";
 import PageViewProject from "../../../pages/home/project/view-project/PageViewProject";
 import PageSignIn from "../../../pages/public/sign-in/PageSignIn";

@@ -6,6 +6,7 @@ import {
   ApiRequestWithPaginationAndSearch,
   GetAllTasksRequest,
   GetProjectByIdResponse,
+  GetTaskByIdResponse,
   ProjectsResponse,
   TaskResponse,
 } from "./Helper";
@@ -108,6 +109,31 @@ const projectServices = {
         `/project/${projectId}`,
         {
           params: { projectId },
+        },
+      );
+      return response;
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError);
+    }
+  },
+  /**
+   * getTaskById
+   *
+   * Retrieves tasks by id .
+   *
+   * @param {number} taskId - taskId.
+   * @returns {Promise<AxiosResponse<ProjectResponse>>} Promise that resolves to the response containing task data.
+   */
+  getTasksById: async ({
+    taskId,
+  }: {
+    taskId: number;
+  }): Promise<AxiosResponse<GetTaskByIdResponse>> => {
+    try {
+      const response = axios.get<GetTaskByIdResponse>(
+        `/project/task/${taskId}`,
+        {
+          params: { taskId },
         },
       );
       return response;
