@@ -16,3 +16,11 @@ export interface ApiError {
     error?: unknown;
   };
 }
+export interface ApiResponse {
+  status: number; // HTTP status code indicating the type of error.
+  data: {
+    success: boolean; //  A boolean flag indicating the success or failure of the API request.
+    message: string; //A descriptive message providing more details about the error.
+    data: any;
+  };
+}

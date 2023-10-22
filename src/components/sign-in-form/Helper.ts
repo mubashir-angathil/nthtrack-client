@@ -50,7 +50,7 @@ export const useSignIn = () => {
   const handleSignIn = async (props: SignInFormInputs) => {
     try {
       // Call the sign-in API from authenticationServices
-      const { authDetails, success } = await authenticationServices.doSignUp({
+      const { authDetails, success } = await authenticationServices.doSignIn({
         username: props.username,
         password: props.password,
       });

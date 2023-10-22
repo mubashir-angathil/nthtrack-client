@@ -1,16 +1,29 @@
 import React from "react";
-import { Grid, Button, TextField } from "@mui/material";
+import { Grid, Button, TextField, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ProjectCardComponent from "../../../components/card/project-card/ProjectCardComponent";
 import { useModalContext } from "../../../utils/helpers/context/modal-context/ModalContext";
 import ManageProjectForm from "../../../components/form/manage-project/ManageProjectForm";
-import SearchIcon from "@mui/icons-material/Search";
+import { Search as SearchIcon, Clear as ClearIcon } from "@mui/icons-material";
+import { useProjects } from "./Helper";
 
+// PageProjects component
 const PageProjects: React.FC = () => {
+  // Access modal context for opening the modal
   const { setModal } = useModalContext();
+
+  // Use the custom hook to manage projects
+  const {
+    projects,
+    handleClear,
+    handleChange,
+    handleProjectLoading,
+    apiConfig,
+  } = useProjects();
 
   return (
     <Grid container gap={2}>
+      {/* Section for creating a new project */}
       <Grid item xs={12} display="flex" justifyContent="space-between">
         <Button
           variant="contained"
@@ -27,56 +40,40 @@ const PageProjects: React.FC = () => {
         >
           Create Project
         </Button>
+        {/* Search input field */}
         <TextField
+          id="project-search-field"
           variant="outlined"
           type="search"
           size="small"
           placeholder="Search project here.."
+          onChange={handleChange}
+          // Change input color to error if there are no projects and there's a search key
+          color={
+            projects.length === 0 && apiConfig.searchKey ? "error" : undefined
+          }
           InputProps={{
-            endAdornment: <SearchIcon fontSize="small" />,
+            // End adornment for search input
+            endAdornment: (
+              <>
+                {/* Show search icon or clear icon based on search key existence */}
+                {apiConfig.searchKey === undefined ? (
+                  <SearchIcon fontSize="small" />
+                ) : (
+                  <IconButton onClick={handleClear}>
+                    <ClearIcon fontSize="small" />
+                  </IconButton>
+                )}
+              </>
+            ),
           }}
         />
       </Grid>
+      {/* Section for displaying project cards */}
       <Grid item xs={12}>
         <ProjectCardComponent
-          projects={[
-            {
-              projectTitle: "Admin Dashboard",
-              description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Pellentesque vel libero ut lacus rutrum viverra. Mauris
-              cursus, dui vitae vestibulum feugiat, velit metus ullamcorper
-              ex`,
-              numberOfIssues: 4,
-              status: "opened",
-            },
-            {
-              projectTitle: "Encusta",
-              description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Pellentesque vel libero ut lacus rutrum viverra. Mauris
-              cursus, dui vitae vestibulum feugiat, velit metus ullamcorper
-              ex`,
-              numberOfIssues: 4,
-              status: "opened",
-            },
-            {
-              projectTitle: "Alumni WMOC",
-              description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Pellentesque vel libero ut lacus rutrum viverra. Mauris
-              cursus, dui vitae vestibulum feugiat, velit metus ullamcorper
-              ex`,
-              numberOfIssues: 4,
-              status: "opened",
-            },
-            {
-              projectTitle: "FMS",
-              description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Pellentesque vel libero ut lacus rutrum viverra. Mauris
-              cursus, dui vitae vestibulum feugiat, velit metus ullamcorper
-              ex`,
-              numberOfIssues: 4,
-              status: "opened",
-            },
-          ]}
+          projects={projects}
+          handleProjectLoading={handleProjectLoading}
         />
       </Grid>
     </Grid>

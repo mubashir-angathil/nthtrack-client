@@ -1,21 +1,25 @@
-// import axios from "axios";
-// import { AUTH_URL } from "../../helpers/configs/Configs";
-// const instance = axios.create({
-//   baseURL: AUTH_URL,
-// });
-// instance.interceptors.request.use(
-//   (config) => {
-//     const user = { accessToken: "asd" };
-//     if (user.accessToken) {
-//       config.headers.Authorization = `Bearer ${user.accessToken}`;
-//     }
-//     return config;
-//   },
-//   async (error) => {
-//     return await Promise.reject(error);
-//   },
-// );
-// instance.interceptors.response.use(
+import axios from "axios";
+import { APP_URL } from "../../utils/helpers/configs/Configs";
+import cookieServices from "../storage-services/CookieServices";
+import { Tokens } from "../storage-services/Helper";
+const projectInstance = axios.create({
+  baseURL: APP_URL,
+});
+
+projectInstance.interceptors.request.use(
+  (config) => {
+    const tokens: Tokens | undefined = cookieServices.getAuthTokens();
+    if (tokens?.accessToken) {
+      config.headers.Authorization = "Bearer ".concat(tokens.accessToken);
+    }
+    return config;
+  },
+  async (error) => {
+    return await Promise.reject(error);
+  },
+);
+
+// projectInstance.interceptors.response.use(
 //   (res) => {
 //     return res;
 //   },
@@ -56,4 +60,4 @@
 //     return await Promise.reject(err);
 //   },
 // );
-// export default instance;
+export default projectInstance;

@@ -1,5 +1,6 @@
 import Cookies from "universal-cookie";
 import { AuthResponse } from "../auth-services/Helper";
+import { Tokens } from "./Helper";
 
 // Create an instance of universal-cookie
 const cookie = new Cookies();
@@ -60,7 +61,7 @@ const cookieServices = {
    *
    * @returns {object | undefined} Authentication tokens.
    */
-  getAuthTokens: (): object | undefined => {
+  getAuthTokens: (): Tokens | undefined => {
     const authDetails = cookie.get(authDetailsCookie);
     if (authDetails) {
       const { accessToken, refreshToken } = authDetails;

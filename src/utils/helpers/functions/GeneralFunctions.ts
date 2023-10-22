@@ -1,5 +1,5 @@
-import { AxiosError } from "axios";
-import { ApiError } from "../../../services/Helper";
+import { AxiosError, AxiosResponse } from "axios";
+import { ApiError, ApiResponse } from "../../../services/Helper";
 import { UseFormSetError } from "react-hook-form";
 
 /**
@@ -50,6 +50,28 @@ const generalFunctions = {
       Object.entries(fieldErrors).every(([key, value]: [string, any]) => {
         setError(key, { message: value });
       });
+  },
+  customResponse: (response: AxiosResponse) => {
+    if (response)
+      return {
+        status: response.status,
+        data: response.data,
+      } as ApiResponse;
+
+    return response;
+  },
+  batchLoading: (event: React.SyntheticEvent): boolean => {
+    const listBoxNode = event.currentTarget;
+    if (
+      Math.abs(
+        listBoxNode.scrollTop +
+          listBoxNode.clientHeight -
+          listBoxNode.scrollHeight,
+      ) < 1
+    ) {
+      return true;
+    }
+    return false;
   },
 };
 
