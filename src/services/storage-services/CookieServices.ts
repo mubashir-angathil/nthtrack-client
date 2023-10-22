@@ -77,7 +77,26 @@ const cookieServices = {
    * Clears the stored authentication details from the cookie.
    */
   clearAuthDetails: (): void => {
+    // Remove the authentication details cookie
     return cookie.remove(authDetailsCookie);
+  },
+
+  /**
+   * updateAccessToken
+   *
+   * Updates the access token in the stored authentication details cookie.
+   *
+   * @param {string} accessToken - The new access token.
+   */
+  updateAccessToken: (accessToken: string) => {
+    // Retrieve the current authentication details from the cookie
+    const authDetails = cookieServices.getAuthDetails();
+
+    // Create a new authentication details object with the updated access token
+    const newAuthDetails = { ...authDetails, accessToken };
+
+    // Set the updated authentication details in the cookie
+    cookie.set(authDetailsCookie, newAuthDetails);
   },
 };
 
