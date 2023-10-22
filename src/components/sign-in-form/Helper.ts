@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import cookieServices from "../../services/storage-services/CookieServices";
 import { useAuthContext } from "../../utils/helpers/context/auth-context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import routes from "../../utils/helpers/routes/Routes";
 import { ApiError } from "../../services/Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
@@ -22,6 +22,7 @@ export type SignInFormInputs = InferType<typeof signInFormSchema>;
 
 // Custom hook for handling sign-up logic
 export const useSignIn = () => {
+  const location: Location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   // Initialize the React Hook Form with validation resolver and default values
   const { handleSubmit, control, setError } = useForm<SignInFormInputs>({
@@ -62,6 +63,7 @@ export const useSignIn = () => {
           auth: true,
           user: authDetails,
         });
+        // navigate(routes.home.path, { replace: true });
       }
     } catch (error) {
       // Handle errors from the sign-ip API
@@ -71,7 +73,13 @@ export const useSignIn = () => {
     }
   };
   useEffect(() => {
-    if (auth) navigate(routes.home.path, { replace: true });
+    if (auth)
+      if (location.state) {
+        navigate(location.state.from, { replace: true });
+      } else {
+        navigate(routes.home.path, { replace: true });
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, navigate]);
 
   // Return the necessary properties for the form

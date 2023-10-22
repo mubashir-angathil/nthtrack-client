@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import cookieServices from "../../services/storage-services/CookieServices";
 import { useAuthContext } from "../../utils/helpers/context/auth-context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import routes from "../../utils/helpers/routes/Routes";
 import { useEffect } from "react";
 import { ApiError } from "../../services/Helper";
@@ -23,6 +23,7 @@ export type SignUpFormInputs = InferType<typeof signUpFormSchema>;
 
 // Custom hook for handling sign-up logic
 export const useSignUp = () => {
+  const location: Location = useLocation();
   // Initialize the React Hook Form with validation resolver and default values
   const { handleSubmit, control, setError } = useForm<SignUpFormInputs>({
     resolver: yupResolver(signUpFormSchema),
@@ -69,7 +70,13 @@ export const useSignUp = () => {
   };
 
   useEffect(() => {
-    if (auth) navigate(routes.home.path, { replace: true });
+    if (auth)
+      if (location.state) {
+        navigate(location.state.from, { replace: true });
+      } else {
+        navigate(routes.home.path, { replace: true });
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, navigate]);
 
   // Return the necessary properties for the form

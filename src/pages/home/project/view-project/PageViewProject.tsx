@@ -10,18 +10,26 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  IconButton,
 } from "@mui/material";
+import { Search as SearchIcon, Clear as ClearIcon } from "@mui/icons-material";
 import { FC } from "react";
 import PluseIcon from "@mui/icons-material/Add";
-import { issues } from "./Helper";
+import { useViewProject } from "./Helper";
 import { useModalContext } from "../../../../utils/helpers/context/modal-context/ModalContext";
 import ManageIssueForm from "../../../../components/form/manage-issue/ManageIssueForm";
 import { useNavigate } from "react-router-dom";
-import routes from "../../../../utils/helpers/routes/Routes";
+import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
 
 const PageViewProject: FC = () => {
   const { setModal } = useModalContext();
-  const navigate = useNavigate();
+  const {
+    tasks,
+    apiConfig,
+    handleTaskLoading,
+    handleChange,
+    handleSearchClear,
+  } = useViewProject();
   return (
     <Grid container gap={2}>
       <Grid item xs={12} display="flex" justifyContent="space-between" mt={2}>
@@ -65,7 +73,7 @@ const PageViewProject: FC = () => {
             size="small"
             onChange={() => {}}
           >
-            <MenuItem value="">
+            <MenuItem value={0}>
               <em>None</em>
             </MenuItem>
             <MenuItem value={10}>Ten</MenuItem>
@@ -83,7 +91,7 @@ const PageViewProject: FC = () => {
             size="small"
             onChange={() => {}}
           >
-            <MenuItem value="">
+            <MenuItem value={0}>
               <em>None</em>
             </MenuItem>
             <MenuItem value={"Opened"}>Opened</MenuItem>
@@ -91,51 +99,38 @@ const PageViewProject: FC = () => {
           </Select>
         </FormControl>
         <TextField
-          size="small"
+          id="task-search-field"
+          variant="outlined"
           type="search"
-          placeholder="Search issues here ..."
+          size="small"
+          placeholder="Search project here.."
+          onChange={handleChange}
+          // Change input color to error if there are no projects and there's a search key
+          color={
+            tasks.length === 0 && apiConfig.searchKey ? "error" : undefined
+          }
+          InputProps={{
+            // End adornment for search input
+            endAdornment: (
+              <>
+                {/* Show search icon or clear icon based on search key existence */}
+                {apiConfig.searchKey === undefined ? (
+                  <SearchIcon fontSize="small" />
+                ) : (
+                  <IconButton onClick={handleSearchClear}>
+                    <ClearIcon fontSize="small" />
+                  </IconButton>
+                )}
+              </>
+            ),
+          }}
         />
       </Grid>
       <Grid item xs={12}>
-        {issues.map(({ id, title, status, description, createdAt }, index) => {
-          const issueStatus = status === "opened";
-          return (
-            <Card
-              component="div"
-              key={id}
-              elevation={0}
-              className="btn"
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                p: "1em",
-                backgroundColor: "transparent",
-                border: 1,
-                gap: 1,
-                mt: 2,
-                borderColor: issueStatus ? colors.red.A200 : colors.blue[500],
-              }}
-              onClick={() =>
-                navigate(routes.tasks.path.concat(index.toString()))
-              }
-            >
-              <Typography>#{id}</Typography>
-              <Typography>{title}</Typography>
-              <Typography>{status}</Typography>
-              <Typography width={350}>{description}</Typography>
-              <Typography>{createdAt}</Typography>
-              <Button
-                variant={issueStatus ? "contained" : "text"}
-                size="small"
-                sx={{ height: 40 }}
-                color={issueStatus ? "error" : "primary"}
-                disabled={!issueStatus}
-              >
-                {issueStatus ? "Close" : "Closed"}
-              </Button>
-            </Card>
-          );
-        })}
+        <TaskCardComponent
+          tasks={tasks}
+          handleTaskLoading={handleTaskLoading}
+        />
       </Grid>
     </Grid>
   );

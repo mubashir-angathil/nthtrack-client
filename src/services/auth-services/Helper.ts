@@ -16,5 +16,7 @@ export interface AuthResponse {
 }
 
 export interface NewTokenResponse {
+  success: boolean;
+  message: string;
   accessToken: string;
 }
