@@ -26,7 +26,7 @@ const PageTaskView: FC = () => {
       {/* Task Details */}
       <Grid item xs={12} gap={2}>
         {/* Tracker Information */}
-        <Typography display="flex">
+        <Typography component="span" display="flex">
           <Box component="span" color="ActiveBorder">
             Tracker:&nbsp;
           </Box>
