@@ -5,13 +5,15 @@ interface Project {
   id: number; // Project ID
   projectName: string; // Project name
   description: string; // Project description
-  status: { id: number; name: string }; // Project status details
-  taskCount: number; // Count of tasks associated with the project
   createdAt: string; // Project creation timestamp
   updatedAt: string; // Project last update timestamp
   closedAt: string | null; // Project closed timestamp (nullable)
 }
 
+interface ProjectWithTaskCount extends Project {
+  status: { id: number; name: string }; // Project status details
+  taskCount: number; // Count of tasks associated with the project
+}
 interface Task {
   id: number;
   description: string;
@@ -34,8 +36,8 @@ export interface GetAllTasksRequest extends ApiRequestWithPaginationAndSearch {
 }
 
 // Interface for the response from the server containing project data
-export interface ProjectResponse extends ApiResponseWithPagination {
-  data: Project[]; // Array of project data
+export interface ProjectsResponse extends ApiResponseWithPagination {
+  data: ProjectWithTaskCount[]; // Array of project data
 }
 
 // Interface for the response from the server containing task data
@@ -48,4 +50,9 @@ export interface NewTokenResponse {
   accessToken: string; // New access token
 }
 
+export interface GetProjectByIdResponse {
+  success: boolean;
+  message: string;
+  data: Project;
+}
 // Comments provide explanations for each interface, making the code more readable and understandable.

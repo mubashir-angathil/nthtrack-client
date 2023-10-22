@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { SyntheticEvent, useEffect, useState } from "react";
 import projectServices from "../../../../services/project-services/ProjectServices";
 import {
@@ -8,6 +9,7 @@ import {
 } from "react-router-dom";
 import {
   GetAllTasksRequest,
+  GetProjectByIdResponse,
   TaskResponse,
 } from "../../../../services/project-services/Helper";
 import { ApiError } from "../../../../services/Helper";
@@ -20,9 +22,24 @@ interface ApiConfig extends GetAllTasksRequest {
   hasMore: boolean;
 }
 
+/**
+ * Custom React hook for managing project view state and logic.
+ * Handles fetching project details, tasks, and search functionality.
+ */
 export const useViewProject = () => {
+  // Extract necessary parameters and functions from React Router
   const params: Params = useParams();
   const navigate: NavigateFunction = useNavigate();
+
+  // State variables for project and tasks, as well as API configuration
+  const [project, setProject] = useState<GetProjectByIdResponse["data"]>({
+    id: 0,
+    projectName: "",
+    description: "",
+    createdAt: "",
+    updatedAt: "",
+    closedAt: "",
+  });
   const [tasks, setTasks] = useState<TaskResponse["data"]>([]);
   const [apiConfig, setApiConfig] = useState<ApiConfig>({
     limit: 5,
@@ -36,7 +53,7 @@ export const useViewProject = () => {
 
   // Debounced search function to handle search input changes
   const handleSearch = debounce((value: string) => {
-    // Clear projects if the search value is empty
+    // Clear tasks if the search value is undefined
     if (apiConfig.searchKey === undefined) {
       setTasks([]);
     }
@@ -67,7 +84,7 @@ export const useViewProject = () => {
     if (taskSearchField) {
       taskSearchField.value = "";
 
-      // Clear projects
+      // Clear tasks
       setTasks([]);
 
       // Update API configuration with the new search value
@@ -80,17 +97,30 @@ export const useViewProject = () => {
     }
   };
 
+  // Event handler for handling task loading (e.g., on scroll)
+  const handleTaskLoading = (e: SyntheticEvent) => {
+    const loadMore = generalFunctions.batchLoading(e);
+
+    // If there's more to load and the API configuration allows it, update the page number
+    if (loadMore && apiConfig.hasMore) {
+      setApiConfig((prevConfig) => ({
+        ...prevConfig,
+        page: prevConfig.page + 1,
+      }));
+    }
+  };
+
   // Function to fetch tasks from the API
   const fetchTasks = async () => {
     try {
-      // Call the API to get projects based on the current API configuration
+      // Call the API to get tasks based on the current API configuration
       const response = await projectServices.getAllTasks(apiConfig);
       const {
         status,
         data: { data, message, success, totalRows },
       } = response;
 
-      // If the API call is successful, update projects and API configuration
+      // If the API call is successful, update tasks and API configuration
       if (status === 200 && success) {
         setTasks((prevTasks) => prevTasks.concat(data));
         setApiConfig((prevConfig) => ({
@@ -108,16 +138,30 @@ export const useViewProject = () => {
     }
   };
 
-  // Event handler for handling task loading (e.g., on scroll)
-  const handleTaskLoading = (e: SyntheticEvent) => {
-    const loadMore = generalFunctions.batchLoading(e);
+  // Function to fetch project details from the API
+  const fetchProjectById = async () => {
+    try {
+      // Call the API to get project details based on the current API configuration
+      const response = await projectServices.getProjectById({
+        projectId: apiConfig.projectId,
+      });
 
-    // If there's more to load and the API configuration allows it, update the page number
-    if (loadMore && apiConfig.hasMore) {
-      setApiConfig((prevConfig) => ({
-        ...prevConfig,
-        page: prevConfig.page + 1,
-      }));
+      const {
+        status,
+        data: { data, message, success },
+      } = response;
+
+      // If the API call is successful, update project details
+      if (status === 200 && success) {
+        setProject(data);
+      } else {
+        // If there's an error, log the error message
+        throw { data: message };
+      }
+    } catch (error) {
+      // Handle API errors
+      const { data } = error as ApiError;
+      console.error(data);
     }
   };
 
@@ -125,17 +169,20 @@ export const useViewProject = () => {
     if (apiConfig.hasMore) {
       fetchTasks();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiConfig.page, apiConfig.searchKey]);
 
   useEffect(() => {
     if (apiConfig.projectId === 0) {
       navigate(routes.projects.path, { replace: true });
     }
+    setTimeout(() => {
+      fetchProjectById();
+    }, 500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
+    project,
     tasks,
     apiConfig,
     fetchTasks,

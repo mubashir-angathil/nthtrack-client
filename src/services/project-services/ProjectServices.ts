@@ -5,7 +5,8 @@ import axios from "../api-instance/ProjectInstance";
 import {
   ApiRequestWithPaginationAndSearch,
   GetAllTasksRequest,
-  ProjectResponse,
+  GetProjectByIdResponse,
+  ProjectsResponse,
   TaskResponse,
 } from "./Helper";
 
@@ -17,14 +18,14 @@ const projectServices = {
    * Retrieves all projects with pagination and search functionality.
    *
    * @param {object} apiConfig - Object containing page, limit, and searchKey for pagination and search.
-   * @returns {Promise<AxiosResponse<ProjectResponse>>} Promise that resolves to the response containing project data.
+   * @returns {Promise<AxiosResponse<ProjectsResponse>>} Promise that resolves to the response containing project data.
    */
   getAllProjects: async ({
     page,
     limit,
     searchKey,
   }: ApiRequestWithPaginationAndSearch): Promise<
-    AxiosResponse<ProjectResponse>
+    AxiosResponse<ProjectsResponse>
   > => {
     // Prepare request parameters
     const params = {
@@ -38,7 +39,7 @@ const projectServices = {
 
     try {
       // Make the API request to get all projects
-      const response = await axios.get<ProjectResponse>("/project/all", {
+      const response = await axios.get<ProjectsResponse>("/project/all", {
         params,
       });
 
@@ -82,6 +83,31 @@ const projectServices = {
         `/project/${projectId}/task/all`,
         {
           params,
+        },
+      );
+      return response;
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError);
+    }
+  },
+  /**
+   * getProjectById
+   *
+   * Retrieves project by id .
+   *
+   * @param {number} projectId - projectId.
+   * @returns {Promise<AxiosResponse<ProjectResponse>>} Promise that resolves to the response containing project data.
+   */
+  getProjectById: async ({
+    projectId,
+  }: {
+    projectId: number;
+  }): Promise<AxiosResponse<GetProjectByIdResponse>> => {
+    try {
+      const response = axios.get<GetProjectByIdResponse>(
+        `/project/${projectId}`,
+        {
+          params: { projectId },
         },
       );
       return response;
