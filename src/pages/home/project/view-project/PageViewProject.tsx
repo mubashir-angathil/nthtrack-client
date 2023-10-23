@@ -1,35 +1,56 @@
 import {
-  Card,
   Button,
   Grid,
   Typography,
   Box,
-  colors,
   TextField,
   Select,
   MenuItem,
   InputLabel,
   FormControl,
+  IconButton,
+  Skeleton,
 } from "@mui/material";
+import { Search as SearchIcon, Clear as ClearIcon } from "@mui/icons-material";
 import { FC } from "react";
 import PluseIcon from "@mui/icons-material/Add";
-import { issues } from "./Helper";
+import { useViewProject } from "./Helper";
 import { useModalContext } from "../../../../utils/helpers/context/modal-context/ModalContext";
 import ManageIssueForm from "../../../../components/form/manage-issue/ManageIssueForm";
-import { useNavigate } from "react-router-dom";
-import routes from "../../../../utils/helpers/routes/Routes";
+import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
 
+/**
+ * Functional component representing the view of a project page.
+ * Utilizes the custom hook `useViewProject` for managing state and logic.
+ */
 const PageViewProject: FC = () => {
+  // Extract necessary functions and state variables from the custom hook
   const { setModal } = useModalContext();
-  const navigate = useNavigate();
+  const {
+    project,
+    tasks,
+    apiConfig,
+    handleTaskLoading,
+    handleChange,
+    handleSearchClear,
+  } = useViewProject();
+
   return (
     <Grid container gap={2}>
+      {/* Project Details Section */}
       <Grid item xs={12} display="flex" justifyContent="space-between" mt={2}>
-        <Typography variant="h4">Project name</Typography>
-        <Box component="div" display="flex" gap={2}>
+        {project.projectName === "" ? (
+          <Skeleton width={200} height={40} />
+        ) : (
+          <Typography variant="h4">{project.projectName}</Typography>
+        )}
+
+        <Box component="div" display="flex" flexGrow={0} gap={2}>
+          {/* Close Project Button */}
           <Button variant="contained" color="error">
             Close Project
           </Button>
+          {/* Create Issue Button */}
           <Button
             variant="contained"
             startIcon={<PluseIcon />}
@@ -47,14 +68,25 @@ const PageViewProject: FC = () => {
           </Button>
         </Box>
       </Grid>
+
+      {/* Project Description Section */}
       <Grid item xs={12}>
-        <Typography variant="body1" color="GrayText">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque
-          vel libero ut lacus rutrum viverra. Mauris cursus, dui vitae
-          vestibulum feugiat, velit metus ullamcorper ex
-        </Typography>
+        {project.description === "" ? (
+          <>
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+          </>
+        ) : (
+          <Typography variant="body1" color="GrayText">
+            {project.description}
+          </Typography>
+        )}
       </Grid>
+
+      {/* Filters and Search Section */}
       <Grid item xs={12} display="flex" justifyContent="end" gap={2}>
+        {/* Tracker Filter */}
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel id="demo-simple-select-disabled">Tracker</InputLabel>
           <Select
@@ -65,7 +97,7 @@ const PageViewProject: FC = () => {
             size="small"
             onChange={() => {}}
           >
-            <MenuItem value="">
+            <MenuItem value={0}>
               <em>None</em>
             </MenuItem>
             <MenuItem value={10}>Ten</MenuItem>
@@ -73,6 +105,8 @@ const PageViewProject: FC = () => {
             <MenuItem value={30}>Thirty</MenuItem>
           </Select>
         </FormControl>
+
+        {/* Status Filter */}
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel id="demo-simple-select-disabled">Status</InputLabel>
           <Select
@@ -83,59 +117,50 @@ const PageViewProject: FC = () => {
             size="small"
             onChange={() => {}}
           >
-            <MenuItem value="">
+            <MenuItem value={0}>
               <em>None</em>
             </MenuItem>
             <MenuItem value={"Opened"}>Opened</MenuItem>
             <MenuItem value={"Closed"}>Closed</MenuItem>
           </Select>
         </FormControl>
+
+        {/* Search Input */}
         <TextField
-          size="small"
+          id="task-search-field"
+          variant="outlined"
           type="search"
-          placeholder="Search issues here ..."
+          size="small"
+          placeholder="Search project here.."
+          onChange={handleChange}
+          // Change input color to error if there are no tasks and there's a search key
+          color={
+            tasks.length === 0 && apiConfig.searchKey ? "error" : undefined
+          }
+          InputProps={{
+            // End adornment for search input
+            endAdornment: (
+              <>
+                {/* Show search icon or clear icon based on search key existence */}
+                {apiConfig.searchKey === undefined ? (
+                  <SearchIcon fontSize="small" />
+                ) : (
+                  <IconButton onClick={handleSearchClear}>
+                    <ClearIcon fontSize="small" />
+                  </IconButton>
+                )}
+              </>
+            ),
+          }}
         />
       </Grid>
+
+      {/* Task Cards Section */}
       <Grid item xs={12}>
-        {issues.map(({ id, title, status, description, createdAt }, index) => {
-          const issueStatus = status === "opened";
-          return (
-            <Card
-              component="div"
-              key={id}
-              elevation={0}
-              className="btn"
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                p: "1em",
-                backgroundColor: "transparent",
-                border: 1,
-                gap: 1,
-                mt: 2,
-                borderColor: issueStatus ? colors.red.A200 : colors.blue[500],
-              }}
-              onClick={() =>
-                navigate(routes.tasks.path.concat(index.toString()))
-              }
-            >
-              <Typography>#{id}</Typography>
-              <Typography>{title}</Typography>
-              <Typography>{status}</Typography>
-              <Typography width={350}>{description}</Typography>
-              <Typography>{createdAt}</Typography>
-              <Button
-                variant={issueStatus ? "contained" : "text"}
-                size="small"
-                sx={{ height: 40 }}
-                color={issueStatus ? "error" : "primary"}
-                disabled={!issueStatus}
-              >
-                {issueStatus ? "Close" : "Closed"}
-              </Button>
-            </Card>
-          );
-        })}
+        <TaskCardComponent
+          tasks={tasks}
+          handleTaskLoading={handleTaskLoading}
+        />
       </Grid>
     </Grid>
   );

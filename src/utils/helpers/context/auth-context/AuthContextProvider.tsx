@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
 import { AuthContextProps, initialAuthDetailsState } from "./Helper";
-import storageServices from "../../../../services/storage-services/CookieServices";
+import cookieServices from "../../../../services/storage-services/CookieServices";
 
 /**
  * AuthContextProvider
@@ -28,7 +28,7 @@ const AuthContextProvider = ({
    * Update authDetails from cookies on mount.
    */
   const updateAuthDetailsFromCookie = () => {
-    const newAuthDetails = storageServices.getAuthDetails();
+    const newAuthDetails = cookieServices.getAuthDetails();
 
     if (newAuthDetails) {
       // If newAuthDetails is present in the cookie, update authDetails

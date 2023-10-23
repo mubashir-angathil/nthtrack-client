@@ -4,7 +4,7 @@ import projectServices from "../../../services/project-services/ProjectServices"
 import { debounce } from "@mui/material";
 import {
   ApiRequestWithPaginationAndSearch,
-  ProjectResponse,
+  ProjectsResponse,
 } from "../../../services/project-services/Helper";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 
@@ -16,7 +16,7 @@ interface ApiConfig extends ApiRequestWithPaginationAndSearch {
 // Custom hook for managing projects
 export const useProjects = () => {
   // State for storing projects and API configuration
-  const [projects, setProjects] = useState<ProjectResponse["data"]>([]);
+  const [projects, setProjects] = useState<ProjectsResponse["data"]>([]);
   const [apiConfig, setApiConfig] = useState<ApiConfig>({
     page: 1,
     limit: 4,

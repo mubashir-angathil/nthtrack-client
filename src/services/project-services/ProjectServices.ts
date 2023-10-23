@@ -2,7 +2,14 @@
 import { AxiosError, AxiosResponse } from "axios";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 import axios from "../api-instance/ProjectInstance";
-import { ApiRequestWithPaginationAndSearch, ProjectResponse } from "./Helper";
+import {
+  ApiRequestWithPaginationAndSearch,
+  GetAllTasksRequest,
+  GetProjectByIdResponse,
+  GetTaskByIdResponse,
+  ProjectsResponse,
+  TaskResponse,
+} from "./Helper";
 
 // Service functions related to projects
 const projectServices = {
@@ -12,14 +19,14 @@ const projectServices = {
    * Retrieves all projects with pagination and search functionality.
    *
    * @param {object} apiConfig - Object containing page, limit, and searchKey for pagination and search.
-   * @returns {Promise<ProjectResponse>} Promise that resolves to the response containing project data.
+   * @returns {Promise<AxiosResponse<ProjectsResponse>>} Promise that resolves to the response containing project data.
    */
   getAllProjects: async ({
     page,
     limit,
     searchKey,
   }: ApiRequestWithPaginationAndSearch): Promise<
-    AxiosResponse<ProjectResponse>
+    AxiosResponse<ProjectsResponse>
   > => {
     // Prepare request parameters
     const params = {
@@ -33,7 +40,7 @@ const projectServices = {
 
     try {
       // Make the API request to get all projects
-      const response = await axios.get<ProjectResponse>("/project/all", {
+      const response = await axios.get<ProjectsResponse>("/project/all", {
         params,
       });
 
@@ -41,6 +48,96 @@ const projectServices = {
       return response;
     } catch (error) {
       // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError);
+    }
+  },
+  /**
+   * getAllTasks
+   *
+   * Retrieves all tasks with pagination and search functionality.
+   *
+   * @param {object} apiConfig - Object containing page, limit, and searchKey for pagination and search.
+   * @returns {Promise<AxiosResponse<ProjectResponse>>} Promise that resolves to the response containing project data.
+   */
+  getAllTasks: async ({
+    projectId,
+    trackerId,
+    statusId,
+    searchKey,
+    limit,
+    page,
+  }: GetAllTasksRequest): Promise<AxiosResponse<TaskResponse>> => {
+    const params = {
+      page,
+      limit,
+      trackerId,
+      statusId,
+      searchKey,
+    };
+
+    statusId === undefined && delete params.statusId;
+    trackerId === undefined && delete params.trackerId;
+    searchKey === undefined && delete params.searchKey;
+
+    try {
+      const response = axios.get<TaskResponse>(
+        `/project/${projectId}/task/all`,
+        {
+          params,
+        },
+      );
+      return response;
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError);
+    }
+  },
+  /**
+   * getProjectById
+   *
+   * Retrieves project by id .
+   *
+   * @param {number} projectId - projectId.
+   * @returns {Promise<AxiosResponse<ProjectResponse>>} Promise that resolves to the response containing project data.
+   */
+  getProjectById: async ({
+    projectId,
+  }: {
+    projectId: number;
+  }): Promise<AxiosResponse<GetProjectByIdResponse>> => {
+    try {
+      const response = axios.get<GetProjectByIdResponse>(
+        `/project/${projectId}`,
+        {
+          params: { projectId },
+        },
+      );
+      return response;
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError);
+    }
+  },
+  /**
+   * getTaskById
+   *
+   * Retrieves tasks by id .
+   *
+   * @param {number} taskId - taskId.
+   * @returns {Promise<AxiosResponse<ProjectResponse>>} Promise that resolves to the response containing task data.
+   */
+  getTasksById: async ({
+    taskId,
+  }: {
+    taskId: number;
+  }): Promise<AxiosResponse<GetTaskByIdResponse>> => {
+    try {
+      const response = axios.get<GetTaskByIdResponse>(
+        `/project/task/${taskId}`,
+        {
+          params: { taskId },
+        },
+      );
+      return response;
+    } catch (error) {
       throw generalFunctions.customError(error as AxiosError);
     }
   },
