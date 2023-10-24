@@ -3,7 +3,6 @@ import { useDialog } from "./Helper";
 import {
   AppBar,
   Box,
-  Button,
   Dialog,
   IconButton,
   Slide,
@@ -27,7 +26,10 @@ const Transition = React.forwardRef(function Transition(
 const GeneralDialog: React.FC = () => {
   const styles = modalStyle;
   const {
-    dialog: { open, title, body, negativeButton, positiveButton },
+    dialog: {
+      open,
+      form: { title, body },
+    },
   } = useDialogContext();
   const { handleDialogClose } = useDialog();
 
@@ -60,12 +62,6 @@ const GeneralDialog: React.FC = () => {
       </AppBar>
       <Box sx={styles.dialog}>
         <Box>{body}</Box>
-        <Box display="flex" justifyContent="end" columnGap={1}>
-          <Button variant="outlined" color="error" onClick={handleDialogClose}>
-            {negativeButton}
-          </Button>
-          <Button variant="contained">{positiveButton}</Button>
-        </Box>
       </Box>
     </Dialog>
   );

@@ -2,18 +2,15 @@ import React from "react";
 import { Grid, Button, TextField, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ProjectCardComponent from "../../../components/card/project-card/ProjectCardComponent";
-import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
-import ManageProjectForm from "../../../components/form/manage-project/ManageProjectForm";
 import { Search as SearchIcon, Clear as ClearIcon } from "@mui/icons-material";
 import { useProjects } from "./Helper";
 
 // PageProjects component
 const PageProjects: React.FC = () => {
-  // Access Dialog context for opening the Dialog
-  const { setDialog } = useDialogContext();
-
   // Use the custom hook to manage projects
   const {
+    dialog,
+    setDialog,
     projects,
     handleClear,
     handleChange,
@@ -28,15 +25,7 @@ const PageProjects: React.FC = () => {
         <Button
           variant="contained"
           endIcon={<AddIcon />}
-          onClick={() =>
-            setDialog({
-              open: true,
-              title: "New Project",
-              body: <ManageProjectForm />,
-              negativeButton: "Close",
-              positiveButton: "Create Project",
-            })
-          }
+          onClick={() => setDialog(dialog)}
         >
           Create Project
         </Button>

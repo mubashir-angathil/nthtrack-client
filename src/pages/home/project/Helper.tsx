@@ -7,6 +7,9 @@ import {
   ProjectsResponse,
 } from "../../../services/project-services/Helper";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
+import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
+import { DialogContextProps } from "../../../utils/helpers/context/dialog-context/Helper";
+import ManageProjectForm from "../../../components/form/manage-project/ManageProjectForm";
 
 // Define the shape of the API configuration
 interface ApiConfig extends ApiRequestWithPaginationAndSearch {
@@ -23,6 +26,18 @@ export const useProjects = () => {
     hasMore: true,
     searchKey: undefined,
   });
+
+  // Access Dialog context for opening the Dialog
+  const { setDialog } = useDialogContext();
+
+  const dialog: DialogContextProps["dialog"] = {
+    open: true,
+    form: {
+      title: "New Project",
+      body: <ManageProjectForm />,
+    },
+    positiveButton: "Create Project",
+  };
 
   // Debounced search function to handle search input changes
   const handleSearch = debounce((value: string) => {
@@ -121,6 +136,8 @@ export const useProjects = () => {
 
   // Return the necessary values and functions for component usage
   return {
+    dialog,
+    setDialog,
     projects,
     apiConfig,
     handleChange,

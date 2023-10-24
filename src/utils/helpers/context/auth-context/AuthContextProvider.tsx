@@ -42,7 +42,6 @@ const AuthContextProvider = ({
   // useEffect to run updateAuthDetailsFromCookie on mount
   useEffect(() => {
     updateAuthDetailsFromCookie();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Render AuthContext.Provider with updated authDetails

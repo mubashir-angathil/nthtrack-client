@@ -1,10 +1,8 @@
 import { Controller, FieldValues } from "react-hook-form";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { RhfTextfieldProps } from "../common/textfield/Helper";
-import { FormHelperText, FormLabel } from "@mui/material";
+import { FormHelperText } from "@mui/material";
 import { Box } from "@mui/system";
-import { useState } from "react";
 import { RhfCkEditorProps, editorConfiguration } from "./Helper";
 
 /**

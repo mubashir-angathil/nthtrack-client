@@ -198,7 +198,6 @@ export const useViewProject = () => {
     setTimeout(() => {
       fetchProjectById();
     }, 500);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

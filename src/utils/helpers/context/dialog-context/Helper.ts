@@ -7,16 +7,16 @@ export interface DialogContextProps {
 
 interface DialogProps {
   open: boolean;
-  title: string;
-  body: React.ReactNode;
-  positiveButton: string;
-  negativeButton: string;
+  form: {
+    title: string;
+    body: React.ReactNode;
+  };
 }
 
-export const initialDialogState = {
+export const initialDialogState: DialogProps = {
   open: false,
-  title: "",
-  body: "",
-  negativeButton: "",
-  positiveButton: "",
+  form: {
+    title: "",
+    body: "",
+  },
 };
