@@ -1,5 +1,11 @@
-import { Control, FieldValues, Path } from "react-hook-form";
+import {
+  Control,
+  FieldValues,
+  Path,
+  ControllerRenderProps,
+} from "react-hook-form";
 
+// Define an interface that extends EditorConfig
 export interface RhfCkEditorProps<TField extends FieldValues> {
   name: Path<TField>;
   control: Control<TField>;
@@ -8,6 +14,7 @@ export interface RhfCkEditorProps<TField extends FieldValues> {
   required?: boolean;
 }
 
+// Configuration for CKEditor toolbar
 export const editorConfiguration = {
   toolbar: [
     "undo",
@@ -21,4 +28,34 @@ export const editorConfiguration = {
     "numberedList",
     "bulletedList",
   ],
+};
+
+// Custom hook for CKEditor functionality
+export const useCkEditorComponent = () => {
+  // Handle editor content change
+  const handleEditorChange = <TField extends FieldValues>(
+    _: any,
+    editor: any,
+    field: ControllerRenderProps<TField, Path<TField>>,
+  ) => {
+    const content = editor.getData();
+    field.onChange(content);
+  };
+
+  // Adjust editor height on ready
+  const handleEditorOnReady = (editor: any) => {
+    editor.editing.view.change((writer: any) => {
+      writer.setStyle(
+        "height",
+        "200px",
+        editor.editing.view.document.getRoot(),
+      );
+    });
+  };
+
+  // Return functions for use in RhfCKEditorComponent
+  return {
+    handleEditorChange,
+    handleEditorOnReady,
+  };
 };

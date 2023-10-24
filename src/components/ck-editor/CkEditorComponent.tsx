@@ -3,55 +3,104 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { FormHelperText } from "@mui/material";
 import { Box } from "@mui/system";
-import { RhfCkEditorProps, editorConfiguration } from "./Helper";
+import {
+  RhfCkEditorProps,
+  editorConfiguration,
+  useCkEditorComponent,
+} from "./Helper";
 
 /**
  * RhfCKEditorComponent
  *
- * A reusable component for rendering CKEditor using React Hook Form.
- * It integrates with Material-UI TextField and provides seamless validation and error handling.
+ * A React component that integrates CKEditor with React Hook Form and Material-UI TextField.
+ * Provides seamless validation, error handling, and character/word count features.
  *
  * @component
  * @param {RhfTextfieldProps<TField>} props - Props for the RhfCKEditorComponent.
  * @returns {JSX.Element} Rendered RhfCKEditorComponent.
  */
 const RhfCKEditorComponent = <TField extends FieldValues>({
+  // Props destructuring
   name,
   control,
   label,
   required,
   rules,
 }: RhfCkEditorProps<TField>): JSX.Element => {
+  // Custom hook for CKEditor functionality
+  const { handleEditorChange, handleEditorOnReady } = useCkEditorComponent();
+
   return (
     <Controller
       name={name}
       control={control}
-      rules={rules}
+      rules={{
+        maxLength: 1000,
+        ...rules,
+      }}
       render={({ field, fieldState: { error } }) => {
+        // Extracting editor data, word count, and character count
+        const editorData = field.value || "";
+        const wordCount = editorData.split(/\s+/).filter(Boolean).length;
+        const characterCount = editorData.length;
+        const maxLengthReachedError = characterCount > 1000;
+
+        // Styling for error indication
+        const errorStyle = {
+          border: `1.7px solid ${
+            maxLengthReachedError ? "red" : "transparent"
+          }`,
+        };
+
         return (
           <>
+            {/* Label and indicator for required field */}
             <FormHelperText variant="standard" sx={{ fontSize: 15 }}>
               {label} {required && "*"}
             </FormHelperText>
-            <Box
-              style={{
-                border: `1.7px solid ${error ? "red" : "transparent"}`,
-                borderRadius: "4px",
-                marginBottom: "8px",
-              }}
-            >
+
+            {/* CKEditor with error handling and character/word count */}
+            <Box component="div" sx={errorStyle}>
               <CKEditor
                 editor={ClassicEditor}
-                data={field.value || ""}
+                data={editorData}
                 config={editorConfiguration}
-                onChange={(_, editor) => field.onChange(editor.getData())}
+                onChange={(_: any, editor: any) =>
+                  handleEditorChange(_, editor, field)
+                }
+                onReady={handleEditorOnReady}
               />
+
+              {/* Error messages and character/word count display */}
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                sx={{
+                  backgroundColor: "background.paper.main",
+                  border: 1,
+                  p: 1,
+                  borderColor: "rgba(0,0,0,0.2)",
+                }}
+              >
+                <Box display="-ms-flexbox">
+                  {error && (
+                    <FormHelperText sx={{ color: "error.main", fontSize: 12 }}>
+                      {error.message}
+                    </FormHelperText>
+                  )}
+                  {maxLengthReachedError && (
+                    <FormHelperText sx={{ color: "error.main", fontSize: 13 }}>
+                      Maximum limit reached
+                    </FormHelperText>
+                  )}
+                </Box>
+
+                {/* Displaying word and character count */}
+                <FormHelperText variant="standard" sx={{ fontSize: 12 }}>
+                  Word: {wordCount} &nbsp; Characters: {characterCount}/1000
+                </FormHelperText>
+              </Box>
             </Box>
-            {error && (
-              <FormHelperText sx={{ color: "error.main" }}>
-                {error.message}
-              </FormHelperText>
-            )}
           </>
         );
       }}
