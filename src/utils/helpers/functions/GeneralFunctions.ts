@@ -21,14 +21,22 @@ const generalFunctions = {
    * @param {AxiosError} error - The Axios error response.
    * @returns {ApiError | AxiosError} Standardized API error format.
    */
-  customError: (error: AxiosError): ApiError | AxiosError => {
-    if (error.response)
+  customError: (error: AxiosError): ApiError => {
+    if (error.response) {
       return {
         status: error.response.status,
         data: error.response.data as ApiError["data"],
       } as ApiError;
-
-    return error;
+    } else {
+      return {
+        status: 404,
+        data: {
+          success: false,
+          message: "Something went wrong",
+          error: error,
+        },
+      };
+    }
   },
 
   /**

@@ -10,6 +10,8 @@ import {
 import { ApiError } from "../../../services/Helper";
 import { GetTaskByIdResponse } from "../../../services/project-services/Helper";
 import routes from "../../../utils/helpers/routes/Routes";
+import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
+import { AxiosError } from "axios";
 
 export const useTask = () => {
   const params: Params = useParams();
@@ -52,6 +54,27 @@ export const useTask = () => {
     }
   };
 
+  // Function to close the task by id  the API
+  const fetchCloseTaskById = async () => {
+    try {
+      const task = await projectServices.closeTaskById({
+        taskId,
+      });
+
+      if (task.status === 200 && task.data.success) {
+        alert(task.data.message);
+      } else {
+        throw generalFunctions.customError(task as any);
+      }
+    } catch (error) {
+      const { data } = error as ApiError;
+      if (!data.success) {
+        alert(data.message);
+      }
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     setTimeout(() => {
       fetchProjectById();
@@ -61,5 +84,5 @@ export const useTask = () => {
       navigate(routes.home.path);
     }
   }, []);
-  return { task };
+  return { task, fetchCloseTaskById };
 };

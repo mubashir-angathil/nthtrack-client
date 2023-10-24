@@ -30,6 +30,7 @@ const PageViewProject: FC = () => {
     project,
     tasks,
     apiConfig,
+    fetchCloseProjectById,
     handleTaskLoading,
     handleChange,
     handleSearchClear,
@@ -47,7 +48,11 @@ const PageViewProject: FC = () => {
 
         <Box component="div" display="flex" flexGrow={0} gap={2}>
           {/* Close Project Button */}
-          <Button variant="contained" color="error">
+          <Button
+            variant="contained"
+            color="error"
+            onClick={async () => await fetchCloseProjectById()}
+          >
             Close Project
           </Button>
           {/* Create Issue Button */}

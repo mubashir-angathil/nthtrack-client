@@ -25,13 +25,16 @@ export interface ApiResponse {
   };
 }
 
-export interface ApiResponseWithPagination {
-  success: boolean; // Indicates the success of the API request
-  message: string; // Message from the server
+export interface ApiResponseWithPagination extends NormalApiSuccessResponse {
   totalRows: number; // Total number of rows/projects available
 }
 
 export interface ApiRequestWithPagination {
   page: number; // Page number for pagination
   limit: number; // Limit for the number of items per page
+}
+
+export interface NormalApiSuccessResponse {
+  success: boolean; // Indicates the success of the API request
+  message: string; // Message from the server
 }

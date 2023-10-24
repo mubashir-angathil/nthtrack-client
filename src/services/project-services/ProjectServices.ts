@@ -10,6 +10,7 @@ import {
   ProjectsResponse,
   TaskResponse,
 } from "./Helper";
+import { NormalApiSuccessResponse } from "../Helper";
 
 // Service functions related to projects
 const projectServices = {
@@ -80,7 +81,7 @@ const projectServices = {
     searchKey === undefined && delete params.searchKey;
 
     try {
-      const response = axios.get<TaskResponse>(
+      const response = await axios.get<TaskResponse>(
         `/project/${projectId}/task/all`,
         {
           params,
@@ -105,7 +106,7 @@ const projectServices = {
     projectId: number;
   }): Promise<AxiosResponse<GetProjectByIdResponse>> => {
     try {
-      const response = axios.get<GetProjectByIdResponse>(
+      const response = await axios.get<GetProjectByIdResponse>(
         `/project/${projectId}`,
         {
           params: { projectId },
@@ -130,10 +131,60 @@ const projectServices = {
     taskId: number;
   }): Promise<AxiosResponse<GetTaskByIdResponse>> => {
     try {
-      const response = axios.get<GetTaskByIdResponse>(
+      const response = await axios.get<GetTaskByIdResponse>(
         `/project/task/${taskId}`,
         {
           params: { taskId },
+        },
+      );
+      return response;
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError);
+    }
+  },
+  /**
+   * closeProjectById
+   *
+   * Close project by id .
+   *
+   * @param {number} projectId - projectId.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response containing closed status.
+   */
+  closeProjectById: async ({
+    projectId,
+  }: {
+    projectId: number;
+  }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      const response = await axios.patch<NormalApiSuccessResponse>(
+        "project/close",
+        {
+          projectId,
+        },
+      );
+      return response;
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError);
+    }
+  },
+  /**
+   * closeTaskById
+   *
+   * Close task by id .
+   *
+   * @param {number} taskId - taskId.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response containing closed status.
+   */
+  closeTaskById: async ({
+    taskId,
+  }: {
+    taskId: number;
+  }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      const response = await axios.patch<NormalApiSuccessResponse>(
+        "project/task/close",
+        {
+          taskId,
         },
       );
       return response;

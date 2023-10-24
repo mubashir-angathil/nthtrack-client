@@ -3,7 +3,7 @@ import { Button, Box, Chip, Grid, Typography, Skeleton } from "@mui/material";
 import { useTask } from "./Helper";
 
 const PageTaskView: FC = () => {
-  const { task } = useTask();
+  const { task, fetchCloseTaskById } = useTask();
 
   return (
     <Grid container gap={2} mt={2}>
@@ -15,7 +15,11 @@ const PageTaskView: FC = () => {
         </Typography>
         {/* Button to close task, disabled if task is not in "Opened" status */}
         {task.status.name === "Opened" ? (
-          <Button variant="contained" size="small">
+          <Button
+            variant="contained"
+            size="small"
+            onClick={async () => await fetchCloseTaskById()}
+          >
             Close task
           </Button>
         ) : undefined}

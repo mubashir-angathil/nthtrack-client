@@ -16,6 +16,7 @@ import { ApiError } from "../../../../services/Helper";
 import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
 import routes from "../../../../utils/helpers/routes/Routes";
 import { debounce } from "@mui/material";
+import { AxiosError } from "axios";
 
 // Define the shape of the API configuration
 interface ApiConfig extends GetAllTasksRequest {
@@ -165,6 +166,26 @@ export const useViewProject = () => {
     }
   };
 
+  const fetchCloseProjectById = async () => {
+    try {
+      const project = await projectServices.closeProjectById({
+        projectId: apiConfig.projectId,
+      });
+
+      if (project.status === 200 && project.data.success) {
+        alert(project.data.message);
+      } else {
+        throw generalFunctions.customError(project as any);
+      }
+    } catch (error) {
+      const { data } = error as ApiError;
+      if (!data.success) {
+        alert(data.message);
+      }
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (apiConfig.hasMore) {
       fetchTasks();
@@ -186,6 +207,7 @@ export const useViewProject = () => {
     tasks,
     apiConfig,
     fetchTasks,
+    fetchCloseProjectById,
     handleTaskLoading,
     handleSearchClear,
     handleChange,
