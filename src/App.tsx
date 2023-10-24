@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import ModalContextProvider from "./utils/helpers/context/modal-context/ModalContextProvider";
+import DialogContextProvider from "./utils/helpers/context/dialog-context/DialogContextProvider";
 import { theme } from "./utils/helpers/configs/Theme";
 import routes from "./utils/helpers/routes/Routes";
-import GeneralModal from "./components/common/modal/GeneralModal";
+import GeneralDialog from "./components/common/dialog/GeneralDialog";
 import { ThemeProvider } from "@mui/material";
 import AuthContextProvider from "./utils/helpers/context/auth-context/AuthContextProvider";
 
@@ -10,7 +10,7 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <AuthContextProvider>
-        <ModalContextProvider>
+        <DialogContextProvider>
           <Routes>
             <Route index element={routes.signIn.element} />
             <Route path={routes.signUp.path} element={routes.signUp.element} />
@@ -25,8 +25,8 @@ const App: React.FC = () => {
               </Route>
             </Route>
           </Routes>
-          <GeneralModal />
-        </ModalContextProvider>
+          <GeneralDialog />
+        </DialogContextProvider>
       </AuthContextProvider>
     </ThemeProvider>
   );

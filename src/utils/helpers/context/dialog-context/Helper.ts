@@ -1,11 +1,11 @@
 import React from "react";
 
-export interface ModalContextProps {
-  modal: ModalProps;
-  setModal: React.Dispatch<React.SetStateAction<ModalProps>>;
+export interface DialogContextProps {
+  dialog: DialogProps;
+  setDialog: React.Dispatch<React.SetStateAction<DialogProps>>;
 }
 
-interface ModalProps {
+interface DialogProps {
   open: boolean;
   title: string;
   body: React.ReactNode;
@@ -13,7 +13,7 @@ interface ModalProps {
   negativeButton: string;
 }
 
-export const initialModalState = {
+export const initialDialogState = {
   open: false,
   title: "",
   body: "",

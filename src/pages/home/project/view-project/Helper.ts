@@ -16,7 +16,6 @@ import { ApiError } from "../../../../services/Helper";
 import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
 import routes from "../../../../utils/helpers/routes/Routes";
 import { debounce } from "@mui/material";
-import { AxiosError } from "axios";
 
 // Define the shape of the API configuration
 interface ApiConfig extends GetAllTasksRequest {

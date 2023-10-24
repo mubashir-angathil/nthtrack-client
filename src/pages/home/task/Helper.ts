@@ -11,7 +11,6 @@ import { ApiError } from "../../../services/Helper";
 import { GetTaskByIdResponse } from "../../../services/project-services/Helper";
 import routes from "../../../utils/helpers/routes/Routes";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
-import { AxiosError } from "axios";
 
 export const useTask = () => {
   const params: Params = useParams();
