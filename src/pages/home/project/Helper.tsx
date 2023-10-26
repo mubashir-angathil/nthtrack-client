@@ -1,4 +1,4 @@
-import { SyntheticEvent, useCallback, useLayoutEffect, useState } from "react";
+import { SyntheticEvent, useLayoutEffect, useState } from "react";
 import { ApiError } from "../../../services/Helper";
 import projectServices from "../../../services/project-services/ProjectServices";
 import { debounce } from "@mui/material";
@@ -124,16 +124,11 @@ export const useProjects = () => {
     }
   };
 
-  const updateProjectsCallback = useCallback(async () => {
-    setProjects([]);
-    setApiConfig(initialApiConfiguration);
-  }, []);
-
   const dialog: DialogContextProps["dialog"] = {
     open: true,
     form: {
       title: "New Project",
-      body: <ManageProjectForm updateProjects={updateProjectsCallback} />,
+      body: <ManageProjectForm />,
     },
   };
   // Effect to fetch projects when the API configuration changes

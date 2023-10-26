@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { modalStyle } from "./Style";
 import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
-import CloseIcon from "@mui/icons-material/close";
+import CloseIcon from "@mui/icons-material/Close";
 import { TransitionProps } from "@mui/material/transitions";
 
 const Transition = React.forwardRef(function Transition(

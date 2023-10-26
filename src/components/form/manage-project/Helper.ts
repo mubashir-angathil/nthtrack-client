@@ -21,9 +21,7 @@ export const manageProjectFormSchema = object({
 export type ManageProjectFormInput = InferType<typeof manageProjectFormSchema>;
 
 // Custom hook for handling sign-up logic
-export const useManageProject = ({
-  updateProjects,
-}: ManageProjectFormProps) => {
+export const useManageProject = () => {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const { handleDialogClose } = useDialog();
   // Initialize the React Hook Form with validation resolver and default values
@@ -49,7 +47,6 @@ export const useManageProject = ({
       const { data, status } = await projectServices.createProject(newProject);
       setIsSubmit(false);
       if (data?.success && status === 200) {
-        updateProjects();
         handleDialogClose();
         enqueueSnackbar({
           message: data?.message,
