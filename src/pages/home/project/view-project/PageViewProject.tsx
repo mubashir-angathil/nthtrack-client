@@ -18,6 +18,7 @@ import { useViewProject } from "./Helper";
 import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
 import ManageIssueForm from "../../../../components/form/manage-issue/ManageIssueForm";
 import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
+import { colors } from "../../../../utils/helpers/configs/Colors";
 
 /**
  * Functional component representing the view of a project page.
@@ -83,9 +84,13 @@ const PageViewProject: FC = () => {
             <Skeleton />
           </>
         ) : (
-          <Typography variant="body1" color="GrayText">
-            {project.description}
-          </Typography>
+          <Typography
+            variant="body1"
+            color={colors.secondaryText}
+            dangerouslySetInnerHTML={{
+              __html: project.description,
+            }}
+          />
         )}
       </Grid>
 
