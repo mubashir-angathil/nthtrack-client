@@ -62,10 +62,10 @@ const PageViewProject: FC = () => {
             onClick={() => {
               setDialog({
                 open: true,
-                body: <ManageIssueForm />,
-                positiveButton: "Create issue",
-                negativeButton: "close",
-                title: "Create Issue",
+                form: {
+                  title: "Create Issue",
+                  body: <ManageIssueForm />,
+                },
               });
             }}
           >
