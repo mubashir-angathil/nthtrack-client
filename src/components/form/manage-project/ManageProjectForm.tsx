@@ -3,13 +3,13 @@ import Box from "@mui/material/Box";
 import { Stack } from "@mui/system";
 import CKEditorComponent from "../../ck-editor/CkEditorComponent";
 import { Button, FormHelperText } from "@mui/material";
-import { useManageProject } from "./Helper";
+import { ManageProjectFormProps, useManageProject } from "./Helper";
 import RhfTextfieldComponent from "../../common/textfield/RhfTextFieldComponent";
 import SubmitButtonComponent from "../../common/buttons/SubmitButtonComponent";
 
-const ManageProjectForm: FC = () => {
+const ManageProjectForm: FC<ManageProjectFormProps> = ({ updateProjects }) => {
   const { control, isSubmit, handleDialogClose, handleSubmit, onSubmit } =
-    useManageProject();
+    useManageProject({ updateProjects });
 
   return (
     <Box p={2} component="form" onSubmit={handleSubmit(onSubmit)}>

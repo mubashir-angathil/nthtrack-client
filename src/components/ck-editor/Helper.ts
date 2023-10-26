@@ -14,7 +14,7 @@ export interface RhfCkEditorProps<TField extends FieldValues> {
   required?: boolean;
 }
 
-// Configuration for CKEditor toolbar
+// Configuration for CKEditor toolbar.
 export const editorConfiguration = {
   toolbar: [
     "undo",
@@ -48,6 +48,12 @@ export const useCkEditorComponent = () => {
       writer.setStyle(
         "height",
         "200px",
+        editor.editing.view.document.getRoot(),
+      );
+      writer.setStyle("color", "white", editor.editing.view.document.getRoot());
+      writer.setStyle(
+        "background-color",
+        "transparent",
         editor.editing.view.document.getRoot(),
       );
     });

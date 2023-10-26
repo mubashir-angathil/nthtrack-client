@@ -41,15 +41,12 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
       render={({ field, fieldState: { error } }) => {
         // Extracting editor data, word count, and character count
         const editorData = field.value || "";
-        const wordCount = editorData.split(/\s+/).filter(Boolean).length;
         const characterCount = editorData.length;
-        const maxLengthReachedError = characterCount > 1000;
+        const wordCount = editorData.split(/\s+/).filter(Boolean).length;
 
         // Styling for error indication
         const errorStyle = {
-          border: `1.7px solid ${
-            maxLengthReachedError ? "red" : "transparent"
-          }`,
+          border: `1.7px solid ${error?.message ? "red" : "transparent"}`,
         };
 
         return (
@@ -86,11 +83,6 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
                   {error && (
                     <FormHelperText sx={{ color: "error.main", fontSize: 12 }}>
                       {error.message}
-                    </FormHelperText>
-                  )}
-                  {maxLengthReachedError && (
-                    <FormHelperText sx={{ color: "error.main", fontSize: 13 }}>
-                      Maximum limit reached
                     </FormHelperText>
                   )}
                 </Box>

@@ -10,10 +10,36 @@ import {
   ProjectsResponse,
   TaskResponse,
 } from "./Helper";
-import { NormalApiSuccessResponse } from "../Helper";
+import { ApiError, NormalApiSuccessResponse } from "../Helper";
+import { ManageProjectFormInput } from "../../components/form/manage-project/Helper";
 
 // Service functions related to projects
 const projectServices = {
+  /**
+   * CreateProject
+   *
+   * CreateProject project.
+   *
+   * @param {object} props - Object containing projectName, description.
+   * @returns {Promise<AxiosResponse<ProjectsResponse>>} Promise that resolves to the response containing project data.
+   */
+  createProject: async (
+    props: ManageProjectFormInput,
+  ): Promise<AxiosResponse<ProjectsResponse>> => {
+    try {
+      // Make the API request to get all projects
+      const response = await axios.post<ProjectsResponse>(
+        "/project/create-project",
+        props,
+      );
+
+      // Return the response
+      return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
   /**
    * getAllProjects
    *
@@ -49,7 +75,7 @@ const projectServices = {
       return response;
     } catch (error) {
       // Throw a custom error using a helper function
-      throw generalFunctions.customError(error as AxiosError);
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
   /**
@@ -89,7 +115,7 @@ const projectServices = {
       );
       return response;
     } catch (error) {
-      throw generalFunctions.customError(error as AxiosError);
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
   /**
@@ -114,7 +140,7 @@ const projectServices = {
       );
       return response;
     } catch (error) {
-      throw generalFunctions.customError(error as AxiosError);
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
   /**
@@ -139,7 +165,7 @@ const projectServices = {
       );
       return response;
     } catch (error) {
-      throw generalFunctions.customError(error as AxiosError);
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
   /**
@@ -164,7 +190,7 @@ const projectServices = {
       );
       return response;
     } catch (error) {
-      throw generalFunctions.customError(error as AxiosError);
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
   /**
@@ -189,7 +215,7 @@ const projectServices = {
       );
       return response;
     } catch (error) {
-      throw generalFunctions.customError(error as AxiosError);
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
 };

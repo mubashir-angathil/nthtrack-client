@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import AuthContext from "./AuthContext";
 import { AuthContextProps, initialAuthDetailsState } from "./Helper";
 import cookieServices from "../../../../services/storage-services/CookieServices";
@@ -40,7 +40,7 @@ const AuthContextProvider = ({
   };
 
   // useEffect to run updateAuthDetailsFromCookie on mount
-  useEffect(() => {
+  useMemo(() => {
     updateAuthDetailsFromCookie();
   }, []);
 

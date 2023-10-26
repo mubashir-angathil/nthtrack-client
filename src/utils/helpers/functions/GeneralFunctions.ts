@@ -21,19 +21,18 @@ const generalFunctions = {
    * @param {AxiosError} error - The Axios error response.
    * @returns {ApiError | AxiosError} Standardized API error format.
    */
-  customError: (error: AxiosError): ApiError => {
-    if (error.response) {
+  customError: (error: AxiosError<ApiError>): ApiError => {
+    if (error?.response?.data) {
       return {
-        status: error.response.status,
-        data: error.response.data as ApiError["data"],
+        status: 2,
+        data: error?.response?.data.data,
       } as ApiError;
     } else {
       return {
         status: 404,
         data: {
           success: false,
-          message: "Something went wrong",
-          error: error,
+          message: error.message,
         },
       };
     }
@@ -47,16 +46,15 @@ const generalFunctions = {
    * @returns {undefined} Void.
    */
   fieldErrorsHandler: (
-    error: ApiError,
+    apiError: ApiError,
     setError: UseFormSetError<any>,
   ): void => {
     const {
-      data: { fieldErrors },
-    } = error;
-
-    if (fieldErrors)
-      Object.entries(fieldErrors).every(([key, value]: [string, any]) => {
-        setError(key, { message: value });
+      data: { error },
+    } = apiError;
+    if (error?.fieldErrors)
+      error.fieldErrors.forEach((value) => {
+        return setError(value.field, { message: value.message });
       });
   },
   customResponse: (response: AxiosResponse) => {

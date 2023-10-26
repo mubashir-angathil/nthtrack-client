@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Grid, Button, TextField, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ProjectCardComponent from "../../../components/card/project-card/ProjectCardComponent";
@@ -60,10 +60,12 @@ const PageProjects: React.FC = () => {
       </Grid>
       {/* Section for displaying project cards */}
       <Grid item xs={12}>
-        <ProjectCardComponent
-          projects={projects}
-          handleProjectLoading={handleProjectLoading}
-        />
+        <Suspense fallback={<h2>loading....</h2>}>
+          <ProjectCardComponent
+            projects={projects}
+            handleProjectLoading={handleProjectLoading}
+          />
+        </Suspense>
       </Grid>
     </Grid>
   );
