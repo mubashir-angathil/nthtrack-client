@@ -10,9 +10,36 @@ import {
   ProjectsResponse,
   TaskResponse,
 } from "./Helper";
+import { ApiError, NormalApiSuccessResponse } from "../Helper";
+import { ManageProjectFormInput } from "../../components/form/manage-project/Helper";
 
 // Service functions related to projects
 const projectServices = {
+  /**
+   * CreateProject
+   *
+   * CreateProject project.
+   *
+   * @param {object} props - Object containing projectName, description.
+   * @returns {Promise<AxiosResponse<ProjectsResponse>>} Promise that resolves to the response containing project data.
+   */
+  createProject: async (
+    props: ManageProjectFormInput,
+  ): Promise<AxiosResponse<ProjectsResponse>> => {
+    try {
+      // Make the API request to get all projects
+      const response = await axios.post<ProjectsResponse>(
+        "/project/create-project",
+        props,
+      );
+
+      // Return the response
+      return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
   /**
    * getAllProjects
    *
@@ -48,7 +75,7 @@ const projectServices = {
       return response;
     } catch (error) {
       // Throw a custom error using a helper function
-      throw generalFunctions.customError(error as AxiosError);
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
   /**
@@ -80,7 +107,7 @@ const projectServices = {
     searchKey === undefined && delete params.searchKey;
 
     try {
-      const response = axios.get<TaskResponse>(
+      const response = await axios.get<TaskResponse>(
         `/project/${projectId}/task/all`,
         {
           params,
@@ -88,7 +115,7 @@ const projectServices = {
       );
       return response;
     } catch (error) {
-      throw generalFunctions.customError(error as AxiosError);
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
   /**
@@ -105,7 +132,7 @@ const projectServices = {
     projectId: number;
   }): Promise<AxiosResponse<GetProjectByIdResponse>> => {
     try {
-      const response = axios.get<GetProjectByIdResponse>(
+      const response = await axios.get<GetProjectByIdResponse>(
         `/project/${projectId}`,
         {
           params: { projectId },
@@ -113,7 +140,7 @@ const projectServices = {
       );
       return response;
     } catch (error) {
-      throw generalFunctions.customError(error as AxiosError);
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
   /**
@@ -130,7 +157,7 @@ const projectServices = {
     taskId: number;
   }): Promise<AxiosResponse<GetTaskByIdResponse>> => {
     try {
-      const response = axios.get<GetTaskByIdResponse>(
+      const response = await axios.get<GetTaskByIdResponse>(
         `/project/task/${taskId}`,
         {
           params: { taskId },
@@ -138,7 +165,57 @@ const projectServices = {
       );
       return response;
     } catch (error) {
-      throw generalFunctions.customError(error as AxiosError);
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  /**
+   * closeProjectById
+   *
+   * Close project by id .
+   *
+   * @param {number} projectId - projectId.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response containing closed status.
+   */
+  closeProjectById: async ({
+    projectId,
+  }: {
+    projectId: number;
+  }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      const response = await axios.patch<NormalApiSuccessResponse>(
+        "project/close",
+        {
+          projectId,
+        },
+      );
+      return response;
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  /**
+   * closeTaskById
+   *
+   * Close task by id .
+   *
+   * @param {number} taskId - taskId.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response containing closed status.
+   */
+  closeTaskById: async ({
+    taskId,
+  }: {
+    taskId: number;
+  }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      const response = await axios.patch<NormalApiSuccessResponse>(
+        "project/task/close",
+        {
+          taskId,
+        },
+      );
+      return response;
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
 };

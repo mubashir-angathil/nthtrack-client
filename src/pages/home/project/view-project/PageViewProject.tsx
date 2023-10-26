@@ -15,7 +15,7 @@ import { Search as SearchIcon, Clear as ClearIcon } from "@mui/icons-material";
 import { FC } from "react";
 import PluseIcon from "@mui/icons-material/Add";
 import { useViewProject } from "./Helper";
-import { useModalContext } from "../../../../utils/helpers/context/modal-context/ModalContext";
+import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
 import ManageIssueForm from "../../../../components/form/manage-issue/ManageIssueForm";
 import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
 
@@ -25,11 +25,12 @@ import TaskCardComponent from "../../../../components/card/task-card/TaskCardCom
  */
 const PageViewProject: FC = () => {
   // Extract necessary functions and state variables from the custom hook
-  const { setModal } = useModalContext();
+  const { setDialog } = useDialogContext();
   const {
     project,
     tasks,
     apiConfig,
+    fetchCloseProjectById,
     handleTaskLoading,
     handleChange,
     handleSearchClear,
@@ -47,7 +48,11 @@ const PageViewProject: FC = () => {
 
         <Box component="div" display="flex" flexGrow={0} gap={2}>
           {/* Close Project Button */}
-          <Button variant="contained" color="error">
+          <Button
+            variant="contained"
+            color="error"
+            onClick={async () => await fetchCloseProjectById()}
+          >
             Close Project
           </Button>
           {/* Create Issue Button */}
@@ -55,7 +60,7 @@ const PageViewProject: FC = () => {
             variant="contained"
             startIcon={<PluseIcon />}
             onClick={() => {
-              setModal({
+              setDialog({
                 open: true,
                 body: <ManageIssueForm />,
                 positiveButton: "Create issue",

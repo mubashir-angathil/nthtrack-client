@@ -15,8 +15,8 @@ import { RhfTextfieldProps } from "./Helper";
 const RhfTextfieldComponent = <TField extends FieldValues>({
   name,
   control,
-  label,
   rules,
+  label = "",
   size = "small",
   autoComplete = "off",
   ...rest

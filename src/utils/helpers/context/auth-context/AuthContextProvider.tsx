@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import AuthContext from "./AuthContext";
 import { AuthContextProps, initialAuthDetailsState } from "./Helper";
 import cookieServices from "../../../../services/storage-services/CookieServices";
@@ -40,9 +40,8 @@ const AuthContextProvider = ({
   };
 
   // useEffect to run updateAuthDetailsFromCookie on mount
-  useEffect(() => {
+  useMemo(() => {
     updateAuthDetailsFromCookie();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Render AuthContext.Provider with updated authDetails

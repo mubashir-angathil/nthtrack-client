@@ -8,20 +8,32 @@ import {
   Tooltip,
   Typography,
   Box,
+  Button,
+  IconButton,
 } from "@mui/material";
 import BugReportIcon from "@mui/icons-material/BugReport";
-import { ProjectCardComponentProps } from "./Helper";
-import { useNavigate } from "react-router-dom";
+import { ProjectCardComponentProps, useManageProjectCard } from "./Helper";
 import routes from "../../../utils/helpers/routes/Routes";
 import noDataImage from "../../../assets/noData.svg";
+import { Visibility } from "@mui/icons-material";
+import { projectCardStyle } from "./Style";
 
-// ProjectCardComponent component
+/**
+ * ProjectCardComponent
+ *
+ * React component for displaying project cards.
+ *
+ * @component
+ * @param {ProjectCardComponentProps} props - Props for ProjectCardComponent.
+ * @returns {React.Element} Rendered ProjectCardComponent.
+ */
 const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
   projects,
   handleProjectLoading,
 }) => {
-  // React router navigation hook
-  const navigate = useNavigate();
+  // Custom hook for managing project cards
+  const { more, navigate, handleSetMore } = useManageProjectCard(projects);
+  const style = projectCardStyle;
 
   return (
     // Container for project cards
@@ -33,6 +45,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
     >
       {projects.length > 0 ? (
         // Displaying project cards
+
         projects.map(({ projectName, id, taskCount, description, status }) => {
           return (
             // Individual project card
@@ -41,10 +54,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
               sx={{
                 m: 2,
               }}
-              className="btn"
-              onClick={() =>
-                navigate(routes.projects.path.concat(id.toString()))
-              }
+              elevation={3}
             >
               <Grid container p={3}>
                 {/* Project name and metadata */}
@@ -54,12 +64,32 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                   display="flex"
                   justifyContent="space-between"
                 >
-                  <Typography variant="h5" fontWeight="550">
-                    {projectName}
-                  </Typography>
+                  <Grid item display="flex" gap={1} alignItems="center">
+                    <Typography
+                      variant="h5"
+                      fontWeight="550"
+                      style={{
+                        maxWidth: 300,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {projectName.toLocaleUpperCase()}
+                    </Typography>
+                    <Tooltip title="Status">
+                      <Chip
+                        variant="filled"
+                        label={status.name}
+                        color={status.name === "Opened" ? "warning" : "default"}
+                        size="small"
+                      />
+                    </Tooltip>
+                  </Grid>
                   {/* Badges for open issues and status */}
-                  <Box display="flex" gap={2}>
-                    <Tooltip title="No of open issue">
+                  <Box display="flex" gap={1} alignItems="center">
+                    <Tooltip title="tasks">
                       <Badge
                         badgeContent={taskCount}
                         variant="standard"
@@ -68,13 +98,16 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                         <BugReportIcon />
                       </Badge>
                     </Tooltip>
-                    <Tooltip title="Status">
-                      <Chip
-                        variant="filled"
-                        label={status.name}
-                        color={status.name === "Opened" ? "warning" : "default"}
+                    <Tooltip title="View">
+                      <IconButton
                         size="small"
-                      />
+                        onClick={() =>
+                          navigate(routes.projects.path.concat(id.toString()))
+                        }
+                        color="success"
+                      >
+                        <Visibility />
+                      </IconButton>
                     </Tooltip>
                   </Box>
                 </Grid>
@@ -84,7 +117,29 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                 </Grid>
                 {/* Project description */}
                 <Grid item xs={12}>
-                  <Typography>{description}</Typography>
+                  <Typography
+                    component="div"
+                    id="projectDescription"
+                    sx={{
+                      ...style.description,
+                      overflow: more[id] ? "hidden" : null,
+                      height: more[id] ? 60 : "auto",
+                    }}
+                  >
+                    {/* {description} */}
+                    <Box
+                      component="div"
+                      dangerouslySetInnerHTML={{
+                        __html: description,
+                      }}
+                    />
+                  </Typography>
+                  {more[id] && (
+                    <Button onClick={() => handleSetMore(id)}>More...</Button>
+                  )}
+                  {more[id] === false && (
+                    <Button onClick={() => handleSetMore(id)}>less...</Button>
+                  )}
                 </Grid>
               </Grid>
             </Card>

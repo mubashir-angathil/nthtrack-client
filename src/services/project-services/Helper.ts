@@ -1,4 +1,8 @@
-import { ApiRequestWithPagination, ApiResponseWithPagination } from "../Helper";
+import {
+  ApiRequestWithPagination,
+  ApiResponseWithPagination,
+  NormalApiSuccessResponse,
+} from "../Helper";
 
 // Interface for individual project details
 interface Project {
@@ -50,9 +54,7 @@ export interface NewTokenResponse {
   accessToken: string; // New access token
 }
 
-export interface GetProjectByIdResponse {
-  success: boolean;
-  message: string;
+export interface GetProjectByIdResponse extends NormalApiSuccessResponse {
   data: Project;
 }
 export interface GetTaskByIdResponse {

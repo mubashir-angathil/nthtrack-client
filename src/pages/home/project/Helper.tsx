@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useCallback, useLayoutEffect, useState } from "react";
 import { ApiError } from "../../../services/Helper";
 import projectServices from "../../../services/project-services/ProjectServices";
 import { debounce } from "@mui/material";
@@ -7,22 +7,31 @@ import {
   ProjectsResponse,
 } from "../../../services/project-services/Helper";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
+import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
+import { DialogContextProps } from "../../../utils/helpers/context/dialog-context/Helper";
+import ManageProjectForm from "../../../components/form/manage-project/ManageProjectForm";
+import { enqueueSnackbar } from "notistack";
 
 // Define the shape of the API configuration
 interface ApiConfig extends ApiRequestWithPaginationAndSearch {
   hasMore: boolean;
 }
 
+const initialApiConfiguration: ApiConfig = {
+  page: 1,
+  limit: 4,
+  hasMore: true,
+  searchKey: undefined,
+};
 // Custom hook for managing projects
 export const useProjects = () => {
   // State for storing projects and API configuration
   const [projects, setProjects] = useState<ProjectsResponse["data"]>([]);
-  const [apiConfig, setApiConfig] = useState<ApiConfig>({
-    page: 1,
-    limit: 4,
-    hasMore: true,
-    searchKey: undefined,
-  });
+  const [apiConfig, setApiConfig] = useState<ApiConfig>(
+    initialApiConfiguration,
+  );
+  // Access Dialog context for opening the Dialog
+  const { setDialog } = useDialogContext();
 
   // Debounced search function to handle search input changes
   const handleSearch = debounce((value: string) => {
@@ -85,7 +94,7 @@ export const useProjects = () => {
         setProjects((prevProjects) => prevProjects.concat(data));
         setApiConfig((prevConfig) => ({
           ...prevConfig,
-          hasMore: totalRows > projects.length + data.length,
+          hasMore: totalRows !== projects.length + data.length,
         }));
       } else {
         // If there's an error, log the error message
@@ -94,7 +103,11 @@ export const useProjects = () => {
     } catch (error) {
       // Handle API errors
       const { data } = error as ApiError;
-      console.error(data);
+
+      enqueueSnackbar({
+        message: data?.message,
+        variant: "error",
+      });
     }
   };
 
@@ -111,8 +124,20 @@ export const useProjects = () => {
     }
   };
 
+  const updateProjectsCallback = useCallback(async () => {
+    setProjects([]);
+    setApiConfig(initialApiConfiguration);
+  }, []);
+
+  const dialog: DialogContextProps["dialog"] = {
+    open: true,
+    form: {
+      title: "New Project",
+      body: <ManageProjectForm updateProjects={updateProjectsCallback} />,
+    },
+  };
   // Effect to fetch projects when the API configuration changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (apiConfig.hasMore) {
       fetchProjects();
     }
@@ -121,10 +146,41 @@ export const useProjects = () => {
 
   // Return the necessary values and functions for component usage
   return {
-    projects,
+    dialog,
+    setDialog,
     apiConfig,
+    projects,
+    setApiConfig,
     handleChange,
     handleClear,
+    fetchProjects,
     handleProjectLoading,
   };
 };
+
+// const pageProjectsApiHelpers = {
+//   // Function to fetch projects from the API
+//   fetchProjects: async (apiConfig: ApiConfig) => {
+//     try {
+//       // Call the API to get projects based on the current API configuration
+//       const response = await projectServices.getAllProjects(apiConfig);
+//       const {
+//         status,
+//         data: { success, message },
+//       } = response;
+
+//       // If the API call is successful, update projects and API configuration
+//       if (status === 200 && success) {
+//         return response.data;
+//       } else {
+//         // If there's an error, log the error message
+//         throw { data: message };
+//       }
+//     } catch (error) {
+//       // Handle API errors
+//       const { data } = error as ApiError;
+//       console.error(data);
+//       return null;
+//     }
+//   },
+// };
