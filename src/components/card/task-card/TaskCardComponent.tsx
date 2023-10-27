@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Typography, Box, colors, Button } from "@mui/material";
+import { Card, Typography, Box, colors, Button, Chip } from "@mui/material";
 import { TaskCardComponentProps } from "./Helper";
 import { useNavigate } from "react-router-dom";
 import routes from "../../../utils/helpers/routes/Routes";
@@ -25,6 +25,8 @@ const TaskCardComponent: React.FC<TaskCardComponentProps> = ({
         // Displaying task cards
         tasks.map(({ id, status, tracker, description, createdAt }) => {
           const taskStatus = status.name === "Opened";
+          const bug = tracker.name === "Bug";
+
           return (
             <Card
               key={id}
@@ -33,19 +35,36 @@ const TaskCardComponent: React.FC<TaskCardComponentProps> = ({
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
+                alignItems: "center",
                 p: "1em",
                 backgroundColor: "transparent",
+                flexWrap: "wrap",
                 border: 1,
                 gap: 1,
                 m: 2,
-                borderColor: taskStatus ? colors.red.A200 : colors.blue[500],
+                borderColor: taskStatus
+                  ? bug
+                    ? colors.red.A200
+                    : colors.green.A400
+                  : colors.grey.A400,
               }}
               onClick={() => navigate(routes.tasks.path.concat(id.toString()))}
             >
               <Typography>#{id}</Typography>
-              <Typography variant="body1">{tracker.name}</Typography>
+              <Chip
+                label={tracker.name}
+                variant="outlined"
+                color={taskStatus ? (bug ? "warning" : "success") : "info"}
+              />
               <Typography>{taskStatus ? "New" : status.name}</Typography>
-              <Typography width={350}>{description}</Typography>
+              <Typography
+                width={350}
+                dangerouslySetInnerHTML={{
+                  __html: description
+                    .slice(0, 50)
+                    .concat(description.length > 40 ? "..." : ""),
+                }}
+              />
               <Typography>{new Date(createdAt).toLocaleString()}</Typography>
               <Button
                 variant={taskStatus ? "contained" : "text"}
