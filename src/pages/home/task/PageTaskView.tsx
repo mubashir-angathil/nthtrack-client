@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { Button, Box, Chip, Grid, Typography, Skeleton } from "@mui/material";
 import { useTask } from "./Helper";
+import { colors } from "../../../utils/helpers/configs/Colors";
 
 const PageTaskView: FC = () => {
   const { task, fetchCloseTaskById } = useTask();
@@ -29,7 +30,7 @@ const PageTaskView: FC = () => {
       <Grid item xs={12} gap={2}>
         {/* Tracker Information */}
         <Typography component="span" display="flex">
-          <Box component="span" color="ActiveBorder">
+          <Box component="span" color={colors.secondaryText}>
             Tracker:&nbsp;
           </Box>
           {task.tracker.name === "" ? (
@@ -41,7 +42,9 @@ const PageTaskView: FC = () => {
 
         {/* Display Created At */}
         <Typography display="flex">
-          Created At:
+          <Box component="span" color={colors.secondaryText}>
+            Created At:
+          </Box>
           {task.createdAt === "" ? (
             <Skeleton width={200} height={20} />
           ) : (
@@ -51,7 +54,9 @@ const PageTaskView: FC = () => {
 
         {/* Display Updated At */}
         <Typography display="flex">
-          Updated At:
+          <Box component="span" color={colors.secondaryText}>
+            Updated At:
+          </Box>
           {task.updatedAt === "" ? (
             <Skeleton width={200} height={20} />
           ) : (
@@ -72,7 +77,13 @@ const PageTaskView: FC = () => {
           </>
         ) : (
           // Display task description
-          <Typography>{task.description}</Typography>
+          <Typography
+            component="div"
+            dangerouslySetInnerHTML={{
+              __html: task?.description,
+            }}
+            flexWrap="wrap"
+          />
         )}
       </Grid>
     </Grid>

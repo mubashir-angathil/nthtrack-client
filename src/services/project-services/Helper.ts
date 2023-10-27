@@ -1,3 +1,4 @@
+import { ManageTaskFormInput } from "../../components/form/manage-task/Helper";
 import {
   ApiRequestWithPagination,
   ApiResponseWithPagination,
@@ -63,4 +64,7 @@ export interface GetTaskByIdResponse {
   data: Task;
 }
 
+export interface ManageTaskRequest extends ManageTaskFormInput {
+  projectId: number;
+}
 // Comments provide explanations for each interface, making the code more readable and understandable.

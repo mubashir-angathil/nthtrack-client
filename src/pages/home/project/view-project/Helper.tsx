@@ -2,8 +2,10 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import projectServices from "../../../../services/project-services/ProjectServices";
 import {
+  Location,
   NavigateFunction,
   Params,
+  useLocation,
   useNavigate,
   useParams,
 } from "react-router-dom";
@@ -16,6 +18,8 @@ import { ApiError } from "../../../../services/Helper";
 import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
 import routes from "../../../../utils/helpers/routes/Routes";
 import { debounce } from "@mui/material";
+import { DialogContextProps } from "../../../../utils/helpers/context/dialog-context/Helper";
+import ManageTaskForm from "../../../../components/form/manage-task/ManageTaskForm";
 
 // Define the shape of the API configuration
 interface ApiConfig extends GetAllTasksRequest {
@@ -29,6 +33,7 @@ interface ApiConfig extends GetAllTasksRequest {
 export const useViewProject = () => {
   // Extract necessary parameters and functions from React Router
   const params: Params = useParams();
+  const location: Location = useLocation();
   const navigate: NavigateFunction = useNavigate();
 
   // State variables for project and tasks, as well as API configuration
@@ -50,6 +55,14 @@ export const useViewProject = () => {
     searchKey: undefined,
     projectId: params?.id ? parseInt(params.id) : 0,
   });
+
+  const dialog: DialogContextProps["dialog"] = {
+    open: true,
+    form: {
+      title: "New Task",
+      body: <ManageTaskForm />,
+    },
+  };
 
   // Debounced search function to handle search input changes
   const handleSearch = debounce((value: string) => {
@@ -198,11 +211,16 @@ export const useViewProject = () => {
     setTimeout(() => {
       fetchProjectById();
     }, 500);
+
+    if (params?.id) {
+      location.state = { projectId: params.id };
+    }
   }, []);
 
   return {
     project,
     tasks,
+    dialog,
     apiConfig,
     fetchTasks,
     fetchCloseProjectById,

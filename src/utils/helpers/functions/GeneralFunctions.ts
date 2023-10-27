@@ -24,7 +24,7 @@ const generalFunctions = {
   customError: (error: AxiosError<ApiError>): ApiError => {
     if (error?.response?.data) {
       return {
-        status: 2,
+        status: error.response.data.status,
         data: error?.response?.data.data,
       } as ApiError;
     } else {

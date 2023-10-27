@@ -31,11 +31,11 @@ body::-webkit-scrollbar {
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
-  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-track {
   background-color: rgb(208, 208, 208);
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {

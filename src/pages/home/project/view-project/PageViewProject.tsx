@@ -10,15 +10,20 @@ import {
   FormControl,
   IconButton,
   Skeleton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
-import { Search as SearchIcon, Clear as ClearIcon } from "@mui/icons-material";
+import {
+  Search as SearchIcon,
+  Clear as ClearIcon,
+  ExpandMore as ExpandMoreIcon,
+} from "@mui/icons-material";
 import { FC } from "react";
 import PluseIcon from "@mui/icons-material/Add";
 import { useViewProject } from "./Helper";
 import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
-import ManageIssueForm from "../../../../components/form/manage-issue/ManageIssueForm";
 import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
-import { colors } from "../../../../utils/helpers/configs/Colors";
 
 /**
  * Functional component representing the view of a project page.
@@ -30,6 +35,7 @@ const PageViewProject: FC = () => {
   const {
     project,
     tasks,
+    dialog,
     apiConfig,
     fetchCloseProjectById,
     handleTaskLoading,
@@ -61,13 +67,7 @@ const PageViewProject: FC = () => {
             variant="contained"
             startIcon={<PluseIcon />}
             onClick={() => {
-              setDialog({
-                open: true,
-                form: {
-                  title: "Create Issue",
-                  body: <ManageIssueForm />,
-                },
-              });
+              setDialog(dialog);
             }}
           >
             Create Issue
@@ -77,21 +77,20 @@ const PageViewProject: FC = () => {
 
       {/* Project Description Section */}
       <Grid item xs={12}>
-        {project.description === "" ? (
-          <>
-            <Skeleton />
-            <Skeleton />
-            <Skeleton />
-          </>
-        ) : (
-          <Typography
-            variant="body1"
-            color={colors.secondaryText}
+        <Accordion defaultExpanded>
+          <AccordionSummary
+            aria-controls="panel1d-content"
+            id="panel1d-header"
+            expandIcon={<ExpandMoreIcon />}
+          >
+            <Typography>Description</Typography>
+          </AccordionSummary>
+          <AccordionDetails
             dangerouslySetInnerHTML={{
               __html: project.description,
             }}
           />
-        )}
+        </Accordion>
       </Grid>
 
       {/* Filters and Search Section */}

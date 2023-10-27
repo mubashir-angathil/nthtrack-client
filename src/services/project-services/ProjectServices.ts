@@ -7,6 +7,7 @@ import {
   GetAllTasksRequest,
   GetProjectByIdResponse,
   GetTaskByIdResponse,
+  ManageTaskRequest,
   ProjectsResponse,
   TaskResponse,
 } from "./Helper";
@@ -140,6 +141,36 @@ const projectServices = {
       );
       return response;
     } catch (error) {
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  /**
+   * CreateTask
+   *
+   * Create Task.
+   *
+   * @param {object} props - Object containing trackerID, description.
+   * @returns {Promise<AxiosResponse<ProjectsResponse>>} Promise that resolves to the response containing task data.
+   */
+  createTask: async ({
+    projectId,
+    trackerId,
+    description,
+  }: ManageTaskRequest): Promise<AxiosResponse<TaskResponse>> => {
+    try {
+      // Make the API request to get all projects
+      const response = await axios.post<TaskResponse>(
+        `/project/${projectId}/task/create`,
+        {
+          trackerId,
+          description,
+        },
+      );
+
+      // Return the response
+      return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
