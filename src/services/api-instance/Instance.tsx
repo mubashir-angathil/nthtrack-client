@@ -75,7 +75,7 @@ projectInstance.interceptors.response.use(
       } catch (error: any) {
         // Handle any errors during token refresh or retry
         if (error?.data) {
-          if (error.data.error === "jwt expired" && error.status === 403) {
+          if (error.data.success === false) {
             if (confirm(MessageHelper.reSignInAlert)) {
               // Clear authentication details and redirect to the login page
               cookieServices.clearAuthDetails();
