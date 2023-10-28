@@ -4,9 +4,6 @@ import {
   Typography,
   Box,
   TextField,
-  Select,
-  MenuItem,
-  InputLabel,
   FormControl,
   IconButton,
   Skeleton,
@@ -24,6 +21,8 @@ import PluseIcon from "@mui/icons-material/Add";
 import { useViewProject } from "./Helper";
 import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
 import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
+import RhfSelectComponent from "../../../../components/common/textfield/select/RhfSelectComponent";
+import dataServices from "../../../../services/data-services/DataServices";
 
 /**
  * Functional component representing the view of a project page.
@@ -35,6 +34,7 @@ const PageViewProject: FC = () => {
   const {
     project,
     tasks,
+    control,
     dialog,
     apiConfig,
     fetchCloseProjectById,
@@ -97,41 +97,22 @@ const PageViewProject: FC = () => {
       <Grid item xs={12} display="flex" justifyContent="end" gap={2}>
         {/* Tracker Filter */}
         <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-disabled">Tracker</InputLabel>
-          <Select
-            labelId="demo-simple-select-disabled-label"
-            id="demo-simple-select-disabled"
-            value={0}
-            label="Age"
-            size="small"
-            onChange={() => {}}
-          >
-            <MenuItem value={0}>
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-          </Select>
+          <RhfSelectComponent
+            control={control}
+            name="trackerId"
+            label="Tracker"
+            apidetails={{ api: dataServices.getTrackers }}
+          />
         </FormControl>
 
         {/* Status Filter */}
         <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-disabled">Status</InputLabel>
-          <Select
-            labelId="demo-simple-select-disabled-label"
-            id="demo-simple-select-disabled"
-            value={0}
-            label="Age"
-            size="small"
-            onChange={() => {}}
-          >
-            <MenuItem value={0}>
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value={"Opened"}>Opened</MenuItem>
-            <MenuItem value={"Closed"}>Closed</MenuItem>
-          </Select>
+          <RhfSelectComponent
+            control={control}
+            name="statusId"
+            label="Status"
+            apidetails={{ api: dataServices.getStatus }}
+          />
         </FormControl>
 
         {/* Search Input */}

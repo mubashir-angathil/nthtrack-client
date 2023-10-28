@@ -31,7 +31,7 @@ const TaskCardComponent: React.FC<TaskCardComponentProps> = ({
             <Card
               key={id}
               elevation={0}
-              className="btn"
+              className="btn appear"
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -42,6 +42,7 @@ const TaskCardComponent: React.FC<TaskCardComponentProps> = ({
                 border: 1,
                 gap: 1,
                 m: 2,
+                transition: "all 0.5s",
                 borderColor: taskStatus
                   ? bug
                     ? colors.red.A200

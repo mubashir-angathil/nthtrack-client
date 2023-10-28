@@ -51,6 +51,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
             // Individual project card
             <Card
               key={id}
+              className="appear"
               sx={{
                 m: 2,
               }}

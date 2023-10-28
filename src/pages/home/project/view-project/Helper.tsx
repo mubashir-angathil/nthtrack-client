@@ -21,7 +21,15 @@ import { debounce } from "@mui/material";
 import { DialogContextProps } from "../../../../utils/helpers/context/dialog-context/Helper";
 import ManageTaskForm from "../../../../components/form/manage-task/ManageTaskForm";
 import { enqueueSnackbar } from "notistack";
+import { number, object, InferType } from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+export const filterFormSchema = object({
+  trackerId: number(),
+  statusId: number(),
+});
 
+export type FilterInput = InferType<typeof filterFormSchema>;
 // Define the shape of the API configuration
 interface ApiConfig extends GetAllTasksRequest {
   hasMore: boolean;
@@ -46,6 +54,9 @@ export const useViewProject = () => {
     searchKey: undefined,
     projectId: params?.id ? parseInt(params.id) : 0,
   };
+  const { control, watch } = useForm({
+    resolver: yupResolver<FilterInput>(filterFormSchema),
+  });
 
   // State variables for project and tasks, as well as API configuration
   const [project, setProject] = useState<GetProjectByIdResponse["data"]>({
@@ -138,7 +149,10 @@ export const useViewProject = () => {
 
       // If the API call is successful, update tasks and API configuration
       if (status === 200 && success) {
-        setTasks((prevTasks) => prevTasks.concat(data));
+        setTasks((prevTasks) => {
+          const newTasks = apiConfig.page === 1 ? data : prevTasks.concat(data);
+          return newTasks;
+        });
         setApiConfig((prevConfig) => ({
           ...prevConfig,
           hasMore: totalRows > tasks.length + data.length,
@@ -214,7 +228,12 @@ export const useViewProject = () => {
     if (apiConfig.hasMore) {
       fetchTasks();
     }
-  }, [apiConfig.page, apiConfig.searchKey]);
+  }, [
+    apiConfig.page,
+    apiConfig.searchKey,
+    apiConfig.trackerId,
+    apiConfig.statusId,
+  ]);
 
   useEffect(() => {
     // console.log(apiConfig);
@@ -227,10 +246,27 @@ export const useViewProject = () => {
     fetchProjectById();
   }, []);
 
+  useEffect(() => {
+    const trackerId = watch("trackerId");
+    const statusId = watch("statusId");
+    if (trackerId > 0 || statusId > 0) {
+      setTasks([]);
+      setApiConfig((apiConfig) => {
+        return {
+          ...apiConfig,
+          hasMore: true,
+          page: 1,
+          trackerId: trackerId > 0 ? trackerId : undefined,
+          statusId: statusId > 0 ? statusId : undefined,
+        };
+      });
+    } else setApiConfig(initialApiConfig);
+  }, [watch("trackerId"), watch("statusId")]);
   return {
     project,
     tasks,
     dialog,
+    control,
     apiConfig,
     fetchTasks,
     fetchCloseProjectById,
