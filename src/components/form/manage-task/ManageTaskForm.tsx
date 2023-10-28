@@ -5,6 +5,7 @@ import RhfCKEditorComponent from "../../ck-editor/CkEditorComponent";
 import SubmitButtonComponent from "../../common/buttons/SubmitButtonComponent";
 import { useManageTask } from "./Helper";
 import RhfSelectComponent from "../../common/textfield/select/RhfSelectComponent";
+import dataServices from "../../../services/data-services/DataServices";
 
 const ManageTaskForm: FC = () => {
   const { control, isSubmit, handleDialogClose, handleSubmit, onSubmit } =
@@ -18,6 +19,7 @@ const ManageTaskForm: FC = () => {
           name="trackerId"
           size="small"
           required
+          apidetails={{ api: dataServices.getTrackers }}
         />
         <RhfCKEditorComponent
           control={control}

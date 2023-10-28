@@ -1,7 +1,7 @@
 // Import necessary modules and types
 import { AxiosError, AxiosResponse } from "axios";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
-import axios from "../api-instance/ProjectInstance";
+import axios from "../api-instance/Instance";
 import {
   ApiRequestWithPaginationAndSearch,
   GetAllTasksRequest,

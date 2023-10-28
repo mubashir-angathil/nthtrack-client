@@ -22,10 +22,11 @@ const generalFunctions = {
    * @returns {ApiError | AxiosError} Standardized API error format.
    */
   customError: (error: AxiosError<ApiError>): ApiError => {
-    if (error?.response?.data) {
+    if (error?.response?.data?.data) {
+      const { data } = error.response.data;
       return {
-        status: error.response.data.status,
-        data: error?.response?.data.data,
+        status: error.response.status,
+        data: data,
       } as ApiError;
     } else {
       return {

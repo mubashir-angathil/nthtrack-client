@@ -20,6 +20,7 @@ import routes from "../../../../utils/helpers/routes/Routes";
 import { debounce } from "@mui/material";
 import { DialogContextProps } from "../../../../utils/helpers/context/dialog-context/Helper";
 import ManageTaskForm from "../../../../components/form/manage-task/ManageTaskForm";
+import { enqueueSnackbar } from "notistack";
 
 // Define the shape of the API configuration
 interface ApiConfig extends GetAllTasksRequest {
@@ -34,7 +35,17 @@ export const useViewProject = () => {
   // Extract necessary parameters and functions from React Router
   const params: Params = useParams();
   const location: Location = useLocation();
+
   const navigate: NavigateFunction = useNavigate();
+  const initialApiConfig = {
+    limit: 5,
+    page: 1,
+    hasMore: true,
+    trackerId: undefined,
+    statusId: undefined,
+    searchKey: undefined,
+    projectId: params?.id ? parseInt(params.id) : 0,
+  };
 
   // State variables for project and tasks, as well as API configuration
   const [project, setProject] = useState<GetProjectByIdResponse["data"]>({
@@ -46,15 +57,7 @@ export const useViewProject = () => {
     closedAt: "",
   });
   const [tasks, setTasks] = useState<TaskResponse["data"]>([]);
-  const [apiConfig, setApiConfig] = useState<ApiConfig>({
-    limit: 5,
-    page: 1,
-    hasMore: true,
-    trackerId: undefined,
-    statusId: undefined,
-    searchKey: undefined,
-    projectId: params?.id ? parseInt(params.id) : 0,
-  });
+  const [apiConfig, setApiConfig] = useState<ApiConfig>(initialApiConfig);
 
   const dialog: DialogContextProps["dialog"] = {
     open: true,
@@ -144,10 +147,19 @@ export const useViewProject = () => {
         // If there's an error, log the error message
         throw { data: message };
       }
-    } catch (error) {
+    } catch (error: any) {
+      let message = error.message ?? "Something went wrong!";
+
       // Handle API errors
       const { data } = error as ApiError;
-      console.error(data);
+      if (data.success && data.message) {
+        message = data.message;
+      }
+
+      enqueueSnackbar({
+        message: message,
+        variant: "error",
+      });
     }
   };
 
@@ -205,16 +217,14 @@ export const useViewProject = () => {
   }, [apiConfig.page, apiConfig.searchKey]);
 
   useEffect(() => {
+    // console.log(apiConfig);
     if (apiConfig.projectId === 0) {
       navigate(routes.projects.path, { replace: true });
-    }
-    setTimeout(() => {
-      fetchProjectById();
-    }, 500);
-
-    if (params?.id) {
+    } else {
       location.state = { projectId: params.id };
     }
+
+    fetchProjectById();
   }, []);
 
   return {

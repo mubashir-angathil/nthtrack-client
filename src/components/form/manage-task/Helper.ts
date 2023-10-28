@@ -41,8 +41,8 @@ export const useManageTask = () => {
   const onSubmit: SubmitHandler<ManageTaskFormInput> = async (
     newTask: ManageTaskFormInput,
   ) => {
-    // setIsSubmit(true);
     if (projectId) {
+      setIsSubmit(true);
       await createNewTask({
         ...newTask,
         projectId: parseInt(projectId),
