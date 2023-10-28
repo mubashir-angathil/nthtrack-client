@@ -1,5 +1,5 @@
 import { Controller, FieldValues } from "react-hook-form";
-import { RhfSelectProps } from "./Helper";
+import { RhfSelectProps, useRhfSelect } from "./Helper";
 import {
   FormControl,
   FormHelperText,
@@ -7,17 +7,16 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { useState } from "react";
 
 /**
- * RhfTextfieldComponent
+ * RhfSelectComponent
  *
  * A reusable component for rendering text input fields using React Hook Form.
  * It integrates with Material-UI TextField and provides seamless validation and error handling.
  *
  * @component
- * @param {RhfSelectProps<TField>} props - Props for the RhfTextfieldComponent.
- * @returns {JSX.Element} Rendered RhfTextfieldComponent.
+ * @param {RhfSelectProps<TField>} props - Props for the RhfSelectComponent.
+ * @returns {JSX.Element} Rendered RhfSelectComponent.
  */
 const RhfSelectComponent = <TField extends FieldValues>({
   name,
@@ -27,15 +26,7 @@ const RhfSelectComponent = <TField extends FieldValues>({
   size = "small",
   ...rest
 }: RhfSelectProps<TField>): JSX.Element => {
-  const [open, setOpen] = useState(false);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  const { handleClose, handleOpen, open, data } = useRhfSelect(rest.apidetails);
   return (
     <Controller
       name={name}
@@ -65,8 +56,13 @@ const RhfSelectComponent = <TField extends FieldValues>({
               <MenuItem value={0}>
                 <em>None</em>
               </MenuItem>
-              <MenuItem value={1}>Bug</MenuItem>
-              <MenuItem value={2}>Feature</MenuItem>
+              {data.map((item: { id: number; name: string }) => {
+                return (
+                  <MenuItem value={item.id} key={item.id}>
+                    {item.name}
+                  </MenuItem>
+                );
+              })}
             </Select>
             {error && (
               <FormHelperText sx={{ color: "red" }}>

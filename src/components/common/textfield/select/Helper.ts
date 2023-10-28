@@ -1,5 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { AxiosResponse } from "axios";
+import { useEffect, useState } from "react";
 import { Control, FieldValues, Path } from "react-hook-form";
+import { SelectFieldApiResponse } from "../../../../services/data-services/Helper";
+import { enqueueSnackbar } from "notistack";
+import { ApiError } from "../../../../services/Helper";
 
+export declare type DataApiDetails = {
+  api: () => Promise<AxiosResponse<SelectFieldApiResponse>>;
+};
 export interface RhfSelectProps<TField extends FieldValues> {
   name: Path<TField>;
   control: Control<TField>;
@@ -9,4 +18,52 @@ export interface RhfSelectProps<TField extends FieldValues> {
   placeholder?: string;
   required?: boolean;
   autoComplete?: string;
+  apidetails: DataApiDetails;
 }
+
+export const useRhfSelect = ({ api }: DataApiDetails) => {
+  const [open, setOpen] = useState(false);
+  const [data, setData] = useState<SelectFieldApiResponse["data"] | []>([]);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await api();
+      if (response.status === 200 && response.data.success) {
+        setData(response.data.data);
+      } else throw Error("Data fetching id failed");
+    } catch (error: any) {
+      let message = error?.message;
+      const { data } = error as ApiError;
+
+      if (data?.success === false && data?.message) {
+        message = data?.message;
+      }
+
+      enqueueSnackbar({
+        message: message,
+        variant: "error",
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (open && data.length === 0) {
+      fetchData();
+    }
+  }, [open]);
+
+  return {
+    data,
+    open,
+    handleClose,
+    handleOpen,
+  };
+};
