@@ -7,6 +7,8 @@ import { CssBaseline, IconButton, ThemeProvider } from "@mui/material";
 import AuthContextProvider from "./utils/helpers/context/auth-context/AuthContextProvider";
 import { SnackbarProvider, closeSnackbar } from "notistack";
 import { Close } from "@mui/icons-material";
+import { AlertContextProvider } from "./utils/helpers/context/alert-context/AlertContextProvider";
+import AlertComponent from "./components/common/alert/AlertComponent";
 
 const App: React.FC = () => {
   return (
@@ -26,26 +28,29 @@ const App: React.FC = () => {
             vertical: "bottom",
           }}
         >
-          <DialogContextProvider>
-            <Routes>
-              <Route index element={routes.signIn.element} />
-              <Route
-                path={routes.signUp.path}
-                element={routes.signUp.element}
-              />
-              <Route path={routes.home.path} element={routes.home.default}>
-                <Route index element={routes.home.element} />
-                <Route path={routes.projects.path.concat(":id")}>
-                  <Route index element={routes.projects.element} />
-                  <Route
-                    path={routes.tasks.path.concat(":id")}
-                    element={routes.tasks.element}
-                  />
+          <AlertContextProvider>
+            <DialogContextProvider>
+              <Routes>
+                <Route index element={routes.signIn.element} />
+                <Route
+                  path={routes.signUp.path}
+                  element={routes.signUp.element}
+                />
+                <Route path={routes.home.path} element={routes.home.default}>
+                  <Route index element={routes.home.element} />
+                  <Route path={routes.projects.path.concat(":id")}>
+                    <Route index element={routes.projects.element} />
+                    <Route
+                      path={routes.tasks.path.concat(":id")}
+                      element={routes.tasks.element}
+                    />
+                  </Route>
                 </Route>
-              </Route>
-            </Routes>
-            <GeneralDialog />
-          </DialogContextProvider>
+              </Routes>
+              <AlertComponent />
+              <GeneralDialog />
+            </DialogContextProvider>
+          </AlertContextProvider>
         </SnackbarProvider>
       </AuthContextProvider>
     </ThemeProvider>

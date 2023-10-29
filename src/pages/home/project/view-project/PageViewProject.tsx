@@ -34,8 +34,8 @@ const PageViewProject: FC = () => {
     control,
     dialog,
     apiConfig,
-    fetchCloseProjectById,
     handleTaskLoading,
+    handleCloseProject,
     handleChange,
     setDialog,
     handleSearchClear,
@@ -49,7 +49,9 @@ const PageViewProject: FC = () => {
         {project.projectName === "" ? (
           <Skeleton width={200} height={40} />
         ) : (
-          <Typography variant="h4">{project.projectName}</Typography>
+          <Typography variant="h4" overflow="auto" flexWrap="wrap">
+            {project.projectName}
+          </Typography>
         )}
 
         <Box component="div" display="flex" flexGrow={0} gap={2}>
@@ -57,7 +59,7 @@ const PageViewProject: FC = () => {
           <Button
             variant="contained"
             color="error"
-            onClick={async () => await fetchCloseProjectById()}
+            onClick={handleCloseProject}
           >
             Close Project
           </Button>
@@ -97,6 +99,7 @@ const PageViewProject: FC = () => {
             dangerouslySetInnerHTML={{
               __html: project.description,
             }}
+            sx={{ overflow: "auto" }}
           />
         </Accordion>
       </Grid>

@@ -26,6 +26,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
 import ManageProjectForm from "../../../../components/form/manage-project/ManageProjectForm";
+import { useAlertContext } from "../../../../utils/helpers/context/alert-context/AlertContext";
+import { useAlert } from "../../../../components/common/alert/Helper";
 export const filterFormSchema = object({
   trackerId: number(),
   statusId: number(),
@@ -45,8 +47,9 @@ export const useViewProject = () => {
   // Extract necessary parameters and functions from React Router
   const params: Params = useParams();
   const location: Location = useLocation();
-
+  const { setAlert } = useAlertContext();
   const navigate: NavigateFunction = useNavigate();
+  const { handleCloseAlert } = useAlert();
   const initialApiConfig = {
     limit: 5,
     page: 1,
@@ -158,6 +161,25 @@ export const useViewProject = () => {
       },
     });
   };
+
+  const handleCloseProject = () => {
+    setAlert({
+      open: true,
+      alert: {
+        title: "Close Project",
+        message: "Are you sure?",
+        positiveButton: "Accept",
+        negativeButton: "Cancel",
+        response: async (res) => {
+          if (res === "accept") {
+            handleCloseAlert();
+            await fetchCloseProjectById();
+          }
+        },
+      },
+    });
+  };
+
   // Function to fetch tasks from the API
   const fetchTasks = async () => {
     try {
@@ -232,16 +254,22 @@ export const useViewProject = () => {
       });
 
       if (project.status === 200 && project.data.success) {
-        alert(project.data.message);
+        enqueueSnackbar({
+          message: project.data.message,
+          variant: "success",
+        });
+        navigate(routes.home.path);
       } else {
         throw generalFunctions.customError(project as any);
       }
     } catch (error) {
       const { data } = error as ApiError;
-      if (!data.success) {
-        alert(data.message);
+      if (data.success === false) {
+        enqueueSnackbar({
+          message: data.message,
+          variant: "error",
+        });
       }
-      console.error(error);
     }
   };
 
@@ -292,7 +320,7 @@ export const useViewProject = () => {
     apiConfig,
     setDialog,
     fetchTasks,
-    fetchCloseProjectById,
+    handleCloseProject,
     handleTaskLoading,
     handleSearchClear,
     handleUpdateProject,

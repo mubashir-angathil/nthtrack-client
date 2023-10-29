@@ -65,10 +65,26 @@ input[type="search"]::-webkit-search-cancel-button {
   scale: 0;
 }
 
+.alert {
+  animation: alert 1s forwards;
+  scale: 0;
+}
+
 @keyframes appear {
   0%,
   50% {
     scale: 0.8;
+  }
+
+  50%,
+  100% {
+    scale: 1;
+  }
+}
+@keyframes alert {
+  0%,
+  50% {
+    scale: 0;
   }
 
   50%,
