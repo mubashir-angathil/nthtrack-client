@@ -4,7 +4,6 @@ import {
   Typography,
   Box,
   TextField,
-  FormControl,
   IconButton,
   Skeleton,
   Accordion,
@@ -15,11 +14,11 @@ import {
   Search as SearchIcon,
   Clear as ClearIcon,
   ExpandMore as ExpandMoreIcon,
+  Update as UpdateIcon,
 } from "@mui/icons-material";
 import { FC } from "react";
 import PluseIcon from "@mui/icons-material/Add";
 import { useViewProject } from "./Helper";
-import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
 import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
 import RhfSelectComponent from "../../../../components/common/textfield/select/RhfSelectComponent";
 import dataServices from "../../../../services/data-services/DataServices";
@@ -29,8 +28,6 @@ import dataServices from "../../../../services/data-services/DataServices";
  * Utilizes the custom hook `useViewProject` for managing state and logic.
  */
 const PageViewProject: FC = () => {
-  // Extract necessary functions and state variables from the custom hook
-  const { setDialog } = useDialogContext();
   const {
     project,
     tasks,
@@ -40,7 +37,9 @@ const PageViewProject: FC = () => {
     fetchCloseProjectById,
     handleTaskLoading,
     handleChange,
+    setDialog,
     handleSearchClear,
+    handleUpdateProject,
   } = useViewProject();
 
   return (
@@ -61,6 +60,15 @@ const PageViewProject: FC = () => {
             onClick={async () => await fetchCloseProjectById()}
           >
             Close Project
+          </Button>
+          {/* Update Project Button */}
+          <Button
+            variant="contained"
+            color="info"
+            endIcon={<UpdateIcon />}
+            onClick={handleUpdateProject}
+          >
+            Update Project
           </Button>
           {/* Create Issue Button */}
           <Button
@@ -94,33 +102,36 @@ const PageViewProject: FC = () => {
       </Grid>
 
       {/* Filters and Search Section */}
-      <Grid item xs={12} display="flex" justifyContent="end" gap={2}>
+      <Grid
+        item
+        xs={12}
+        display="flex"
+        alignItems="center"
+        justifyContent="end"
+        gap={2}
+      >
         {/* Tracker Filter */}
-        <FormControl sx={{ minWidth: 120 }}>
-          <RhfSelectComponent
-            control={control}
-            name="trackerId"
-            label="Tracker"
-            apidetails={{ api: dataServices.getTrackers }}
-          />
-        </FormControl>
+        <RhfSelectComponent
+          control={control}
+          name="trackerId"
+          label="Tracker"
+          apidetails={{ api: dataServices.getTrackers }}
+        />
 
         {/* Status Filter */}
-        <FormControl sx={{ minWidth: 120 }}>
-          <RhfSelectComponent
-            control={control}
-            name="statusId"
-            label="Status"
-            apidetails={{ api: dataServices.getStatus }}
-          />
-        </FormControl>
+        <RhfSelectComponent
+          control={control}
+          name="statusId"
+          label="Status"
+          apidetails={{ api: dataServices.getStatus }}
+        />
 
         {/* Search Input */}
         <TextField
           id="task-search-field"
           variant="outlined"
           type="search"
-          size="small"
+          size="medium"
           placeholder="Search project here.."
           onChange={handleChange}
           // Change input color to error if there are no tasks and there's a search key

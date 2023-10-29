@@ -24,6 +24,8 @@ import { enqueueSnackbar } from "notistack";
 import { number, object, InferType } from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
+import ManageProjectForm from "../../../../components/form/manage-project/ManageProjectForm";
 export const filterFormSchema = object({
   trackerId: number(),
   statusId: number(),
@@ -57,6 +59,8 @@ export const useViewProject = () => {
   const { control, watch } = useForm({
     resolver: yupResolver<FilterInput>(filterFormSchema),
   });
+
+  const { setDialog } = useDialogContext();
 
   // State variables for project and tasks, as well as API configuration
   const [project, setProject] = useState<GetProjectByIdResponse["data"]>({
@@ -137,6 +141,23 @@ export const useViewProject = () => {
     }
   };
 
+  const handleUpdateProject = () => {
+    setDialog({
+      open: true,
+      form: {
+        title: "Update Project",
+        body: (
+          <ManageProjectForm
+            values={{
+              projectId: project.id,
+              projectName: project.projectName,
+              description: project.description,
+            }}
+          />
+        ),
+      },
+    });
+  };
   // Function to fetch tasks from the API
   const fetchTasks = async () => {
     try {
@@ -262,16 +283,19 @@ export const useViewProject = () => {
       });
     } else setApiConfig(initialApiConfig);
   }, [watch("trackerId"), watch("statusId")]);
+
   return {
     project,
     tasks,
     dialog,
     control,
     apiConfig,
+    setDialog,
     fetchTasks,
     fetchCloseProjectById,
     handleTaskLoading,
     handleSearchClear,
+    handleUpdateProject,
     handleChange,
   };
 };

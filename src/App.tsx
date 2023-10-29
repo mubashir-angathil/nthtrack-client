@@ -17,11 +17,9 @@ const App: React.FC = () => {
           autoHideDuration={3000}
           maxSnack={3}
           action={(snackbarId) => (
-            <>
-              <IconButton onClick={() => closeSnackbar(snackbarId)}>
-                <Close sx={{ color: "white" }} />
-              </IconButton>
-            </>
+            <IconButton size="small" onClick={() => closeSnackbar(snackbarId)}>
+              <Close sx={{ color: "white" }} />
+            </IconButton>
           )}
           anchorOrigin={{
             horizontal: "center",

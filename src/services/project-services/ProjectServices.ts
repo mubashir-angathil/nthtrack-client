@@ -10,6 +10,7 @@ import {
   ManageTaskRequest,
   ProjectsResponse,
   TaskResponse,
+  UpdateProjectRequest,
 } from "./Helper";
 import { ApiError, NormalApiSuccessResponse } from "../Helper";
 import { ManageProjectFormInput } from "../../components/form/manage-project/Helper";
@@ -31,6 +32,31 @@ const projectServices = {
       // Make the API request to get all projects
       const response = await axios.post<ProjectsResponse>(
         "/project/create-project",
+        props,
+      );
+
+      // Return the response
+      return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  /**
+   * UpdateProject
+   *
+   * UpdateProject project.
+   *
+   * @param {object} props - Object may containing either both projectName description or any one.
+   * @returns {Promise<AxiosResponse<ProjectsResponse>>} Promise that resolves to the response containing project data.
+   */
+  updateProject: async (
+    props: UpdateProjectRequest,
+  ): Promise<AxiosResponse<ProjectsResponse>> => {
+    try {
+      // Make the API request to get all projects
+      const response = await axios.patch<ProjectsResponse>(
+        "/project/update-project",
         props,
       );
 

@@ -67,4 +67,10 @@ export interface GetTaskByIdResponse {
 export interface ManageTaskRequest extends ManageTaskFormInput {
   projectId: number;
 }
+
+export interface UpdateProjectRequest {
+  projectName?: string;
+  description?: string;
+  projectId: number;
+}
 // Comments provide explanations for each interface, making the code more readable and understandable.
