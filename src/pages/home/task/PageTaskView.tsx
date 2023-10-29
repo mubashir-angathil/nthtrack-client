@@ -2,9 +2,10 @@ import { FC } from "react";
 import { Button, Box, Chip, Grid, Typography, Skeleton } from "@mui/material";
 import { useTask } from "./Helper";
 import { colors } from "../../../utils/helpers/configs/Colors";
+import UpdateButtonComponent from "../../../components/common/buttons/UpdateButtonComponent";
 
 const PageTaskView: FC = () => {
-  const { task, fetchCloseTaskById } = useTask();
+  const { task, fetchCloseTaskById, handleTaskUpdate } = useTask();
 
   return (
     <Grid container gap={2} mt={2}>
@@ -14,16 +15,25 @@ const PageTaskView: FC = () => {
           #task:
           {task.id === 0 ? <Skeleton width={30} height={40} /> : task.id}
         </Typography>
-        {/* Button to close task, disabled if task is not in "Opened" status */}
-        {task.status.name === "Opened" ? (
-          <Button
-            variant="contained"
+        <Grid>
+          {/* Button to update task */}
+          <UpdateButtonComponent
+            title="Update task"
             size="small"
-            onClick={async () => await fetchCloseTaskById()}
-          >
-            Close task
-          </Button>
-        ) : undefined}
+            onClick={handleTaskUpdate}
+            sx={{ mr: 1 }}
+          />
+          {/* Button to close task, disabled if task is not in "Opened" status */}
+          {task.status.name === "Opened" ? (
+            <Button
+              variant="contained"
+              size="small"
+              onClick={async () => await fetchCloseTaskById()}
+            >
+              Close task
+            </Button>
+          ) : undefined}
+        </Grid>
       </Grid>
 
       {/* Task Details */}

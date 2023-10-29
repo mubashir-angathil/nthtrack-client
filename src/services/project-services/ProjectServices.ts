@@ -11,6 +11,7 @@ import {
   ProjectsResponse,
   TaskResponse,
   UpdateProjectRequest,
+  UpdateTaskRequest,
 } from "./Helper";
 import { ApiError, NormalApiSuccessResponse } from "../Helper";
 import { ManageProjectFormInput } from "../../components/form/manage-project/Helper";
@@ -191,6 +192,31 @@ const projectServices = {
           trackerId,
           description,
         },
+      );
+
+      // Return the response
+      return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  /**
+   * UpdateProject
+   *
+   * UpdateProject project.
+   *
+   * @param {object} props - Object may containing either both projectName description or any one.
+   * @returns {Promise<AxiosResponse<ProjectsResponse>>} Promise that resolves to the response containing project data.
+   */
+  updateTask: async (
+    props: UpdateTaskRequest,
+  ): Promise<AxiosResponse<TaskResponse>> => {
+    try {
+      // Make the API request to get all projects
+      const response = await axios.patch<TaskResponse>(
+        "/project/update-task",
+        props,
       );
 
       // Return the response

@@ -28,7 +28,10 @@ const RhfSelectComponent = <TField extends FieldValues>({
   size = "medium",
   ...rest
 }: RhfSelectProps<TField>): JSX.Element => {
-  const { handleClose, handleOpen, open, data } = useRhfSelect(rest.apidetails);
+  const { handleClose, handleOpen, open, data } = useRhfSelect({
+    apidetails: rest.apidetails,
+    defaultValue: rest.defaultValue,
+  });
   return (
     <Controller
       name={name}
@@ -65,7 +68,7 @@ const RhfSelectComponent = <TField extends FieldValues>({
                   </IconButton>
                 )
               }
-              sx={{}}
+              onBlur={field.onBlur}
             >
               {data.map((item: { id: number; name: string }) => {
                 return (

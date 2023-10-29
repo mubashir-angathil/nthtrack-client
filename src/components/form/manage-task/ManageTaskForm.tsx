@@ -6,10 +6,13 @@ import SubmitButtonComponent from "../../common/buttons/SubmitButtonComponent";
 import { useManageTask } from "./Helper";
 import RhfSelectComponent from "../../common/textfield/select/RhfSelectComponent";
 import dataServices from "../../../services/data-services/DataServices";
+import { GetTaskByIdResponse } from "../../../services/project-services/Helper";
 
-const ManageTaskForm: FC = () => {
-  const { control, isSubmit, handleDialogClose, handleSubmit, onSubmit } =
-    useManageTask();
+const ManageTaskForm: FC<{ values?: GetTaskByIdResponse["data"] }> = ({
+  values,
+}) => {
+  const { control, isSubmitting, handleDialogClose, handleSubmit, onSubmit } =
+    useManageTask(values);
   return (
     <Box component="form" p={2} onSubmit={handleSubmit(onSubmit)}>
       <Stack gap={2} mt={2} mb={2}>
@@ -19,6 +22,7 @@ const ManageTaskForm: FC = () => {
           name="trackerId"
           size="small"
           required
+          defaultValue={values?.tracker}
           apidetails={{ api: dataServices.getTrackers }}
         />
         <RhfCKEditorComponent
@@ -31,7 +35,10 @@ const ManageTaskForm: FC = () => {
           <Button variant="outlined" color="error" onClick={handleDialogClose}>
             Close
           </Button>
-          <SubmitButtonComponent title="Create Project" loading={isSubmit} />
+          <SubmitButtonComponent
+            title={values ? "Update Project" : "Create Project"}
+            loading={isSubmitting}
+          />
         </Box>
       </Stack>
     </Box>

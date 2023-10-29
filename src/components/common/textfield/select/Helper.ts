@@ -19,9 +19,16 @@ export interface RhfSelectProps<TField extends FieldValues> {
   required?: boolean;
   autoComplete?: string;
   apidetails: DataApiDetails;
+  defaultValue?: { id: number; name: string };
 }
 
-export const useRhfSelect = ({ api }: DataApiDetails) => {
+export const useRhfSelect = ({
+  apidetails,
+  defaultValue,
+}: {
+  apidetails: DataApiDetails;
+  defaultValue?: { id: number; name: string };
+}) => {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<SelectFieldApiResponse["data"] | []>([]);
 
@@ -35,7 +42,7 @@ export const useRhfSelect = ({ api }: DataApiDetails) => {
 
   const fetchData = async () => {
     try {
-      const response = await api();
+      const response = await apidetails.api();
       if (response.status === 200 && response.data.success) {
         setData(response.data.data);
       } else throw Error("Data fetching id failed");
@@ -55,10 +62,16 @@ export const useRhfSelect = ({ api }: DataApiDetails) => {
   };
 
   useEffect(() => {
-    if (open && data.length === 0) {
+    if ((open && data.length === 0) || (defaultValue && data.length === 1)) {
       fetchData();
     }
   }, [open]);
+
+  useEffect(() => {
+    if (defaultValue) {
+      setData([defaultValue]);
+    }
+  }, [defaultValue]);
 
   return {
     data,

@@ -4,5 +4,6 @@ export interface CustomButtonComponentProps {
   onClick?: () => void;
   sx?: SxProps;
   loading?: boolean;
+  size?: "medium" | "small" | "large";
   disabled?: boolean;
 }

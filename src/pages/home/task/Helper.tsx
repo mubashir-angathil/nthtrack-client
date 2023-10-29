@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 import projectServices from "../../../services/project-services/ProjectServices";
 import {
   NavigateFunction,
@@ -11,10 +11,13 @@ import { ApiError } from "../../../services/Helper";
 import { GetTaskByIdResponse } from "../../../services/project-services/Helper";
 import routes from "../../../utils/helpers/routes/Routes";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
+import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
+import ManageTaskForm from "../../../components/form/manage-task/ManageTaskForm";
 
 export const useTask = () => {
   const params: Params = useParams();
   const navigate: NavigateFunction = useNavigate();
+  const { setDialog } = useDialogContext();
   const [taskId] = useState<number>(params.id ? parseInt(params.id) : 0);
   const [task, setTask] = useState<GetTaskByIdResponse["data"]>({
     id: 0,
@@ -25,6 +28,16 @@ export const useTask = () => {
     updatedAt: "",
     closedAt: null,
   });
+
+  const handleTaskUpdate = () => {
+    setDialog({
+      open: true,
+      form: {
+        title: "Update Task",
+        body: <ManageTaskForm values={task} />,
+      },
+    });
+  };
 
   // Function to fetch project details from the API
   const fetchProjectById = async () => {
@@ -74,14 +87,11 @@ export const useTask = () => {
     }
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      fetchProjectById();
-    }, 500);
-
+  useLayoutEffect(() => {
     if (taskId === 0) {
       navigate(routes.home.path);
     }
+    fetchProjectById();
   }, []);
-  return { task, fetchCloseTaskById };
+  return { task, fetchCloseTaskById, handleTaskUpdate };
 };

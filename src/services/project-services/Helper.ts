@@ -73,4 +73,9 @@ export interface UpdateProjectRequest {
   description?: string;
   projectId: number;
 }
+export interface UpdateTaskRequest {
+  trackerId?: number;
+  description?: string; // optional
+  taskId: number; // required
+}
 // Comments provide explanations for each interface, making the code more readable and understandable.
