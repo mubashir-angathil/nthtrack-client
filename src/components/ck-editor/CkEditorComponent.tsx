@@ -66,6 +66,9 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
                   handleEditorChange(_, editor, field)
                 }
                 onReady={handleEditorOnReady}
+                onBlur={field.onBlur}
+                ref={field.ref}
+                disabled={field.disabled}
               />
 
               {/* Error messages and character/word count display */}

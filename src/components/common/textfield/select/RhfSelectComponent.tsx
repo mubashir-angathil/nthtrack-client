@@ -3,10 +3,12 @@ import { RhfSelectProps, useRhfSelect } from "./Helper";
 import {
   FormControl,
   FormHelperText,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
 } from "@mui/material";
+import { Close } from "@mui/icons-material";
 
 /**
  * RhfSelectComponent
@@ -23,7 +25,7 @@ const RhfSelectComponent = <TField extends FieldValues>({
   control,
   rules,
   label = "",
-  size = "small",
+  size = "medium",
   ...rest
 }: RhfSelectProps<TField>): JSX.Element => {
   const { handleClose, handleOpen, open, data } = useRhfSelect(rest.apidetails);
@@ -52,10 +54,19 @@ const RhfSelectComponent = <TField extends FieldValues>({
                 return field.onChange(e);
               }}
               {...rest}
+              endAdornment={
+                typeof field.value === "number" && (
+                  <IconButton
+                    size="small"
+                    sx={{ mr: 2 }}
+                    onClick={() => field.onChange("")}
+                  >
+                    <Close fontSize="small" />
+                  </IconButton>
+                )
+              }
+              sx={{}}
             >
-              <MenuItem value={0}>
-                <em>None</em>
-              </MenuItem>
               {data.map((item: { id: number; name: string }) => {
                 return (
                   <MenuItem value={item.id} key={item.id}>
