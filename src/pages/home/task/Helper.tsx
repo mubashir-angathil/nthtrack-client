@@ -13,11 +13,17 @@ import routes from "../../../utils/helpers/routes/Routes";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
 import ManageTaskForm from "../../../components/form/manage-task/ManageTaskForm";
+import { enqueueSnackbar } from "notistack";
+import { useAlertContext } from "../../../utils/helpers/context/alert-context/AlertContext";
+import { useAlert } from "../../../components/common/alert/Helper";
 
 export const useTask = () => {
   const params: Params = useParams();
   const navigate: NavigateFunction = useNavigate();
   const { setDialog } = useDialogContext();
+  const { setAlert } = useAlertContext();
+  const { handleCloseAlert } = useAlert();
+
   const [taskId] = useState<number>(params.id ? parseInt(params.id) : 0);
   const [task, setTask] = useState<GetTaskByIdResponse["data"]>({
     id: 0,
@@ -35,6 +41,24 @@ export const useTask = () => {
       form: {
         title: "Update Task",
         body: <ManageTaskForm values={task} />,
+      },
+    });
+  };
+
+  const handleCloseTask = () => {
+    setAlert({
+      open: true,
+      alert: {
+        title: "Close Task",
+        message: "Are you sure?",
+        positiveButton: "Accept",
+        negativeButton: "Cancel",
+        response: async (res) => {
+          if (res === "accept") {
+            handleCloseAlert();
+            await fetchCloseTaskById();
+          }
+        },
       },
     });
   };
@@ -69,21 +93,27 @@ export const useTask = () => {
   // Function to close the task by id  the API
   const fetchCloseTaskById = async () => {
     try {
-      const task = await projectServices.closeTaskById({
-        taskId,
+      const project = await projectServices.closeTaskById({
+        taskId: task.id,
       });
 
-      if (task.status === 200 && task.data.success) {
-        alert(task.data.message);
+      if (project.status === 200 && project.data.success) {
+        enqueueSnackbar({
+          message: project.data.message,
+          variant: "success",
+        });
+        navigate(routes.home.path);
       } else {
-        throw generalFunctions.customError(task as any);
+        throw generalFunctions.customError(project as any);
       }
     } catch (error) {
       const { data } = error as ApiError;
-      if (!data.success) {
-        alert(data.message);
+      if (data.success === false) {
+        enqueueSnackbar({
+          message: data.message,
+          variant: "error",
+        });
       }
-      console.error(error);
     }
   };
 
@@ -93,5 +123,5 @@ export const useTask = () => {
     }
     fetchProjectById();
   }, []);
-  return { task, fetchCloseTaskById, handleTaskUpdate };
+  return { task, handleCloseTask, handleTaskUpdate };
 };

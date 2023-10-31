@@ -5,7 +5,7 @@ import { colors } from "../../../utils/helpers/configs/Colors";
 import UpdateButtonComponent from "../../../components/common/buttons/UpdateButtonComponent";
 
 const PageTaskView: FC = () => {
-  const { task, fetchCloseTaskById, handleTaskUpdate } = useTask();
+  const { task, handleCloseTask, handleTaskUpdate } = useTask();
 
   return (
     <Grid container gap={2} mt={2}>
@@ -25,11 +25,7 @@ const PageTaskView: FC = () => {
           />
           {/* Button to close task, disabled if task is not in "Opened" status */}
           {task.status.name === "Opened" ? (
-            <Button
-              variant="contained"
-              size="small"
-              onClick={async () => await fetchCloseTaskById()}
-            >
+            <Button variant="contained" size="small" onClick={handleCloseTask}>
               Close task
             </Button>
           ) : undefined}
