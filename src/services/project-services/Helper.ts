@@ -8,7 +8,7 @@ import {
 // Interface for individual project details
 interface Project {
   id: number; // Project ID
-  projectName: string; // Project name
+  name: string; // Project name
   description: string; // Project description
   createdAt: string; // Project creation timestamp
   updatedAt: string; // Project last update timestamp
@@ -69,7 +69,7 @@ export interface ManageTaskRequest extends ManageTaskFormInput {
 }
 
 export interface UpdateProjectRequest {
-  projectName?: string;
+  name?: string;
   description?: string;
   projectId: number;
 }

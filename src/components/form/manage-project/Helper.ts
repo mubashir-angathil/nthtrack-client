@@ -14,7 +14,7 @@ export interface ManageProjectFormProps {
 }
 // Define the validation schema for the sign-in form
 export const manageProjectFormSchema = object({
-  projectName: string().min(2).max(52).required(),
+  name: string().min(2).max(52).required(),
   description: string().min(2).max(1002).required(),
 }).required();
 
@@ -36,7 +36,7 @@ export const useManageProject = (values?: UpdateProjectRequest) => {
     resolver: yupResolver(manageProjectFormSchema),
     defaultValues: {
       description: "",
-      projectName: "",
+      name: "",
     },
   });
   // Handle form submission
@@ -48,8 +48,7 @@ export const useManageProject = (values?: UpdateProjectRequest) => {
         ...newProject,
         projectId: values.projectId,
       };
-      touchedFields?.projectName === undefined &&
-        delete updatedProject.projectName;
+      touchedFields?.name === undefined && delete updatedProject.name;
       touchedFields?.description === undefined &&
         delete updatedProject.description;
 
@@ -69,7 +68,7 @@ export const useManageProject = (values?: UpdateProjectRequest) => {
   const createNewProject = async (newProject: ManageProjectFormInput) => {
     try {
       const { data, status } = await projectServices.createProject(newProject);
-      if (data?.success && status === 200) {
+      if (data?.success && status === 201) {
         handleDialogClose();
         enqueueSnackbar({
           message: data?.message,
@@ -119,8 +118,8 @@ export const useManageProject = (values?: UpdateProjectRequest) => {
   };
 
   useEffect(() => {
-    if (values?.projectName && values?.description) {
-      setValue("projectName", values.projectName);
+    if (values?.name && values?.description) {
+      setValue("name", values.name);
       setValue("description", values.description);
     }
 

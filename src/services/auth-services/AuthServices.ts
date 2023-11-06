@@ -1,6 +1,7 @@
 import axios from "../api-instance/AuthInstance";
 import { AuthRequest, AuthResponse, NewTokenResponse } from "./Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
+import { AxiosResponse } from "axios";
 
 /**
  * Authentication Services Module
@@ -41,10 +42,12 @@ const authenticationServices = {
    * @param {AuthRequest} props - User authentication details.
    * @returns {Promise<AuthResponse>} User authentication response.
    */
-  doSignIn: async (props: AuthRequest): Promise<AuthResponse> => {
+  doSignIn: async (
+    props: AuthRequest,
+  ): Promise<AxiosResponse<AuthResponse>> => {
     return await axios
-      .post<AuthResponse>("/sign-in", props)
-      .then((response) => response.data)
+      .post<AuthResponse>("/login", props)
+      .then((response) => response)
       .catch((error) => {
         // Re-throw the error with the custom error type
         throw generalFunctions.customError(error);

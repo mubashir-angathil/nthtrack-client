@@ -46,7 +46,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
       {projects.length > 0 ? (
         // Displaying project cards
 
-        projects.map(({ projectName, id, taskCount, description, status }) => {
+        projects.map(({ name, id, taskCount, description, status }) => {
           return (
             // Individual project card
             <Card
@@ -77,7 +77,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                         lineHeight: 1,
                       }}
                     >
-                      {projectName.toLocaleUpperCase()}
+                      {name.toLocaleUpperCase()}
                     </Typography>
                     <Tooltip title="Status">
                       <Chip

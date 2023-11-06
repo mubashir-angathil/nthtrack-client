@@ -32,7 +32,7 @@ const projectServices = {
     try {
       // Make the API request to get all projects
       const response = await axios.post<ProjectsResponse>(
-        "/project/create-project",
+        "/project/create",
         props,
       );
 
@@ -87,11 +87,11 @@ const projectServices = {
     const params = {
       page,
       limit,
-      projectName: searchKey,
+      name: searchKey,
     };
 
     // Remove projectName property from params if searchKey is empty or undefined
-    searchKey === "" || (searchKey === undefined && delete params.projectName);
+    searchKey === "" || (searchKey === undefined && delete params.name);
 
     try {
       // Make the API request to get all projects

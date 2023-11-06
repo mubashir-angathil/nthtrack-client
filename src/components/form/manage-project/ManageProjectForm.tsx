@@ -20,7 +20,7 @@ const ManageProjectForm: FC<{ values?: UpdateProjectRequest }> = ({
         <FormHelperText sx={{ fontSize: 15 }}>Project Title *</FormHelperText>
         <RhfTextfieldComponent
           control={control}
-          name="projectName"
+          name="name"
           size="small"
           required
         />

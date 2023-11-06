@@ -7,7 +7,7 @@ export interface AuthResponse {
   success: boolean;
   message: string;
   fieldErrors?: Array<{ [key: string]: unknown }>;
-  authDetails: {
+  data: {
     id: number;
     username: string;
     accessToken: string;

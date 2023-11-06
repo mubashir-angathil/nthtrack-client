@@ -51,19 +51,20 @@ export const useSignIn = () => {
   const handleSignIn = async (props: SignInFormInputs) => {
     try {
       // Call the sign-in API from authenticationServices
-      const { authDetails, success } = await authenticationServices.doSignIn({
+      const {
+        data: { success, data },
+      } = await authenticationServices.doSignIn({
         username: props.username,
         password: props.password,
       });
-
       // If sign-in is successful, set authentication details in cookies
-      if (success && authDetails) {
-        cookieServices.setAuthDetails(authDetails);
+      if (success && data) {
+        cookieServices.setAuthDetails(data);
         setAuthDetails({
           auth: true,
-          user: authDetails,
+          user: data,
         });
-        // navigate(routes.home.path, { replace: true });
+        navigate(routes.home.path, { replace: true });
       }
     } catch (error) {
       // Handle errors from the sign-ip API
