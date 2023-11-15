@@ -1,18 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { object, string, InferType, number } from "yup";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDialog } from "../../common/dialog/Helper";
 import projectServices from "../../../services/project-services/ProjectServices";
 import { ApiError } from "../../../services/Helper";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 import { enqueueSnackbar } from "notistack";
-import { Location, useLocation } from "react-router-dom";
+import {
+  NavigateFunction,
+  Params,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import {
   GetTaskByIdResponse,
   ManageTaskRequest,
   UpdateTaskRequest,
 } from "../../../services/project-services/Helper";
+import routes from "../../../utils/helpers/routes/Routes";
 
 export interface ManageTaskFormProps {
   updateProjects: () => Promise<void>;
@@ -28,8 +33,11 @@ export type ManageTaskFormInput = InferType<typeof manageTaskFormSchema>;
 
 // Custom hook for handling sign-up logic
 export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
-  const { state }: Location = useLocation();
-  const { handleDialogClose } = useDialog();
+  const navigate: NavigateFunction = useNavigate();
+  const params: Params = useParams();
+  const [projectId] = useState(
+    params?.projectId ? parseInt(params.projectId) : 0,
+  );
 
   // Initialize the React Hook Form with validation resolver and default values
   const {
@@ -50,13 +58,17 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
   const onSubmit: SubmitHandler<ManageTaskFormInput> = async (
     newTask: ManageTaskFormInput,
   ) => {
-    if (state?.projectId && !values) {
+    if (projectId && !values) {
       await createNewTask({
         ...newTask,
-        projectId: parseInt(state.projectId),
+        projectId,
       });
     } else if (values) {
-      const updatedTask: UpdateTaskRequest = { ...newTask, taskId: values.id };
+      const updatedTask: UpdateTaskRequest = {
+        ...newTask,
+        taskId: values.id,
+        projectId,
+      };
       touchedFields?.description === undefined &&
         delete updatedTask.description;
       touchedFields?.trackerId === undefined && delete updatedTask.trackerId;
@@ -81,7 +93,7 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
       const { data, status } = await projectServices.createTask(newTask);
 
       if (data?.success && status === 200) {
-        handleDialogClose();
+        generalFunctions.goBack();
         enqueueSnackbar({
           message: data.message,
           variant: "success",
@@ -93,7 +105,6 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
         data: { message },
       } = error as ApiError;
 
-      generalFunctions.fieldErrorsHandler(error as ApiError, setError);
       message.split(",").map((value) => {
         enqueueSnackbar({
           message: value,
@@ -105,9 +116,12 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
 
   const updateTask = async (newTask: UpdateTaskRequest) => {
     try {
-      const { data, status } = await projectServices.updateTask(newTask);
+      const { data, status } = await projectServices.updateTask({
+        ...newTask,
+        projectId,
+      });
       if (data?.success && status === 200) {
-        handleDialogClose();
+        generalFunctions.goBack();
         enqueueSnackbar({
           message: data?.message,
           variant: "success",
@@ -137,10 +151,15 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
     return () => reset();
   }, [setValue, values, reset]);
 
+  useEffect(() => {
+    if (projectId === 0) {
+      navigate(routes.projects.path, { replace: true });
+    }
+  }, [navigate, projectId]);
+
   return {
     isSubmitting,
     handleSubmit,
-    handleDialogClose,
     control,
     onSubmit,
   };

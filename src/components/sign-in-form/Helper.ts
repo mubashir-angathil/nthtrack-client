@@ -13,7 +13,7 @@ import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 
 // Define the validation schema for the sign-in form
 export const signInFormSchema = object({
-  username: string().email().required(),
+  usernameOrEmail: string().email().required(),
   password: string().min(4).required(),
 }).required();
 
@@ -28,7 +28,7 @@ export const useSignIn = () => {
   const { handleSubmit, control, setError } = useForm<SignInFormInputs>({
     resolver: yupResolver(signInFormSchema),
     defaultValues: {
-      username: "",
+      usernameOrEmail: "",
       password: "",
     },
   });
@@ -54,7 +54,7 @@ export const useSignIn = () => {
       const {
         data: { success, data },
       } = await authenticationServices.doSignIn({
-        username: props.username,
+        usernameOrEmail: props.usernameOrEmail,
         password: props.password,
       });
       // If sign-in is successful, set authentication details in cookies
@@ -64,7 +64,9 @@ export const useSignIn = () => {
           auth: true,
           user: data,
         });
-        navigate(routes.home.path, { replace: true });
+        navigate(routes.home.path, {
+          replace: true,
+        });
       }
     } catch (error) {
       // Handle errors from the sign-ip API

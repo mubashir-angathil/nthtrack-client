@@ -35,10 +35,10 @@ const SignInFormComponent: React.FC = () => {
         <RhfTextfieldComponent
           required
           type="email"
-          name="username"
-          label="Username"
+          name="usernameOrEmail"
+          label="Username / Email"
           control={control}
-          placeholder="john@gmail.com"
+          placeholder="John / john@gmail.com"
         />
       </FormControl>
 

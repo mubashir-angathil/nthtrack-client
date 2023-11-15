@@ -2,10 +2,8 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import projectServices from "../../../../services/project-services/ProjectServices";
 import {
-  Location,
   NavigateFunction,
   Params,
-  useLocation,
   useNavigate,
   useParams,
 } from "react-router-dom";
@@ -18,14 +16,10 @@ import { ApiError } from "../../../../services/Helper";
 import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
 import routes from "../../../../utils/helpers/routes/Routes";
 import { debounce } from "@mui/material";
-import { DialogContextProps } from "../../../../utils/helpers/context/dialog-context/Helper";
-import ManageTaskForm from "../../../../components/form/manage-task/ManageTaskForm";
 import { enqueueSnackbar } from "notistack";
 import { number, object, InferType } from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
-import ManageProjectForm from "../../../../components/form/manage-project/ManageProjectForm";
 import { useAlertContext } from "../../../../utils/helpers/context/alert-context/AlertContext";
 import { useAlert } from "../../../../components/common/alert/Helper";
 export const filterFormSchema = object({
@@ -46,7 +40,6 @@ interface ApiConfig extends GetAllTasksRequest {
 export const useViewProject = () => {
   // Extract necessary parameters and functions from React Router
   const params: Params = useParams();
-  const location: Location = useLocation();
   const { setAlert } = useAlertContext();
   const navigate: NavigateFunction = useNavigate();
   const { handleCloseAlert } = useAlert();
@@ -57,18 +50,16 @@ export const useViewProject = () => {
     trackerId: undefined,
     statusId: undefined,
     searchKey: undefined,
-    projectId: params?.id ? parseInt(params.id) : 0,
+    projectId: params?.projectId ? parseInt(params.projectId) : 0,
   };
   const { control, watch } = useForm({
     resolver: yupResolver<FilterInput>(filterFormSchema),
   });
 
-  const { setDialog } = useDialogContext();
-
   // State variables for project and tasks, as well as API configuration
   const [project, setProject] = useState<GetProjectByIdResponse["data"]>({
     id: 0,
-    projectName: "",
+    name: "",
     description: "",
     createdAt: "",
     updatedAt: "",
@@ -76,14 +67,6 @@ export const useViewProject = () => {
   });
   const [tasks, setTasks] = useState<TaskResponse["data"]>([]);
   const [apiConfig, setApiConfig] = useState<ApiConfig>(initialApiConfig);
-
-  const dialog: DialogContextProps["dialog"] = {
-    open: true,
-    form: {
-      title: "New Task",
-      body: <ManageTaskForm />,
-    },
-  };
 
   // Debounced search function to handle search input changes
   const handleSearch = debounce((value: string) => {
@@ -145,21 +128,15 @@ export const useViewProject = () => {
   };
 
   const handleUpdateProject = () => {
-    setDialog({
-      open: true,
-      form: {
-        title: "Update Project",
-        body: (
-          <ManageProjectForm
-            values={{
-              projectId: project.id,
-              projectName: project.projectName,
-              description: project.description,
-            }}
-          />
-        ),
-      },
-    });
+    if (routes.projects.update?.path) {
+      navigate(routes.projects.update.path);
+    }
+  };
+
+  const handleCreateTask = () => {
+    if (routes.tasks.create?.path) {
+      navigate(routes.tasks.path + routes.tasks.create.path);
+    }
   };
 
   const handleCloseProject = () => {
@@ -259,8 +236,6 @@ export const useViewProject = () => {
           variant: "success",
         });
         navigate(routes.home.path);
-      } else {
-        throw generalFunctions.customError(project as any);
       }
     } catch (error) {
       const { data } = error as ApiError;
@@ -288,8 +263,6 @@ export const useViewProject = () => {
     // console.log(apiConfig);
     if (apiConfig.projectId === 0) {
       navigate(routes.projects.path, { replace: true });
-    } else {
-      location.state = { projectId: params.id };
     }
 
     fetchProjectById();
@@ -315,14 +288,13 @@ export const useViewProject = () => {
   return {
     project,
     tasks,
-    dialog,
     control,
     apiConfig,
-    setDialog,
     fetchTasks,
     handleCloseProject,
     handleTaskLoading,
     handleSearchClear,
+    handleCreateTask,
     handleUpdateProject,
     handleChange,
   };

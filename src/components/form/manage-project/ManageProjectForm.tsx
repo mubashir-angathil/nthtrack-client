@@ -6,14 +6,14 @@ import { Button, FormHelperText } from "@mui/material";
 import { useManageProject } from "./Helper";
 import RhfTextfieldComponent from "../../common/textfield/RhfTextFieldComponent";
 import SubmitButtonComponent from "../../common/buttons/SubmitButtonComponent";
-import { UpdateProjectRequest } from "../../../services/project-services/Helper";
+import { GetProjectByIdResponse } from "../../../services/project-services/Helper";
+import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 
-const ManageProjectForm: FC<{ values?: UpdateProjectRequest }> = ({
+const ManageProjectForm: FC<{ values?: GetProjectByIdResponse["data"] }> = ({
   values,
 }) => {
-  const { control, isSubmitting, handleDialogClose, handleSubmit, onSubmit } =
+  const { control, isSubmitting, handleSubmit, onSubmit } =
     useManageProject(values);
-
   return (
     <Box p={2} component="form" onSubmit={handleSubmit(onSubmit)}>
       <Stack gap={2} mt={2} mb={2}>
@@ -31,7 +31,11 @@ const ManageProjectForm: FC<{ values?: UpdateProjectRequest }> = ({
           required
         />
         <Box display="flex" justifyContent="end" columnGap={1}>
-          <Button variant="outlined" color="error" onClick={handleDialogClose}>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={generalFunctions.goBack}
+          >
             Close
           </Button>
           <SubmitButtonComponent

@@ -2,12 +2,14 @@ import { useEffect } from "react";
 import { object, string, InferType } from "yup";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDialog } from "../../common/dialog/Helper";
 import projectServices from "../../../services/project-services/ProjectServices";
 import { ApiError } from "../../../services/Helper";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 import { enqueueSnackbar } from "notistack";
-import { UpdateProjectRequest } from "../../../services/project-services/Helper";
+import {
+  GetProjectByIdResponse,
+  UpdateProjectRequest,
+} from "../../../services/project-services/Helper";
 
 export interface ManageProjectFormProps {
   updateProjects: () => Promise<void>;
@@ -22,8 +24,7 @@ export const manageProjectFormSchema = object({
 export type ManageProjectFormInput = InferType<typeof manageProjectFormSchema>;
 
 // Custom hook for handling sign-up logic
-export const useManageProject = (values?: UpdateProjectRequest) => {
-  const { handleDialogClose } = useDialog();
+export const useManageProject = (values?: GetProjectByIdResponse["data"]) => {
   // Initialize the React Hook Form with validation resolver and default values
   const {
     handleSubmit,
@@ -46,8 +47,9 @@ export const useManageProject = (values?: UpdateProjectRequest) => {
     if (values) {
       const updatedProject: UpdateProjectRequest = {
         ...newProject,
-        projectId: values.projectId,
+        projectId: values.id,
       };
+
       touchedFields?.name === undefined && delete updatedProject.name;
       touchedFields?.description === undefined &&
         delete updatedProject.description;
@@ -69,7 +71,7 @@ export const useManageProject = (values?: UpdateProjectRequest) => {
     try {
       const { data, status } = await projectServices.createProject(newProject);
       if (data?.success && status === 201) {
-        handleDialogClose();
+        generalFunctions.goBack();
         enqueueSnackbar({
           message: data?.message,
           variant: "success",
@@ -95,7 +97,7 @@ export const useManageProject = (values?: UpdateProjectRequest) => {
     try {
       const { data, status } = await projectServices.updateProject(newProject);
       if (data?.success && status === 200) {
-        handleDialogClose();
+        generalFunctions.goBack();
         enqueueSnackbar({
           message: data?.message,
           variant: "success",
@@ -128,7 +130,6 @@ export const useManageProject = (values?: UpdateProjectRequest) => {
   return {
     isSubmitting,
     handleSubmit,
-    handleDialogClose,
     control,
     onSubmit,
   };

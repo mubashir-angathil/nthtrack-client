@@ -77,5 +77,10 @@ export interface UpdateTaskRequest {
   trackerId?: number;
   description?: string; // optional
   taskId: number; // required
+  projectId: number; //required
+}
+
+export interface TeamProjectsRequest extends ApiRequestWithPaginationAndSearch {
+  teamId: number;
 }
 // Comments provide explanations for each interface, making the code more readable and understandable.

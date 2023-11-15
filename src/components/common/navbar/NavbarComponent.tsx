@@ -11,11 +11,13 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import navbarStyes from "./Style";
-
-const settings = ["Profile", "Logout"];
+import cookieServices from "../../../services/storage-services/CookieServices";
+import { useAuthContext } from "../../../utils/helpers/context/auth-context/AuthContext";
+import { initialAuthDetailsState } from "../../../utils/helpers/context/auth-context/Helper";
 
 export const NavbarComponent = () => {
   const styles = navbarStyes;
+  const { setAuthDetails } = useAuthContext();
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
@@ -29,6 +31,18 @@ export const NavbarComponent = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const settings = [
+    {
+      item: "Logout",
+      action: () => {
+        handleCloseUserMenu();
+
+        cookieServices.clearAuthDetails();
+        setAuthDetails(initialAuthDetailsState);
+      },
+    },
+  ];
 
   return (
     <AppBar position="fixed">
@@ -72,8 +86,8 @@ export const NavbarComponent = () => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting.item} onClick={setting.action}>
+                  <Typography textAlign="center">{setting.item}</Typography>
                 </MenuItem>
               ))}
             </Menu>

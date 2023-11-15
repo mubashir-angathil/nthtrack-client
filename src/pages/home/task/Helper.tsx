@@ -11,8 +11,6 @@ import { ApiError } from "../../../services/Helper";
 import { GetTaskByIdResponse } from "../../../services/project-services/Helper";
 import routes from "../../../utils/helpers/routes/Routes";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
-import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
-import ManageTaskForm from "../../../components/form/manage-task/ManageTaskForm";
 import { enqueueSnackbar } from "notistack";
 import { useAlertContext } from "../../../utils/helpers/context/alert-context/AlertContext";
 import { useAlert } from "../../../components/common/alert/Helper";
@@ -20,11 +18,14 @@ import { useAlert } from "../../../components/common/alert/Helper";
 export const useTask = () => {
   const params: Params = useParams();
   const navigate: NavigateFunction = useNavigate();
-  const { setDialog } = useDialogContext();
   const { setAlert } = useAlertContext();
   const { handleCloseAlert } = useAlert();
 
-  const [taskId] = useState<number>(params.id ? parseInt(params.id) : 0);
+  const [ids] = useState<{ taskId: number; projectId: number }>({
+    taskId: params.taskId ? parseInt(params.taskId) : 0,
+    projectId: params.projectId ? parseInt(params.projectId) : 0,
+  });
+
   const [task, setTask] = useState<GetTaskByIdResponse["data"]>({
     id: 0,
     description: "",
@@ -36,13 +37,9 @@ export const useTask = () => {
   });
 
   const handleTaskUpdate = () => {
-    setDialog({
-      open: true,
-      form: {
-        title: "Update Task",
-        body: <ManageTaskForm values={task} />,
-      },
-    });
+    if (routes.tasks.update?.path) {
+      navigate(routes.tasks.update.path);
+    }
   };
 
   const handleCloseTask = () => {
@@ -64,18 +61,18 @@ export const useTask = () => {
   };
 
   // Function to fetch project details from the API
-  const fetchProjectById = async () => {
+  const fetchTaskById = async () => {
     try {
       // Call the API to get project details based on the current API configuration
       const response = await projectServices.getTasksById({
-        taskId,
+        taskId: ids.taskId,
+        projectId: ids.projectId,
       });
 
       const {
         status,
         data: { data, message, success },
       } = response;
-
       // If the API call is successful, update project details
       if (status === 200 && success) {
         setTask(data);
@@ -86,7 +83,11 @@ export const useTask = () => {
     } catch (error) {
       // Handle API errors
       const { data } = error as ApiError;
-      console.error(data);
+
+      enqueueSnackbar({
+        message: data?.message,
+        variant: "error",
+      });
     }
   };
 
@@ -94,6 +95,7 @@ export const useTask = () => {
   const fetchCloseTaskById = async () => {
     try {
       const project = await projectServices.closeTaskById({
+        projectId: ids.projectId,
         taskId: task.id,
       });
 
@@ -102,7 +104,7 @@ export const useTask = () => {
           message: project.data.message,
           variant: "success",
         });
-        navigate(routes.home.path);
+        generalFunctions.goBack();
       } else {
         throw generalFunctions.customError(project as any);
       }
@@ -118,10 +120,10 @@ export const useTask = () => {
   };
 
   useLayoutEffect(() => {
-    if (taskId === 0) {
-      navigate(routes.home.path);
+    if (ids.taskId === 0 || ids.projectId === 0) {
+      generalFunctions.goBack();
     }
-    fetchProjectById();
+    fetchTaskById();
   }, []);
   return { task, handleCloseTask, handleTaskUpdate };
 };

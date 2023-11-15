@@ -1,5 +1,10 @@
 export interface AuthRequest {
+  usernameOrEmail: string;
+  password: string;
+}
+export interface SignUpRequest {
   username: string;
+  email: string;
   password: string;
 }
 
@@ -10,6 +15,7 @@ export interface AuthResponse {
   data: {
     id: number;
     username: string;
+    email: string;
     accessToken: string;
     refreshToken: string;
   };

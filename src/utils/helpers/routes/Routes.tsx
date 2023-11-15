@@ -5,6 +5,9 @@ import PageViewProject from "../../../pages/home/project/view-project/PageViewPr
 import PageSignIn from "../../../pages/public/sign-in/PageSignIn";
 import PageSignUp from "../../../pages/public/sign-up/PageSignUp";
 import { RouteConfigsType } from "./Helper";
+import PageTeamProjects from "../../../pages/home/team/project/PageTeamProjects";
+import PageManageProject from "../../../pages/home/project/manage-project/PageManageProject";
+import PageManageTask from "../../../pages/home/task/manage-task/PageManageTask";
 
 // Define your routes using the RouteConfigsType
 const routes: RouteConfigsType = {
@@ -31,12 +34,33 @@ const routes: RouteConfigsType = {
   projects: {
     path: "project/", // Dynamic parameter :id
     element: <PageViewProject />, // React component to render
+    update: {
+      path: "update",
+      element: <PageManageProject type="update" />,
+    },
+    create: {
+      path: "create",
+      element: <PageManageProject type="create" />,
+    },
   },
 
   // Task Route
   tasks: {
     path: "task/", // Dynamic parameter :id
     element: <PageTaskView />, // React component to render
+    create: {
+      path: "create",
+      element: <PageManageTask type="create" />,
+    },
+    update: {
+      path: "update",
+      element: <PageManageTask type="update" />,
+    },
+  },
+
+  team: {
+    path: "",
+    element: <PageTeamProjects />,
   },
 };
 

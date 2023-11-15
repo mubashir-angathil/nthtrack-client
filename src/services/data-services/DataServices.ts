@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from "axios";
 import axios from "../api-instance/Instance";
-import { SelectFieldApiResponse } from "./Helper";
+import { SelectFieldApiResponse, Teams } from "./Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 import { ApiError } from "../Helper";
 const dataServices = {
@@ -29,6 +29,14 @@ const dataServices = {
   getStatus: async (): Promise<AxiosResponse<SelectFieldApiResponse>> => {
     try {
       const response = await axios.get<SelectFieldApiResponse>("data/statuses");
+      return response;
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  getTeams: async (): Promise<AxiosResponse<Teams>> => {
+    try {
+      const response = await axios.get<Teams>("data/teams");
       return response;
     } catch (error) {
       throw generalFunctions.customError(error as AxiosError<ApiError>);

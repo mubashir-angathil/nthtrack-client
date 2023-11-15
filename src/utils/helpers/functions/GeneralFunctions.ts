@@ -80,6 +80,7 @@ const generalFunctions = {
     }
     return false;
   },
+  goBack: () => history.go(-1),
 };
 
 export default generalFunctions;

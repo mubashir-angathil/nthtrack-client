@@ -4,6 +4,7 @@ import cookieServices from "../storage-services/CookieServices";
 import { Tokens } from "../storage-services/Helper";
 import authenticationServices from "../auth-services/AuthServices";
 import { MessageHelper } from "../../utils/helpers/constants/Constants";
+import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 
 // Create a new axios instance for project-related API requests
 const projectInstance = axios.create({
@@ -86,6 +87,8 @@ projectInstance.interceptors.response.use(
         // Reject the promise with the error
         return Promise.reject(error);
       }
+    } else if (error.response.status === 403) {
+      generalFunctions.goBack();
     }
 
     // Reject the promise with the original error for other cases

@@ -32,12 +32,11 @@ const PageViewProject: FC = () => {
     project,
     tasks,
     control,
-    dialog,
     apiConfig,
     handleTaskLoading,
     handleCloseProject,
     handleChange,
-    setDialog,
+    handleCreateTask,
     handleSearchClear,
     handleUpdateProject,
   } = useViewProject();
@@ -46,11 +45,11 @@ const PageViewProject: FC = () => {
     <Grid container gap={2}>
       {/* Project Details Section */}
       <Grid item xs={12} display="flex" justifyContent="space-between" mt={2}>
-        {project.projectName === "" ? (
+        {project.name === "" ? (
           <Skeleton width={200} height={40} />
         ) : (
           <Typography variant="h4" overflow="auto" flexWrap="wrap">
-            {project.projectName}
+            {project.name}
           </Typography>
         )}
 
@@ -76,11 +75,9 @@ const PageViewProject: FC = () => {
           <Button
             variant="contained"
             startIcon={<PluseIcon />}
-            onClick={() => {
-              setDialog(dialog);
-            }}
+            onClick={handleCreateTask}
           >
-            Create Issue
+            Create Task
           </Button>
         </Box>
       </Grid>

@@ -7,11 +7,12 @@ import { useManageTask } from "./Helper";
 import RhfSelectComponent from "../../common/textfield/select/RhfSelectComponent";
 import dataServices from "../../../services/data-services/DataServices";
 import { GetTaskByIdResponse } from "../../../services/project-services/Helper";
+import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 
 const ManageTaskForm: FC<{ values?: GetTaskByIdResponse["data"] }> = ({
   values,
 }) => {
-  const { control, isSubmitting, handleDialogClose, handleSubmit, onSubmit } =
+  const { control, isSubmitting, handleSubmit, onSubmit } =
     useManageTask(values);
   return (
     <Box component="form" p={2} onSubmit={handleSubmit(onSubmit)}>
@@ -32,11 +33,15 @@ const ManageTaskForm: FC<{ values?: GetTaskByIdResponse["data"] }> = ({
           required
         />
         <Box display="flex" justifyContent="end" columnGap={1}>
-          <Button variant="outlined" color="error" onClick={handleDialogClose}>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={generalFunctions.goBack}
+          >
             Close
           </Button>
           <SubmitButtonComponent
-            title={values ? "Update Project" : "Create Project"}
+            title={values ? "Update Task" : "Create Task"}
             loading={isSubmitting}
           />
         </Box>

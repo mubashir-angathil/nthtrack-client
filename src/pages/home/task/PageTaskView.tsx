@@ -71,7 +71,7 @@ const PageTaskView: FC = () => {
         </Typography>
 
         {/* Task Description */}
-        <Typography gutterBottom color="ActiveBorder">
+        <Typography gutterBottom color={colors.secondaryText}>
           Description:
         </Typography>
         {task.description === "" ? (

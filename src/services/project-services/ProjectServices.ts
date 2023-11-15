@@ -10,6 +10,7 @@ import {
   ManageTaskRequest,
   ProjectsResponse,
   TaskResponse,
+  TeamProjectsRequest,
   UpdateProjectRequest,
   UpdateTaskRequest,
 } from "./Helper";
@@ -57,7 +58,7 @@ const projectServices = {
     try {
       // Make the API request to get all projects
       const response = await axios.patch<ProjectsResponse>(
-        "/project/update-project",
+        "/project/update",
         props,
       );
 
@@ -215,7 +216,7 @@ const projectServices = {
     try {
       // Make the API request to get all projects
       const response = await axios.patch<TaskResponse>(
-        "/project/update-task",
+        `/project/${props.projectId}/task/update`,
         props,
       );
 
@@ -236,12 +237,14 @@ const projectServices = {
    */
   getTasksById: async ({
     taskId,
+    projectId,
   }: {
     taskId: number;
+    projectId: number;
   }): Promise<AxiosResponse<GetTaskByIdResponse>> => {
     try {
       const response = await axios.get<GetTaskByIdResponse>(
-        `/project/task/${taskId}`,
+        `/project/${projectId}/task/${taskId}`,
         {
           params: { taskId },
         },
@@ -286,18 +289,49 @@ const projectServices = {
    */
   closeTaskById: async ({
     taskId,
+    projectId,
   }: {
     taskId: number;
+    projectId: number;
   }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
     try {
       const response = await axios.patch<NormalApiSuccessResponse>(
-        "project/task/close",
-        {
-          taskId,
-        },
+        `project/${projectId}/task/${taskId}/close`,
       );
       return response;
     } catch (error) {
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  getTeamProjects: async ({
+    page,
+    limit,
+    searchKey,
+    teamId,
+  }: TeamProjectsRequest): Promise<AxiosResponse<ProjectsResponse>> => {
+    // Prepare request parameters
+    const params = {
+      page,
+      limit,
+      name: searchKey,
+    };
+
+    // Remove projectName property from params if searchKey is empty or undefined
+    searchKey === "" || (searchKey === undefined && delete params.name);
+
+    try {
+      // Make the API request to get all projects
+      const response = await axios.get<ProjectsResponse>(
+        `/project/team/${teamId}`,
+        {
+          params,
+        },
+      );
+
+      // Return the response
+      return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
