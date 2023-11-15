@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
-import { Grid, Button, TextField, IconButton } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import { Grid, TextField, IconButton } from "@mui/material";
 import { Search as SearchIcon, Clear as ClearIcon } from "@mui/icons-material";
 import { useProjects } from "./Helper";
 import ProjectCardComponent from "../../../../components/card/project-card/ProjectCardComponent";
@@ -12,7 +11,6 @@ const PageTeamProjects: React.FC = () => {
     projects,
     handleClear,
     handleChange,
-    handleCreateProject,
     handleProjectLoading,
     apiConfig,
   } = useProjects();
@@ -21,13 +19,6 @@ const PageTeamProjects: React.FC = () => {
     <Grid container gap={2}>
       {/* Section for creating a new project */}
       <Grid item xs={12} display="flex" justifyContent="space-between">
-        <Button
-          variant="contained"
-          endIcon={<AddIcon />}
-          onClick={handleCreateProject}
-        >
-          Create Project
-        </Button>
         {/* Search input field */}
         <TextField
           id="project-search-field"

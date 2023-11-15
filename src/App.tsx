@@ -72,9 +72,22 @@ const App: React.FC = () => {
                     <Route path={routes.projects.path.concat(":projectId")}>
                       <Route index element={routes.projects.element} />
                       <Route
-                        path={routes.tasks.path.concat(":taskId")}
-                        element={routes.tasks.element}
+                        path={routes.projects.update?.path}
+                        element={routes.projects.update?.element}
                       />
+                      <Route path={routes.tasks.path}>
+                        <Route path=":taskId">
+                          <Route index element={routes.tasks.element} />
+                          <Route
+                            path={routes.tasks.update?.path}
+                            element={routes.tasks.update?.element}
+                          />
+                        </Route>
+                        <Route
+                          path={routes.tasks.create?.path}
+                          element={routes.tasks.create?.element}
+                        />
+                      </Route>
                     </Route>
                   </Route>
                 </Route>

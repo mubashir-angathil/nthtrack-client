@@ -61,6 +61,14 @@ const routes: RouteConfigsType = {
   team: {
     path: "",
     element: <PageTeamProjects />,
+    create: {
+      path: "create",
+      element: <PageManageTask type="create" />,
+    },
+    update: {
+      path: "update",
+      element: <PageManageTask type="update" />,
+    },
   },
 };
 

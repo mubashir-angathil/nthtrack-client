@@ -74,12 +74,6 @@ export const useProjects = () => {
     }
   };
 
-  const handleCreateProject = () => {
-    if (routes.projects.create?.path) {
-      navigate(routes.projects.create?.path);
-    }
-  };
-
   // Function to fetch projects from the API
   const fetchProjects = async () => {
     try {
@@ -148,7 +142,6 @@ export const useProjects = () => {
     handleChange,
     handleClear,
     fetchProjects,
-    handleCreateProject,
     handleProjectLoading,
   };
 };

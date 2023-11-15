@@ -235,7 +235,7 @@ export const useViewProject = () => {
           message: project.data.message,
           variant: "success",
         });
-        navigate(routes.home.path);
+        generalFunctions.goBack();
       }
     } catch (error) {
       const { data } = error as ApiError;
