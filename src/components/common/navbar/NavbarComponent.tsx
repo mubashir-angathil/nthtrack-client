@@ -17,7 +17,7 @@ import { initialAuthDetailsState } from "../../../utils/helpers/context/auth-con
 
 export const NavbarComponent = () => {
   const styles = navbarStyes;
-  const { setAuthDetails } = useAuthContext();
+  const { authDetails, setAuthDetails } = useAuthContext();
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
@@ -62,11 +62,9 @@ export const NavbarComponent = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar
-                  alt="Remy Sharp"
-                  src="/static/images/avatar/2.jpg"
-                  sx={{ width: 36, height: 36 }}
-                />
+                <Avatar sx={{ width: 36, height: 36 }}>
+                  {authDetails.user.username?.charAt(0)}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu
@@ -85,6 +83,10 @@ export const NavbarComponent = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
+              <MenuItem disabled sx={{ display: "grid" }}>
+                <Typography>{authDetails.user.username}</Typography>
+                <Typography>{authDetails.user.email}</Typography>
+              </MenuItem>
               {settings.map((setting) => (
                 <MenuItem key={setting.item} onClick={setting.action}>
                   <Typography textAlign="center">{setting.item}</Typography>

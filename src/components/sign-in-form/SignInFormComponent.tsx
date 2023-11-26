@@ -34,7 +34,7 @@ const SignInFormComponent: React.FC = () => {
       <FormControl fullWidth>
         <RhfTextfieldComponent
           required
-          type="email"
+          type="text"
           name="usernameOrEmail"
           label="Username / Email"
           control={control}

@@ -5,6 +5,11 @@ import {
   NormalApiSuccessResponse,
 } from "../Helper";
 
+export declare type ByUserDetails = {
+  id: number;
+  username: string;
+  email: string;
+};
 // Interface for individual project details
 interface Project {
   id: number; // Project ID
@@ -13,6 +18,9 @@ interface Project {
   createdAt: string; // Project creation timestamp
   updatedAt: string; // Project last update timestamp
   closedAt: string | null; // Project closed timestamp (nullable)
+  createdByUser: ByUserDetails;
+  updatedByUser: ByUserDetails;
+  closedByUser: ByUserDetails;
 }
 
 interface ProjectWithTaskCount extends Project {
@@ -27,6 +35,10 @@ interface Task {
   closedAt: string | null;
   status: { id: number; name: string };
   tracker: { id: number; name: string };
+  assignees: Array<ByUserDetails>;
+  createdByUser: ByUserDetails;
+  updatedByUser: ByUserDetails;
+  closedByUser: ByUserDetails;
 }
 
 // Interface for API requests with pagination and search

@@ -52,7 +52,7 @@ export const useSignUp = () => {
       // Call the sign-up API from authenticationServices
       const { data, success } = await authenticationServices.doSignUp({
         username: props.username,
-        email: props.username,
+        email: props.email,
         password: props.password,
       });
 

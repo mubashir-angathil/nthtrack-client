@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { object, string, InferType, number } from "yup";
+import { object, string, InferType, number, array } from "yup";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import projectServices from "../../../services/project-services/ProjectServices";
@@ -18,6 +18,8 @@ import {
   UpdateTaskRequest,
 } from "../../../services/project-services/Helper";
 import routes from "../../../utils/helpers/routes/Routes";
+import { ApiDetailsType } from "../../common/textfield/autocomplete/multi-autocomplete/Helper";
+import dataServices from "../../../services/data-services/DataServices";
 
 export interface ManageTaskFormProps {
   updateProjects: () => Promise<void>;
@@ -26,6 +28,7 @@ export interface ManageTaskFormProps {
 export const manageTaskFormSchema = object({
   trackerId: number().required(),
   description: string().min(2).max(1000).required(),
+  assignees: array().required().default([]),
 }).required();
 
 // Define the type for the form inputs based on the schema
@@ -38,6 +41,8 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
   const [projectId] = useState(
     params?.projectId ? parseInt(params.projectId) : 0,
   );
+  const [assigneesApiDetails, setAssigneesApiDetails] =
+    useState<ApiDetailsType>({});
 
   // Initialize the React Hook Form with validation resolver and default values
   const {
@@ -58,6 +63,10 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
   const onSubmit: SubmitHandler<ManageTaskFormInput> = async (
     newTask: ManageTaskFormInput,
   ) => {
+    const assignees = newTask.assignees.map((value) => value.id);
+
+    newTask.assignees = assignees;
+
     if (projectId && !values) {
       await createNewTask({
         ...newTask,
@@ -85,7 +94,6 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
         variant: "error",
       });
     }
-    // console.log(data);
   };
 
   const createNewTask = async (newTask: ManageTaskRequest) => {
@@ -154,12 +162,18 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
   useEffect(() => {
     if (projectId === 0) {
       navigate(routes.projects.path, { replace: true });
+    } else {
+      setAssigneesApiDetails({
+        api: () => dataServices.getProjectMembers({ projectId }) as any,
+      });
     }
   }, [navigate, projectId]);
 
   return {
     isSubmitting,
     handleSubmit,
+    setValue,
+    assigneesApiDetails,
     control,
     onSubmit,
   };

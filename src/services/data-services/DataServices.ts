@@ -1,8 +1,13 @@
 import { AxiosError, AxiosResponse } from "axios";
 import axios from "../api-instance/Instance";
-import { SelectFieldApiResponse, Teams } from "./Helper";
+import {
+  GetProjectMemberRequest,
+  GetProjectMemberResponse,
+  SelectFieldApiResponse,
+  Teams,
+} from "./Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
-import { ApiError } from "../Helper";
+import { ApiError, AutocompleteOptionType } from "../Helper";
 const dataServices = {
   /**
    * getAllTrackers
@@ -38,6 +43,33 @@ const dataServices = {
     try {
       const response = await axios.get<Teams>("data/teams");
       return response;
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  getPermissions: async (): Promise<AxiosResponse<SelectFieldApiResponse>> => {
+    try {
+      return await axios.get<SelectFieldApiResponse>("data/permissions");
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  getUsers: async (): Promise<AxiosResponse<AutocompleteOptionType[]>> => {
+    try {
+      return await axios.get<AutocompleteOptionType[]>("data/user");
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  getProjectMembers: async ({
+    projectId,
+  }: GetProjectMemberRequest): Promise<
+    AxiosResponse<GetProjectMemberResponse>
+  > => {
+    try {
+      return await axios.get<GetProjectMemberResponse>(
+        `data/project/${projectId}/members`,
+      );
     } catch (error) {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }

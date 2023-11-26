@@ -26,15 +26,7 @@ export const useTask = () => {
     projectId: params.projectId ? parseInt(params.projectId) : 0,
   });
 
-  const [task, setTask] = useState<GetTaskByIdResponse["data"]>({
-    id: 0,
-    description: "",
-    tracker: { id: 0, name: "" },
-    status: { id: 0, name: "" },
-    createdAt: "",
-    updatedAt: "",
-    closedAt: null,
-  });
+  const [task, setTask] = useState<GetTaskByIdResponse["data"] | undefined>();
 
   const handleTaskUpdate = () => {
     if (routes.tasks.update?.path) {
@@ -51,9 +43,12 @@ export const useTask = () => {
         positiveButton: "Accept",
         negativeButton: "Cancel",
         response: async (res) => {
-          if (res === "accept") {
+          if (res === "accept" && task?.id) {
             handleCloseAlert();
-            await fetchCloseTaskById();
+            await fetchCloseTaskById({
+              projectId: ids.projectId,
+              taskId: task.id,
+            });
           }
         },
       },
@@ -61,12 +56,18 @@ export const useTask = () => {
   };
 
   // Function to fetch project details from the API
-  const fetchTaskById = async () => {
+  const fetchTaskById = async ({
+    taskId,
+    projectId,
+  }: {
+    taskId: number;
+    projectId: number;
+  }) => {
     try {
       // Call the API to get project details based on the current API configuration
       const response = await projectServices.getTasksById({
-        taskId: ids.taskId,
-        projectId: ids.projectId,
+        taskId,
+        projectId,
       });
 
       const {
@@ -92,11 +93,17 @@ export const useTask = () => {
   };
 
   // Function to close the task by id  the API
-  const fetchCloseTaskById = async () => {
+  const fetchCloseTaskById = async ({
+    taskId,
+    projectId,
+  }: {
+    taskId: number;
+    projectId: number;
+  }) => {
     try {
       const project = await projectServices.closeTaskById({
-        projectId: ids.projectId,
-        taskId: task.id,
+        projectId,
+        taskId,
       });
 
       if (project.status === 200 && project.data.success) {
@@ -123,7 +130,7 @@ export const useTask = () => {
     if (ids.taskId === 0 || ids.projectId === 0) {
       generalFunctions.goBack();
     }
-    fetchTaskById();
+    fetchTaskById({ projectId: ids.projectId, taskId: ids.taskId });
   }, []);
   return { task, handleCloseTask, handleTaskUpdate };
 };

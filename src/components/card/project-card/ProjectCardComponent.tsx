@@ -77,7 +77,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                         lineHeight: 1,
                       }}
                     >
-                      {name.toLocaleUpperCase()}
+                      {name.toLocaleUpperCase()} + {id}
                     </Typography>
                     <Tooltip title="Status">
                       <Chip

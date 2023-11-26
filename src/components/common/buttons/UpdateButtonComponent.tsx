@@ -11,6 +11,7 @@ const UpdateButtonComponent: React.FC<CustomButtonComponentProps> = ({
     <Button
       disabled={rest.disabled}
       color="info"
+      size="small"
       variant="contained"
       {...rest}
       endIcon={<UpdateIcon />}

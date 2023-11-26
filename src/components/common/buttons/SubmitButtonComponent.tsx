@@ -4,6 +4,7 @@ import { LoadingButton } from "@mui/lab";
 
 const SubmitButtonComponent: React.FC<CustomButtonComponentProps> = ({
   title,
+  size = "small",
   ...reset
 }) => {
   return (
@@ -11,6 +12,7 @@ const SubmitButtonComponent: React.FC<CustomButtonComponentProps> = ({
       disabled={reset.disabled}
       type="submit"
       color="success"
+      size={size}
       variant="contained"
       {...reset}
     >

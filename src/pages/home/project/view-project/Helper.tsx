@@ -22,6 +22,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAlertContext } from "../../../../utils/helpers/context/alert-context/AlertContext";
 import { useAlert } from "../../../../components/common/alert/Helper";
+import dataServices from "../../../../services/data-services/DataServices";
+import {
+  GetProjectMemberRequest,
+  GetProjectMemberResponse,
+} from "../../../../services/data-services/Helper";
 export const filterFormSchema = object({
   trackerId: number(),
   statusId: number(),
@@ -66,6 +71,9 @@ export const useViewProject = () => {
     closedAt: "",
   });
   const [tasks, setTasks] = useState<TaskResponse["data"]>([]);
+  const [projectMembers, setProjectMembers] = useState<
+    GetProjectMemberResponse["data"]
+  >([]);
   const [apiConfig, setApiConfig] = useState<ApiConfig>(initialApiConfig);
 
   // Debounced search function to handle search input changes
@@ -248,6 +256,36 @@ export const useViewProject = () => {
     }
   };
 
+  // Function to fetch teams from the API
+  const fetchProjectMembers = async ({
+    projectId,
+  }: GetProjectMemberRequest) => {
+    try {
+      // Call the API to get projects based on the current API configuration
+      const response = await dataServices.getProjectMembers({ projectId });
+      const {
+        status,
+        data: { data, message, success },
+      } = response;
+
+      // If the API call is successful, update projects and API configuration
+      if (status === 200 && success) {
+        setProjectMembers(data);
+      } else {
+        // If there's an error, log the error message
+        throw { data: message };
+      }
+    } catch (error) {
+      // Handle API errors
+      const { data } = error as ApiError;
+
+      enqueueSnackbar({
+        message: data?.message,
+        variant: "error",
+      });
+    }
+  };
+
   useEffect(() => {
     if (apiConfig.hasMore) {
       fetchTasks();
@@ -262,9 +300,9 @@ export const useViewProject = () => {
   useEffect(() => {
     // console.log(apiConfig);
     if (apiConfig.projectId === 0) {
-      navigate(routes.projects.path, { replace: true });
+      return navigate(routes.projects.path, { replace: true });
     }
-
+    fetchProjectMembers({ projectId: apiConfig.projectId });
     fetchProjectById();
   }, []);
 
@@ -290,6 +328,7 @@ export const useViewProject = () => {
     tasks,
     control,
     apiConfig,
+    projectMembers,
     fetchTasks,
     handleCloseProject,
     handleTaskLoading,

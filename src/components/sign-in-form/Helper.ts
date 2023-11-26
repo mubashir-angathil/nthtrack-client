@@ -10,10 +10,11 @@ import { Location, useLocation, useNavigate } from "react-router-dom";
 import routes from "../../utils/helpers/routes/Routes";
 import { ApiError } from "../../services/Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
+import { enqueueSnackbar } from "notistack";
 
 // Define the validation schema for the sign-in form
 export const signInFormSchema = object({
-  usernameOrEmail: string().email().required(),
+  usernameOrEmail: string().required(),
   password: string().min(4).required(),
 }).required();
 
@@ -69,10 +70,16 @@ export const useSignIn = () => {
         });
       }
     } catch (error) {
+      const {
+        data: { message },
+      } = error as ApiError;
       // Handle errors from the sign-ip API
       generalFunctions.fieldErrorsHandler(error as ApiError, setError);
 
-      console.error("SignIn:", error);
+      enqueueSnackbar({
+        message,
+        variant: "error",
+      });
     }
   };
   useEffect(() => {

@@ -39,7 +39,7 @@ const RhfSelectComponent = <TField extends FieldValues>({
       rules={rules}
       render={({ field, fieldState: { error } }) => {
         return (
-          <FormControl required sx={{ m: 1, minWidth: 120 }}>
+          <FormControl fullWidth required sx={{ minWidth: 120 }}>
             <InputLabel id="demo-simple-select-required-label">
               {label}
             </InputLabel>

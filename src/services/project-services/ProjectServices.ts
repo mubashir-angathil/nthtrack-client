@@ -182,16 +182,14 @@ const projectServices = {
    */
   createTask: async ({
     projectId,
-    trackerId,
-    description,
+    ...props
   }: ManageTaskRequest): Promise<AxiosResponse<TaskResponse>> => {
     try {
       // Make the API request to get all projects
       const response = await axios.post<TaskResponse>(
         `/project/${projectId}/task/create`,
         {
-          trackerId,
-          description,
+          ...props,
         },
       );
 
@@ -268,13 +266,9 @@ const projectServices = {
     projectId: number;
   }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
     try {
-      const response = await axios.patch<NormalApiSuccessResponse>(
-        "project/close",
-        {
-          projectId,
-        },
+      return await axios.delete<NormalApiSuccessResponse>(
+        `project/${projectId}/close`,
       );
-      return response;
     } catch (error) {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
@@ -295,10 +289,9 @@ const projectServices = {
     projectId: number;
   }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
     try {
-      const response = await axios.patch<NormalApiSuccessResponse>(
+      return await axios.delete<NormalApiSuccessResponse>(
         `project/${projectId}/task/${taskId}/close`,
       );
-      return response;
     } catch (error) {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }

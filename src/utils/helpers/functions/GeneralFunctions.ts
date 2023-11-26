@@ -50,11 +50,9 @@ const generalFunctions = {
     apiError: ApiError,
     setError: UseFormSetError<any>,
   ): void => {
-    const {
-      data: { error },
-    } = apiError;
-    if (error?.fieldErrors)
-      error.fieldErrors.forEach((value) => {
+    const { data } = apiError;
+    if (data.error?.fieldErrors)
+      data.error.fieldErrors.forEach((value) => {
         return setError(value.field, { message: value.message });
       });
   },

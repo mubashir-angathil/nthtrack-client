@@ -34,9 +34,19 @@ const SignUpFormComponent: React.FC = () => {
       <FormControl fullWidth>
         <RhfTextfieldComponent
           required
-          type="email"
+          type="text"
           name="username"
           label="Username"
+          control={control}
+        />
+      </FormControl>
+      {/* Username Input */}
+      <FormControl fullWidth>
+        <RhfTextfieldComponent
+          required
+          type="email"
+          name="email"
+          label="Email"
           control={control}
           placeholder="jhon@gmail.com"
         />
