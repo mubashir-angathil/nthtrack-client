@@ -1,5 +1,12 @@
 /* eslint-disable no-unused-vars */
-type keys = "signIn" | "signUp" | "home" | "projects" | "tasks" | "team";
+type keys =
+  | "signIn"
+  | "signUp"
+  | "home"
+  | "projects"
+  | "tasks"
+  | "team"
+  | "projectMembers";
 type actions = "create" | "update" | "view";
 
 export type RouteConfigsType = {

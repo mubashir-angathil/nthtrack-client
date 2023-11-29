@@ -16,6 +16,7 @@ import {
   Clear as ClearIcon,
   ExpandMore as ExpandMoreIcon,
   Update as UpdateIcon,
+  GroupAdd,
 } from "@mui/icons-material";
 import { FC } from "react";
 import { useViewProject } from "./Helper";
@@ -23,6 +24,7 @@ import TaskCardComponent from "../../../../components/card/task-card/TaskCardCom
 import RhfSelectComponent from "../../../../components/common/textfield/select/RhfSelectComponent";
 import dataServices from "../../../../services/data-services/DataServices";
 import AvatarComponent from "../../../../components/common/avatar/AvatarComponent";
+import routes from "../../../../utils/helpers/routes/Routes";
 
 /**
  * Functional component representing the view of a project page.
@@ -33,6 +35,7 @@ const PageViewProject: FC = () => {
     project,
     tasks,
     control,
+    navigate,
     projectMembers,
     apiConfig,
     handleTaskLoading,
@@ -49,43 +52,23 @@ const PageViewProject: FC = () => {
         {project.name === "" ? (
           <Skeleton width={200} height={40} />
         ) : (
-          <Typography variant="h4" overflow="auto" flexWrap="wrap">
+          <Typography variant="h5" overflow="auto" flexWrap="wrap">
             {project.name}
           </Typography>
         )}
 
-        <Box component="div">
-          {/* Close Project Button */}
-          <Button
-            variant="contained"
-            color="error"
-            size="small"
-            onClick={handleCloseProject}
-            sx={{ mr: 1, fontSize: 12 }}
-          >
-            Close Project
-          </Button>
-          {/* Update Project Button */}
-          <Button
-            variant="contained"
-            color="info"
-            size="small"
-            endIcon={<UpdateIcon />}
-            sx={{ mr: 1, fontSize: 12 }}
-            onClick={handleUpdateProject}
-          >
-            Update Project
-          </Button>
-          {/* Create Issue Button */}
-          <Button
-            variant="contained"
-            sx={{ fontSize: 12 }}
-            size="small"
-            onClick={handleCreateTask}
-          >
-            New Task
-          </Button>
-        </Box>
+        <Button
+          variant="contained"
+          sx={{ fontSize: 12 }}
+          size="small"
+          onClick={() => navigate(routes.projectMembers.path)}
+          startIcon={<GroupAdd fontSize="small" />}
+        >
+          Members
+        </Button>
+      </Grid>
+      <Grid item xs={12}>
+        <Divider />
       </Grid>
 
       <Grid item md={projectMembers.length > 0 ? 10 : 12}>
@@ -108,41 +91,47 @@ const PageViewProject: FC = () => {
             {/* <AccordionDetails>{project.createdUserBy}</AccordionDetails> */}
           </Accordion>
         </Grid>
-
+        <Grid item xs={12} display="flex" justifyContent="end">
+          {/* Close Project Button */}
+          <Button
+            variant="contained"
+            color="error"
+            size="small"
+            onClick={handleCloseProject}
+            sx={{ mr: 1, fontSize: 12 }}
+          >
+            Close Project
+          </Button>
+          {/* Update Project Button */}
+          <Button
+            variant="contained"
+            color="info"
+            size="small"
+            endIcon={<UpdateIcon />}
+            sx={{ mr: 1, fontSize: 12 }}
+            onClick={handleUpdateProject}
+          >
+            Update Project
+          </Button>
+        </Grid>
         {/* Filters and Search Section */}
         <Grid
           item
           xs={12}
+          mt={2}
+          mb={2}
+          gap={1}
           display="flex"
           alignItems="center"
-          justifyContent="end"
-          gap={2}
-          mb={2}
+          // justifyContent="end"
         >
-          {/* Tracker Filter */}
-          <RhfSelectComponent
-            control={control}
-            name="trackerId"
-            label="Tracker"
-            size="small"
-            apidetails={{ api: dataServices.getTrackers }}
-          />
-
-          {/* Status Filter */}
-          <RhfSelectComponent
-            control={control}
-            name="statusId"
-            label="Status"
-            size="small"
-            apidetails={{ api: dataServices.getStatus }}
-          />
-
           {/* Search Input */}
           <TextField
             id="task-search-field"
             variant="outlined"
             type="search"
             size="small"
+            fullWidth
             placeholder="Search project here.."
             onChange={handleChange}
             // Change input color to error if there are no tasks and there's a search key
@@ -165,6 +154,32 @@ const PageViewProject: FC = () => {
               ),
             }}
           />
+          {/* Tracker Filter */}
+          <RhfSelectComponent
+            control={control}
+            name="trackerId"
+            label="Tracker"
+            size="small"
+            apidetails={{ api: dataServices.getTrackers }}
+          />
+
+          {/* Status Filter */}
+          <RhfSelectComponent
+            control={control}
+            name="statusId"
+            label="Status"
+            size="small"
+            apidetails={{ api: dataServices.getStatus }}
+          />
+
+          <Button
+            variant="contained"
+            sx={{ fontSize: 12, minWidth: 100 }}
+            size="small"
+            onClick={handleCreateTask}
+          >
+            New Task
+          </Button>
         </Grid>
 
         {/* Task Cards Section */}
@@ -177,16 +192,27 @@ const PageViewProject: FC = () => {
       </Grid>
       {projectMembers.length > 0 && (
         <Grid item md={2}>
-          <Typography>Peoples</Typography>
-          <Divider />
-          <Box mt={1} display="flex" flexWrap="wrap">
-            {projectMembers.map((profileDetails) => {
+          <Typography variant="subtitle1">Contributors</Typography>
+          <Box mt={1} flexWrap="wrap">
+            {projectMembers.map((profileDetails, index) => {
               return (
-                <AvatarComponent
+                <Box
                   key={profileDetails.id}
-                  profile
-                  {...profileDetails}
-                />
+                  display="flex"
+                  alignItems="center"
+                  gap={1}
+                  pt={index > 0 ? 1 : 0}
+                >
+                  <AvatarComponent
+                    profile
+                    width={28}
+                    height={28}
+                    {...profileDetails}
+                  />
+                  <Typography variant="subtitle2">
+                    {profileDetails.username}
+                  </Typography>
+                </Box>
               );
             })}
           </Box>

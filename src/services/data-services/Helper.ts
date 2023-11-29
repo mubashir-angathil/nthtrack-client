@@ -1,4 +1,5 @@
-import { NormalApiSuccessResponse } from "../Helper";
+import { ApiResponseWithPagination, NormalApiSuccessResponse } from "../Helper";
+import { ByUserDetails } from "../project-services/Helper";
 
 export interface SelectFieldApiResponse extends NormalApiSuccessResponse {
   data: Array<{ id: number; name: string }>;
@@ -14,4 +15,9 @@ export interface GetProjectMemberRequest {
 
 export interface GetProjectMemberResponse extends NormalApiSuccessResponse {
   data: Array<{ id: number; email: string; username: string }>;
+}
+
+export interface AutocompleteOptionType extends ByUserDetails {}
+export interface AutocompleteResponse extends ApiResponseWithPagination {
+  data: ByUserDetails[];
 }

@@ -44,7 +44,10 @@ const App: React.FC = () => {
                   />
                   <Route path={routes.projects.path.concat(":projectId")}>
                     <Route index element={routes.projects.element} />
-
+                    <Route
+                      path={routes.projectMembers.path}
+                      element={routes.projectMembers.element}
+                    />
                     <Route
                       path={routes.projects.update?.path}
                       element={routes.projects.update?.element}
@@ -71,6 +74,10 @@ const App: React.FC = () => {
                     />
                     <Route path={routes.projects.path.concat(":projectId")}>
                       <Route index element={routes.projects.element} />
+                      <Route
+                        path={routes.projectMembers.path}
+                        element={routes.projectMembers.element}
+                      />
                       <Route
                         path={routes.projects.update?.path}
                         element={routes.projects.update?.element}

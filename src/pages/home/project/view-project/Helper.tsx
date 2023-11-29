@@ -336,5 +336,6 @@ export const useViewProject = () => {
     handleCreateTask,
     handleUpdateProject,
     handleChange,
+    navigate,
   };
 };

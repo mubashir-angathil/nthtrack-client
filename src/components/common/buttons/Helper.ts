@@ -6,4 +6,5 @@ export interface CustomButtonComponentProps {
   loading?: boolean;
   size?: "medium" | "small" | "large";
   disabled?: boolean;
+  fullWidth?: boolean;
 }

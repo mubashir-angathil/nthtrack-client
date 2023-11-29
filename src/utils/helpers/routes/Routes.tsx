@@ -8,6 +8,7 @@ import { RouteConfigsType } from "./Helper";
 import PageTeamProjects from "../../../pages/home/team/project/PageTeamProjects";
 import PageManageProject from "../../../pages/home/project/manage-project/PageManageProject";
 import PageManageTask from "../../../pages/home/task/manage-task/PageManageTask";
+import { ManageMembers } from "../../../pages/home/project/manage-members/ManageMembers";
 
 // Define your routes using the RouteConfigsType
 const routes: RouteConfigsType = {
@@ -69,6 +70,11 @@ const routes: RouteConfigsType = {
       path: "update",
       element: <PageManageTask type="update" />,
     },
+  },
+
+  projectMembers: {
+    path: "member",
+    element: <ManageMembers />,
   },
 };
 

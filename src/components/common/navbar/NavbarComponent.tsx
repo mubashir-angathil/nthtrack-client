@@ -14,6 +14,7 @@ import navbarStyes from "./Style";
 import cookieServices from "../../../services/storage-services/CookieServices";
 import { useAuthContext } from "../../../utils/helpers/context/auth-context/AuthContext";
 import { initialAuthDetailsState } from "../../../utils/helpers/context/auth-context/Helper";
+import { TitleHelper } from "../../../utils/helpers/constants/Constants";
 
 export const NavbarComponent = () => {
   const styles = navbarStyes;
@@ -56,7 +57,7 @@ export const NavbarComponent = () => {
             href="/home"
             sx={styles.logo}
           >
-            BUGTRACK
+            {TitleHelper.appName}
           </Typography>
 
           <Box sx={{ flexGrow: 0 }}>

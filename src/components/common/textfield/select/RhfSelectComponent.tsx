@@ -44,6 +44,7 @@ const RhfSelectComponent = <TField extends FieldValues>({
               {label}
             </InputLabel>
             <Select
+              fullWidth
               labelId="demo-controlled-open-select-label"
               id="demo-controlled-open-select"
               open={open}

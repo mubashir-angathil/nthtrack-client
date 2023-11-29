@@ -77,7 +77,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                         lineHeight: 1,
                       }}
                     >
-                      {name.toLocaleUpperCase()} + {id}
+                      {name.toLocaleUpperCase()}
                     </Typography>
                     <Tooltip title="Status">
                       <Chip
@@ -94,7 +94,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                       <Badge
                         badgeContent={taskCount}
                         variant="standard"
-                        color="warning"
+                        color="error"
                       >
                         <BugReportIcon />
                       </Badge>

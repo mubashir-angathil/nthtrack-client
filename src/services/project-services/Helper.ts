@@ -95,4 +95,10 @@ export interface UpdateTaskRequest {
 export interface TeamProjectsRequest extends ApiRequestWithPaginationAndSearch {
   teamId: number;
 }
+
+export interface AddNewMemberRequest {
+  projectId: number;
+  userId: number;
+  permissionId: number;
+}
 // Comments provide explanations for each interface, making the code more readable and understandable.

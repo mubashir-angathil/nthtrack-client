@@ -1,13 +1,15 @@
 import { AxiosError, AxiosResponse } from "axios";
 import axios from "../api-instance/Instance";
 import {
+  AutocompleteOptionType,
   GetProjectMemberRequest,
   GetProjectMemberResponse,
   SelectFieldApiResponse,
   Teams,
 } from "./Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
-import { ApiError, AutocompleteOptionType } from "../Helper";
+import { ApiError } from "../Helper";
+import { ApiRequestWithPaginationAndSearch } from "../project-services/Helper";
 const dataServices = {
   /**
    * getAllTrackers
@@ -54,9 +56,26 @@ const dataServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
-  getUsers: async (): Promise<AxiosResponse<AutocompleteOptionType[]>> => {
+  getUsers: async ({
+    limit,
+    page,
+    searchKey,
+    cancelToken,
+  }: ApiRequestWithPaginationAndSearch): Promise<
+    AxiosResponse<AutocompleteOptionType>
+  > => {
     try {
-      return await axios.get<AutocompleteOptionType[]>("data/user");
+      return await axios.post<AutocompleteOptionType>(
+        "data/users",
+        {
+          limit,
+          page,
+          searchKey,
+        },
+        {
+          cancelToken,
+        },
+      );
     } catch (error) {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }

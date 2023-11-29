@@ -3,6 +3,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 import axios from "../api-instance/Instance";
 import {
+  AddNewMemberRequest,
   ApiRequestWithPaginationAndSearch,
   GetAllTasksRequest,
   GetProjectByIdResponse,
@@ -323,6 +324,20 @@ const projectServices = {
 
       // Return the response
       return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  addNewMember: async ({
+    projectId,
+    ...props
+  }: AddNewMemberRequest): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      return await axios.post<NormalApiSuccessResponse>(
+        `/project/${projectId}/member/add`,
+        props,
+      );
     } catch (error) {
       // Throw a custom error using a helper function
       throw generalFunctions.customError(error as AxiosError<ApiError>);
