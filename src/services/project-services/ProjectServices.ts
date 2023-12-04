@@ -7,11 +7,15 @@ import {
   ApiRequestWithPaginationAndSearch,
   GetAllTasksRequest,
   GetProjectByIdResponse,
+  GetProjectMembersRequest,
+  GetProjectMembersResponse,
   GetTaskByIdResponse,
   ManageTaskRequest,
   ProjectsResponse,
+  RemoveMemberRequest,
   TaskResponse,
   TeamProjectsRequest,
+  UpdateMemberRequest,
   UpdateProjectRequest,
   UpdateTaskRequest,
 } from "./Helper";
@@ -337,6 +341,55 @@ const projectServices = {
       return await axios.post<NormalApiSuccessResponse>(
         `/project/${projectId}/member/add`,
         props,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  updateMember: async ({
+    projectId,
+    ...props
+  }: UpdateMemberRequest): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      return await axios.put<NormalApiSuccessResponse>(
+        `/project/${projectId}/member/update`,
+        props,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  removeMember: async ({
+    projectId,
+    memberId,
+    userId,
+  }: RemoveMemberRequest): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      return await axios.delete<NormalApiSuccessResponse>(
+        `/project/${projectId}/member/${memberId}/delete`,
+        {
+          params: {
+            userId,
+          },
+        },
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  getProjectMembers: async ({
+    projectId,
+    ...props
+  }: GetProjectMembersRequest): Promise<
+    AxiosResponse<GetProjectMembersResponse>
+  > => {
+    try {
+      return await axios.post<GetProjectMembersResponse>(
+        `/project/${projectId}/members`,
+        { ...props },
       );
     } catch (error) {
       // Throw a custom error using a helper function

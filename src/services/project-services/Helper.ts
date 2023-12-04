@@ -101,4 +101,33 @@ export interface AddNewMemberRequest {
   userId: number;
   permissionId: number;
 }
+export interface UpdateMemberRequest extends RemoveMemberRequest {
+  permissionId: number;
+}
+export interface RemoveMemberRequest {
+  projectId: number;
+  userId: number;
+  memberId: number;
+}
+
+export interface GetProjectMembersRequest extends ApiRequestWithPagination {
+  projectId: number;
+}
+
+export interface GetProjectMembersResponse extends ApiResponseWithPagination {
+  data: Array<{
+    id: number;
+    user: {
+      id: number;
+      email: string;
+      username: string;
+    };
+    permission: {
+      id: number;
+      name: string;
+    };
+    createdAt: string;
+    updatedAt: string;
+  }>;
+}
 // Comments provide explanations for each interface, making the code more readable and understandable.

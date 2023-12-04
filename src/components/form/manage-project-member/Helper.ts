@@ -9,6 +9,7 @@ import { Location, useLocation } from "react-router-dom";
 import { AxiosResponse } from "axios";
 import { ApiError } from "../../../services/Helper";
 import { enqueueSnackbar } from "notistack";
+import { Dispatch, SetStateAction } from "react";
 
 // Define the validation schema for the ProjectMember
 export const manageProjectMemberSchema = object({
@@ -21,7 +22,9 @@ export type ManageProjectMemberInput = InferType<
   typeof manageProjectMemberSchema
 >;
 
-export const useManageProjectMember = () => {
+export const useManageProjectMember = (
+  refresh: Dispatch<SetStateAction<boolean | undefined>>,
+) => {
   const location: Location = useLocation();
   const { control, handleSubmit } = useForm<ManageProjectMemberInput>({
     resolver: yupResolver(manageProjectMemberSchema),
@@ -47,6 +50,8 @@ export const useManageProjectMember = () => {
       } = response;
       if (success && response.status === 201) {
         enqueueSnackbar({ message, variant: "success" });
+        refresh(true);
+        handleDialogClose();
       }
     } catch (error) {
       const {

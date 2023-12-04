@@ -6,71 +6,33 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  MenuItem,
-  Select,
   IconButton,
   Button,
   Box,
   Stack,
   Typography,
+  Select,
+  MenuItem,
+  TablePagination,
 } from "@mui/material";
-import { useEffect } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { FC, useState } from "react";
-import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
+import { FC } from "react";
 import ManageProjectMember from "../../../../components/form/manage-project-member/ManageProjectMember";
-import { Location, Params, useLocation, useParams } from "react-router-dom";
-import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
-
-const permissionOptions = ["view", "create", "update", "Admin"];
-
-function createData(
-  id: number,
-  username: string,
-  email: string,
-  avatar: string,
-  permission: string,
-) {
-  return { id, avatar, username, email, permission };
-}
-
-const rows = [
-  createData(1, "avatar1", "User1", "user1@gmail.com", "view"),
-  createData(2, "avatar2", "User2", "user2@gmail.com", "create"),
-  // Add more rows as needed
-];
+import { useManageProjectMembers } from "./Helper";
+import AvatarComponent from "../../../../components/common/avatar/AvatarComponent";
 
 export const ManageMembers: FC = () => {
-  const [members, setMembers] = useState(rows);
-  const location: Location = useLocation();
-  const params: Params = useParams();
-  const [projectId] = useState<number | null>(
-    typeof params?.projectId === "string" ? parseInt(params?.projectId) : null,
-  );
-  const { setDialog } = useDialogContext();
-  const handlePermissionChange = (id: number, value: string) => {
-    setMembers((prevMembers) =>
-      prevMembers.map((member) =>
-        member.id === id ? { ...member, permission: value } : member,
-      ),
-    );
-  };
+  const {
+    tableConfig,
+    permissionOptions,
+    handleRemoveMember,
+    setTableLoading,
+    handlePermissionChange,
+    setDialog,
+    handleChangePage,
+    handleChangeRowsPerPage,
+  } = useManageProjectMembers();
 
-  const handleDelete = (id: number) => {
-    setMembers((prevMembers) =>
-      prevMembers.filter((member) => member.id !== id),
-    );
-  };
-
-  // Validate Whether projectId is null
-  // If projectId become null then call browser back otherwise assign projectId to react router location state
-  useEffect(() => {
-    if (projectId) {
-      location.state = { projectId };
-    } else {
-      generalFunctions.goBack();
-    }
-  }, [location, projectId]);
   return (
     <Stack component="div" gap={2} display="flex" flexDirection="column">
       <Box display="flex" justifyContent="space-between">
@@ -83,7 +45,7 @@ export const ManageMembers: FC = () => {
             setDialog({
               open: true,
               form: {
-                body: <ManageProjectMember />,
+                body: <ManageProjectMember refresh={setTableLoading} />,
                 title: "New Member",
               },
             })
@@ -96,7 +58,7 @@ export const ManageMembers: FC = () => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>No</TableCell>
+              <TableCell>Id</TableCell>
               <TableCell>Avatar</TableCell>
               <TableCell>Username</TableCell>
               <TableCell>Email</TableCell>
@@ -105,39 +67,49 @@ export const ManageMembers: FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {members.map((row, index) => (
-              <TableRow
-                key={row.email}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{row.avatar}</TableCell>
-                <TableCell component="th" scope="row">
-                  {row.username}
+            {tableConfig.members.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.id}</TableCell>
+                <TableCell>
+                  <AvatarComponent {...row.user} />
                 </TableCell>
-                <TableCell>{row.email}</TableCell>
+                <TableCell component="th" scope="row">
+                  {row.user.username}
+                </TableCell>
+                <TableCell>{row.user.email}</TableCell>
                 <TableCell>
                   <Select
-                    value={row.permission}
+                    disabled={row.permission.name.includes("Super Admin")}
+                    value={row.permission.id}
                     onChange={(e) =>
-                      handlePermissionChange(row.id, e.target.value as string)
+                      handlePermissionChange({
+                        memberId: row.id,
+                        permissionId: parseInt(e.target.value as string),
+                        userId: row.user.id,
+                      })
                     }
                     sx={{ borderRadius: 5, height: 28 }}
                     size="small"
                   >
                     {permissionOptions.map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
+                      <MenuItem key={option.id} value={option.id}>
+                        {option.name}
                       </MenuItem>
                     ))}
                   </Select>
                 </TableCell>
                 <TableCell>
                   <IconButton
+                    disabled={row.permission.name.includes("Super Admin")}
                     size="small"
                     aria-label="delete"
                     color="error"
-                    onClick={() => handleDelete(row.id)}
+                    onClick={() =>
+                      handleRemoveMember({
+                        memberId: row.id,
+                        userId: row.user.id,
+                      })
+                    }
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -146,6 +118,15 @@ export const ManageMembers: FC = () => {
             ))}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={tableConfig.totalRows}
+          rowsPerPage={tableConfig.limit}
+          page={tableConfig.page - 1}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </TableContainer>
     </Stack>
   );

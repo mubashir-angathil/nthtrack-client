@@ -1,14 +1,16 @@
 import { Box, Button, Stack } from "@mui/material";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { useManageProjectMember } from "./Helper";
 import dataServices from "../../../services/data-services/DataServices";
 import RhfSelectComponent from "../../common/textfield/select/RhfSelectComponent";
 import AsynchronousRhfAutocomplete from "../../common/textfield/autocomplete/AsynchronousRhfAutocomplete";
 import SubmitButtonComponent from "../../common/buttons/SubmitButtonComponent";
 
-const ManageProjectMember: FC = () => {
+const ManageProjectMember: FC<{
+  refresh: Dispatch<SetStateAction<boolean | undefined>>;
+}> = ({ refresh }) => {
   const { control, handleDialogClose, handleSubmit, onSubmit } =
-    useManageProjectMember();
+    useManageProjectMember(refresh);
   return (
     <Stack gap={1} p={2} component="form" onSubmit={handleSubmit(onSubmit)}>
       <AsynchronousRhfAutocomplete

@@ -5,6 +5,7 @@ import { Control, FieldValues, Path } from "react-hook-form";
 import { SelectFieldApiResponse } from "../../../../services/data-services/Helper";
 import { enqueueSnackbar } from "notistack";
 import { ApiError } from "../../../../services/Helper";
+import { SxProps } from "@mui/system";
 
 export declare type DataApiDetails = {
   api: () => Promise<AxiosResponse<SelectFieldApiResponse>>;
@@ -19,6 +20,7 @@ export interface RhfSelectProps<TField extends FieldValues> {
   required?: boolean;
   autoComplete?: string;
   apidetails: DataApiDetails;
+  sx?: SxProps;
   defaultValue?: { id: number; name: string };
 }
 
