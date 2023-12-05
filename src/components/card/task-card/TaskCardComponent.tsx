@@ -15,7 +15,7 @@ import { TaskCardComponentProps } from "./Helper";
 import { useNavigate } from "react-router-dom";
 import routes from "../../../utils/helpers/routes/Routes";
 import noDataImage from "../../../assets/noData.svg";
-import { CloseRounded, Visibility } from "@mui/icons-material";
+import { Visibility } from "@mui/icons-material";
 import AvatarComponent from "../../common/avatar/AvatarComponent";
 
 // TaskCardComponent component
@@ -141,22 +141,6 @@ const TaskCardComponent: React.FC<TaskCardComponentProps> = ({
                         >
                           <Visibility />
                         </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Close task">
-                        <span>
-                          <IconButton
-                            size="small"
-                            onClick={() =>
-                              navigate(
-                                routes.projects.path.concat(id.toString()),
-                              )
-                            }
-                            color={taskStatus ? "error" : "primary"}
-                            disabled={!taskStatus}
-                          >
-                            <CloseRounded />
-                          </IconButton>
-                        </span>
                       </Tooltip>
                     </Box>
                   </Grid>

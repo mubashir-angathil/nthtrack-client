@@ -26,7 +26,7 @@ const AlertComponent: FC = () => {
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ width: 400 }}>
         <DialogContentText id="alert-dialog-description">
           {message}
         </DialogContentText>
