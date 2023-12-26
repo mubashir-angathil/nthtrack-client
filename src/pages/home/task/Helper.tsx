@@ -1,52 +1,121 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import projectServices from "../../../services/project-services/ProjectServices";
-import {
-  NavigateFunction,
-  Params,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { Params, useParams } from "react-router-dom";
 import { ApiError } from "../../../services/Helper";
-import { GetTaskByIdResponse } from "../../../services/project-services/Helper";
-import routes from "../../../utils/helpers/routes/Routes";
+import {
+  GetTaskByIdResponse,
+  StatusInterface,
+  UpdateTaskRequest,
+} from "../../../services/project-services/Helper";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 import { enqueueSnackbar } from "notistack";
 import { useAlertContext } from "../../../utils/helpers/context/alert-context/AlertContext";
 import { useAlert } from "../../../components/common/alert/Helper";
+import useSocketHelpers from "../../../socket/Socket";
+import { useProjectContext } from "../../../utils/helpers/context/project-context/ProjectContext";
+import { LabelAutocompleteOptionType } from "../../../services/data-services/Helper";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { InferType, array, number, object, string } from "yup";
+import ManageTaskForm from "../../../components/form/manage-task/ManageTaskForm";
+import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
+
+interface UpdateTaskInput {
+  task?: string;
+  description?: string;
+  label?: LabelAutocompleteOptionType;
+  status?: StatusInterface;
+}
+
+// Define the validation schema for the sign-in form
+export const manageTaskFormSchema = object({
+  labelId: number(),
+  statusId: number(),
+  task: string(),
+  description: string().min(2).max(500),
+  assignees: array().default([]),
+});
+
+// Define the type for the form inputs based on the schema
+export type ManageTaskFormInput = InferType<typeof manageTaskFormSchema>;
 
 export const useTask = () => {
   const params: Params = useParams();
-  const navigate: NavigateFunction = useNavigate();
+  const { pushNotification } = useSocketHelpers();
   const { setAlert } = useAlertContext();
+  const { setDialog } = useDialogContext();
   const { handleCloseAlert } = useAlert();
-
-  const [ids] = useState<{ taskId: number; projectId: number }>({
-    taskId: params.taskId ? parseInt(params.taskId) : 0,
-    projectId: params.projectId ? parseInt(params.projectId) : 0,
-  });
-
+  const { project } = useProjectContext();
+  const [refresh, setRefresh] = useState<boolean>(false);
   const [task, setTask] = useState<GetTaskByIdResponse["data"] | undefined>();
 
-  const handleTaskUpdate = () => {
-    if (routes.tasks.update?.path) {
-      navigate(routes.tasks.update.path);
+  // Initialize the React Hook Form with validation resolver and default values
+  const { control, watch, setValue, reset, resetField } =
+    useForm<ManageTaskFormInput>({
+      resolver: yupResolver(manageTaskFormSchema),
+    });
+
+  const handelSetFormValues = ({
+    key,
+    value,
+  }: {
+    key: "task" | "label" | "status" | "description";
+    value: string | number;
+  }) => {
+    if (key === "label" || key === "status") {
+      setValue(`${key}Id`, value as number);
+    } else if (key === "description" || key === "task") {
+      setValue(key, value as string);
     }
   };
 
-  const handleCloseTask = () => {
+  // handler to update the task
+  const handleTaskUpdate = async (updatedValues: UpdateTaskInput) => {
     setAlert({
       open: true,
       alert: {
-        title: "Close Task",
-        message: "Are you sure?",
+        title: "Confirm the changes",
+        message: "Do you confirm the to made this change on this",
+        negativeButton: "Cancel",
+        positiveButton: "Confirm",
+        response: async (response) => {
+          if (response === "accept" && project && task) {
+            await updateTaskById({
+              ...updatedValues,
+              labelId: updatedValues?.label
+                ? updatedValues.label.id
+                : undefined,
+              statusId: updatedValues?.status
+                ? updatedValues.status.id
+                : undefined,
+              projectId: project.id,
+              taskId: task.id,
+            });
+          } else {
+            reset();
+          }
+          handleCloseAlert();
+        },
+      },
+    });
+  };
+
+  // Handler to delete the task
+  const handleDeleteTask = () => {
+    setAlert({
+      open: true,
+      alert: {
+        title: "Delete This Task",
+        message:
+          "Once you delete a task, there is no going back.Please be certain.",
         positiveButton: "Accept",
         negativeButton: "Cancel",
         response: async (res) => {
-          if (res === "accept" && task?.id) {
+          if (res === "accept" && task?.id && project) {
             handleCloseAlert();
-            await fetchCloseTaskById({
-              projectId: ids.projectId,
+            await deleteTask({
+              projectId: project.id,
               taskId: task.id,
             });
           }
@@ -55,7 +124,7 @@ export const useTask = () => {
     });
   };
 
-  // Function to fetch project details from the API
+  // controller to get the task
   const fetchTaskById = async ({
     taskId,
     projectId,
@@ -92,8 +161,8 @@ export const useTask = () => {
     }
   };
 
-  // Function to close the task by id  the API
-  const fetchCloseTaskById = async ({
+  // Controller for delete the task
+  const deleteTask = async ({
     taskId,
     projectId,
   }: {
@@ -101,22 +170,26 @@ export const useTask = () => {
     projectId: number;
   }) => {
     try {
-      const project = await projectServices.closeTaskById({
+      const response = await projectServices.deleteTask({
         projectId,
         taskId,
       });
-
-      if (project.status === 200 && project.data.success) {
+      if (response.status === 200 && response.data.success) {
+        pushNotification({
+          broadcastId: projectId,
+          message: `:author deleted the project ${project?.name}'s task ${taskId}`,
+        });
         enqueueSnackbar({
-          message: project.data.message,
+          message: response.data.message,
           variant: "success",
         });
         generalFunctions.goBack();
       } else {
-        throw generalFunctions.customError(project as any);
+        throw { data: { message: response.data.message } };
       }
     } catch (error) {
       const { data } = error as ApiError;
+
       if (data.success === false) {
         enqueueSnackbar({
           message: data.message,
@@ -126,11 +199,53 @@ export const useTask = () => {
     }
   };
 
-  useLayoutEffect(() => {
-    if (ids.taskId === 0 || ids.projectId === 0) {
-      generalFunctions.goBack();
+  // Controller to update the task
+  const updateTaskById = async (props: UpdateTaskRequest) => {
+    try {
+      const response = await projectServices.updateTask(props);
+      if (response.status === 200 && response.data.success) {
+        await fetchTaskById({
+          projectId: props.projectId,
+          taskId: props.taskId,
+        });
+        reset();
+        enqueueSnackbar({ message: response.data.message, variant: "success" });
+      }
+    } catch (error) {
+      const {
+        data: { message },
+      } = error as ApiError;
+
+      enqueueSnackbar({ message, variant: "error" });
     }
-    fetchTaskById({ projectId: ids.projectId, taskId: ids.taskId });
-  }, []);
-  return { task, handleCloseTask, handleTaskUpdate };
+  };
+
+  const handleTaskFormUpdate = () => {
+    setDialog({
+      open: true,
+      form: {
+        title: "Update Task",
+        body: <ManageTaskForm values={task} setRefresh={setRefresh} />,
+      },
+    });
+  };
+
+  // useEffect to fetch task initially
+  useEffect(() => {
+    const taskId = params?.taskId && parseInt(params.taskId);
+    if (project && taskId) {
+      fetchTaskById({ projectId: project.id, taskId });
+    }
+  }, [project, refresh]);
+
+  return {
+    task,
+    control,
+    watch,
+    resetField,
+    handelSetFormValues,
+    handleTaskUpdate,
+    handleTaskFormUpdate,
+    handleDeleteTask,
+  };
 };

@@ -46,15 +46,15 @@ const generalFunctions = {
    * @param {UseFormSetError<any>} setError - React Hook Form's setError function.
    * @returns {undefined} Void.
    */
-  fieldErrorsHandler: (
-    apiError: ApiError,
-    setError: UseFormSetError<any>,
-  ): void => {
+  fieldErrorsHandler: (apiError: ApiError, setError: UseFormSetError<any>) => {
     const { data } = apiError;
-    if (data.error?.fieldErrors)
+    if (data.error?.fieldErrors) {
       data.error.fieldErrors.forEach((value) => {
         return setError(value.field, { message: value.message });
       });
+      return true;
+    }
+    return false;
   },
   customResponse: (response: AxiosResponse) => {
     if (response)
@@ -78,7 +78,7 @@ const generalFunctions = {
     }
     return false;
   },
-  goBack: () => history.go(-1),
+  goBack: () => history.back(),
 };
 
 export default generalFunctions;

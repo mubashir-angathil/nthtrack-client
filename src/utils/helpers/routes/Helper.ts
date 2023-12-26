@@ -6,7 +6,7 @@ type keys =
   | "projects"
   | "tasks"
   | "team"
-  | "projectMembers";
+  | "projectSettings";
 type actions = "create" | "update" | "view";
 
 export type RouteConfigsType = {

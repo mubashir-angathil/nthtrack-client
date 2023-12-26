@@ -1,5 +1,6 @@
-import React from "react";
-import { useDialog } from "./Helper";
+// GeneralDialog: React component for displaying a general dialog.
+
+import React, { useEffect } from "react";
 import {
   Box,
   Dialog,
@@ -7,20 +8,12 @@ import {
   DialogTitle,
   Divider,
   IconButton,
+  Paper,
 } from "@mui/material";
-import { modalStyle } from "./Style";
-import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
 import CloseIcon from "@mui/icons-material/Close";
-// import { TransitionProps } from "@mui/material/transitions";
-
-// const Transition = React.forwardRef(function Transition(
-//   props: TransitionProps & {
-//     children: React.ReactElement;
-//   },
-//   ref: React.Ref<unknown>,
-// ) {
-//   return <Slide direction="up" ref={ref} {...props} />;
-// });
+import { modalStyle } from "./Style";
+import { useDialog } from "./Helper";
+import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
 
 const GeneralDialog: React.FC = () => {
   const styles = modalStyle;
@@ -32,12 +25,8 @@ const GeneralDialog: React.FC = () => {
   } = useDialogContext();
   const { handleDialogClose } = useDialog();
 
-  window.addEventListener("popstate", () => {
-    // close dialog when use press browser navigation
-    handleDialogClose();
-  });
-
-  React.useEffect(() => {
+  // Close dialog when user presses browser navigation
+  useEffect(() => {
     const handlePopstate = () => {
       handleDialogClose();
     };
@@ -55,6 +44,10 @@ const GeneralDialog: React.FC = () => {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       transitionDuration={300}
+      PaperProps={{
+        component: Paper,
+        elevation: 3,
+      }}
     >
       <DialogTitle
         display="flex"

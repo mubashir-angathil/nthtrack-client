@@ -53,6 +53,7 @@ const RhfMultiUsersAutocomplete = <TField extends FieldValues>({
         const { value, ref, onChange } = field;
         return (
           <Autocomplete
+            {...field}
             sx={sx}
             ref={ref}
             multiple

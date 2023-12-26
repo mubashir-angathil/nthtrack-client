@@ -5,12 +5,18 @@ import axios from "../api-instance/Instance";
 import {
   AddNewMemberRequest,
   ApiRequestWithPaginationAndSearch,
+  CreateStatusRequest,
+  CreateStatusResponse,
+  CreateLabelRequest,
+  CreateLabelResponse,
   GetAllTasksRequest,
   GetProjectByIdResponse,
   GetProjectMembersRequest,
   GetProjectMembersResponse,
   GetTaskByIdResponse,
   ManageTaskRequest,
+  ManageTaskResponse,
+  MarkNotificationsAsReadRequest,
   ProjectsResponse,
   RemoveMemberRequest,
   TaskResponse,
@@ -18,6 +24,9 @@ import {
   UpdateMemberRequest,
   UpdateProjectRequest,
   UpdateTaskRequest,
+  UpdateLabelRequest,
+  UpdateStatusRequest,
+  UpdatedTaskResponse,
 } from "./Helper";
 import { ApiError, NormalApiSuccessResponse } from "../Helper";
 import { ManageProjectFormInput } from "../../components/form/manage-project/Helper";
@@ -122,22 +131,15 @@ const projectServices = {
    */
   getAllTasks: async ({
     projectId,
-    trackerId,
-    statusId,
+    labelId,
     searchKey,
-    limit,
-    page,
   }: GetAllTasksRequest): Promise<AxiosResponse<TaskResponse>> => {
     const params = {
-      page,
-      limit,
-      trackerId,
-      statusId,
+      labelId,
       searchKey,
     };
 
-    statusId === undefined && delete params.statusId;
-    trackerId === undefined && delete params.trackerId;
+    labelId === undefined && delete params.labelId;
     searchKey === undefined && delete params.searchKey;
 
     try {
@@ -168,9 +170,6 @@ const projectServices = {
     try {
       const response = await axios.get<GetProjectByIdResponse>(
         `/project/${projectId}`,
-        {
-          params: { projectId },
-        },
       );
       return response;
     } catch (error) {
@@ -188,10 +187,10 @@ const projectServices = {
   createTask: async ({
     projectId,
     ...props
-  }: ManageTaskRequest): Promise<AxiosResponse<TaskResponse>> => {
+  }: ManageTaskRequest): Promise<AxiosResponse<ManageTaskResponse>> => {
     try {
       // Make the API request to get all projects
-      const response = await axios.post<TaskResponse>(
+      const response = await axios.post<ManageTaskResponse>(
         `/project/${projectId}/task/create`,
         {
           ...props,
@@ -215,10 +214,10 @@ const projectServices = {
    */
   updateTask: async (
     props: UpdateTaskRequest,
-  ): Promise<AxiosResponse<TaskResponse>> => {
+  ): Promise<AxiosResponse<UpdatedTaskResponse>> => {
     try {
       // Make the API request to get all projects
-      const response = await axios.patch<TaskResponse>(
+      const response = await axios.patch<UpdatedTaskResponse>(
         `/project/${props.projectId}/task/update`,
         props,
       );
@@ -391,6 +390,177 @@ const projectServices = {
         `/project/${projectId}/members`,
         { ...props },
       );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  markNotificationsAsRead: async (
+    props: MarkNotificationsAsReadRequest,
+  ): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      return await axios.patch<NormalApiSuccessResponse>(
+        `/project/notification/all/mark-as-read`,
+        props,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  deleteProject: async ({ projectId }: { projectId: number }) => {
+    try {
+      return await axios.delete<NormalApiSuccessResponse>(
+        `/project/${projectId}/delete`,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  restoreClosedProject: async ({ projectId }: { projectId: number }) => {
+    try {
+      return await axios.patch<NormalApiSuccessResponse>(
+        `/project/${projectId}/reopen`,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  restoreClosedTask: async ({
+    projectId,
+    taskId,
+  }: {
+    taskId: number;
+    projectId: number;
+  }) => {
+    try {
+      return await axios.patch<NormalApiSuccessResponse>(
+        `/project/${projectId}/task/${taskId}/reopen`,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  deleteTask: async ({
+    projectId,
+    taskId,
+  }: {
+    taskId: number;
+    projectId: number;
+  }) => {
+    try {
+      return await axios.delete<NormalApiSuccessResponse>(
+        `/project/${projectId}/task/${taskId}/delete`,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  createStatus: async ({
+    projectId,
+    ...props
+  }: CreateStatusRequest): Promise<AxiosResponse<CreateStatusResponse>> => {
+    try {
+      // Make the API request to get all projects
+      const response = await axios.post<CreateStatusResponse>(
+        `/project/${projectId}/status/create`,
+        props,
+      );
+
+      // Return the response
+      return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  createLabel: async ({
+    projectId,
+    ...props
+  }: CreateLabelRequest): Promise<AxiosResponse<CreateLabelResponse>> => {
+    try {
+      // Make the API request to get all projects
+      const response = await axios.post<CreateLabelResponse>(
+        `/project/${projectId}/label/create`,
+        props,
+      );
+
+      // Return the response
+      return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  deleteStatus: async ({
+    projectId,
+    statusId,
+  }: {
+    statusId: number;
+    projectId: number;
+  }) => {
+    try {
+      return await axios.delete<NormalApiSuccessResponse>(
+        `/project/${projectId}/status/${statusId}/delete`,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  deleteLabel: async ({
+    projectId,
+    labelId,
+  }: {
+    projectId: number;
+    labelId: number;
+  }) => {
+    try {
+      return await axios.delete<NormalApiSuccessResponse>(
+        `/project/${projectId}/label/${labelId}/delete`,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  updateStatus: async ({
+    projectId,
+    statusId,
+    ...props
+  }: UpdateStatusRequest): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      // Make the API request to get all projects
+      const response = await axios.patch<NormalApiSuccessResponse>(
+        `/project/${projectId}/status/${statusId}/update`,
+        props,
+      );
+
+      // Return the response
+      return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  updateLabel: async ({
+    projectId,
+    labelId,
+    ...props
+  }: UpdateLabelRequest): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      // Make the API request to get all projects
+      const response = await axios.patch<NormalApiSuccessResponse>(
+        `/project/${projectId}/label/${labelId}/update`,
+        props,
+      );
+
+      // Return the response
+      return response;
     } catch (error) {
       // Throw a custom error using a helper function
       throw generalFunctions.customError(error as AxiosError<ApiError>);

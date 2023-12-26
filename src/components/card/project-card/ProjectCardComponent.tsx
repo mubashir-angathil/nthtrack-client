@@ -2,7 +2,6 @@ import React from "react";
 import {
   Badge,
   Card,
-  Chip,
   Divider,
   Grid,
   Tooltip,
@@ -46,7 +45,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
       {projects.length > 0 ? (
         // Displaying project cards
 
-        projects.map(({ name, id, taskCount, description, status }) => {
+        projects.map(({ name, id, taskCount, description }) => {
           return (
             // Individual project card
             <Card
@@ -79,16 +78,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                     >
                       {name.toLocaleUpperCase()}
                     </Typography>
-                    <Tooltip title="Status">
-                      <Chip
-                        variant="filled"
-                        label={status.name}
-                        color={status.name === "Opened" ? "warning" : "default"}
-                        size="small"
-                      />
-                    </Tooltip>
                   </Grid>
-                  {/* Badges for open issues and status */}
                   <Box display="flex" gap={1} alignItems="center">
                     <Tooltip title="tasks">
                       <Badge

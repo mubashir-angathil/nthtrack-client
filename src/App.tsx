@@ -9,6 +9,9 @@ import { SnackbarProvider, closeSnackbar } from "notistack";
 import { Close } from "@mui/icons-material";
 import { AlertContextProvider } from "./utils/helpers/context/alert-context/AlertContextProvider";
 import AlertComponent from "./components/common/alert/AlertComponent";
+import { ProjectContextProvider } from "./utils/helpers/context/project-context/ProjectContextProvider";
+import ModalContextProvider from "./utils/helpers/context/modal-context/ModalContextProvider";
+import GeneralModal from "./components/common/modal/GeneralModal";
 
 const App: React.FC = () => {
   return (
@@ -28,82 +31,90 @@ const App: React.FC = () => {
             vertical: "bottom",
           }}
         >
-          <AlertContextProvider>
-            <DialogContextProvider>
-              <Routes>
-                <Route index element={routes.signIn.element} />
-                <Route
-                  path={routes.signUp.path}
-                  element={routes.signUp.element}
-                />
-                <Route path={routes.home.path} element={routes.home.default}>
-                  <Route index element={routes.home.element} />
-                  <Route
-                    path={routes.projects.create?.path}
-                    element={routes.projects.create?.element}
-                  />
-                  <Route path={routes.projects.path.concat(":projectId")}>
-                    <Route index element={routes.projects.element} />
+          <ProjectContextProvider>
+            <AlertContextProvider>
+              <ModalContextProvider>
+                <DialogContextProvider>
+                  <Routes>
+                    <Route index element={routes.signIn.element} />
                     <Route
-                      path={routes.projectMembers.path}
-                      element={routes.projectMembers.element}
+                      path={routes.signUp.path}
+                      element={routes.signUp.element}
                     />
                     <Route
-                      path={routes.projects.update?.path}
-                      element={routes.projects.update?.element}
-                    />
-                    <Route path={routes.tasks.path}>
-                      <Route path=":taskId">
-                        <Route index element={routes.tasks.element} />
+                      path={routes.home.path}
+                      element={routes.home.default}
+                    >
+                      <Route index element={routes.home.element} />
+                      <Route
+                        path={routes.projects.create?.path}
+                        element={routes.projects.create?.element}
+                      />
+                      <Route path={routes.projects.path.concat(":projectId")}>
+                        <Route index element={routes.projects.element} />
                         <Route
-                          path={routes.tasks.update?.path}
-                          element={routes.tasks.update?.element}
+                          path={routes.projectSettings.path}
+                          element={routes.projectSettings.element}
                         />
-                      </Route>
-                      <Route
-                        path={routes.tasks.create?.path}
-                        element={routes.tasks.create?.element}
-                      />
-                    </Route>
-                  </Route>
-                  <Route path={routes.team.path.concat(":team")}>
-                    <Route index element={routes.team.element} />
-                    <Route
-                      path={routes.projects.create?.path}
-                      element={routes.projects.create?.element}
-                    />
-                    <Route path={routes.projects.path.concat(":projectId")}>
-                      <Route index element={routes.projects.element} />
-                      <Route
-                        path={routes.projectMembers.path}
-                        element={routes.projectMembers.element}
-                      />
-                      <Route
-                        path={routes.projects.update?.path}
-                        element={routes.projects.update?.element}
-                      />
-                      <Route path={routes.tasks.path}>
-                        <Route path=":taskId">
-                          <Route index element={routes.tasks.element} />
+                        <Route
+                          path={routes.projects.update?.path}
+                          element={routes.projects.update?.element}
+                        />
+                        <Route path={routes.tasks.path}>
+                          <Route path=":taskId">
+                            <Route index element={routes.tasks.element} />
+                            <Route
+                              path={routes.tasks.update?.path}
+                              element={routes.tasks.update?.element}
+                            />
+                          </Route>
                           <Route
-                            path={routes.tasks.update?.path}
-                            element={routes.tasks.update?.element}
+                            path={routes.tasks.create?.path}
+                            element={routes.tasks.create?.element}
                           />
                         </Route>
+                      </Route>
+                      <Route path={routes.team.path.concat(":team")}>
+                        <Route index element={routes.team.element} />
                         <Route
-                          path={routes.tasks.create?.path}
-                          element={routes.tasks.create?.element}
+                          path={routes.projects.create?.path}
+                          element={routes.projects.create?.element}
                         />
+                        <Route path={routes.projects.path.concat(":projectId")}>
+                          <Route index element={routes.projects.element} />
+                          <Route
+                            path={routes.projectSettings.path}
+                            element={routes.projectSettings.element}
+                          />
+                          <Route
+                            path={routes.projects.update?.path}
+                            element={routes.projects.update?.element}
+                          />
+                          <Route path={routes.tasks.path}>
+                            <Route path=":taskId">
+                              <Route index element={routes.tasks.element} />
+                              <Route
+                                path={routes.tasks.update?.path}
+                                element={routes.tasks.update?.element}
+                              />
+                            </Route>
+                            <Route
+                              path={routes.tasks.create?.path}
+                              element={routes.tasks.create?.element}
+                            />
+                          </Route>
+                        </Route>
                       </Route>
                     </Route>
-                  </Route>
-                </Route>
-                <Route path="*" element={<h1>Page Not Found</h1>} />
-              </Routes>
-              <AlertComponent />
-              <GeneralDialog />
-            </DialogContextProvider>
-          </AlertContextProvider>
+                    <Route path="*" element={<h1>Page Not Found</h1>} />
+                  </Routes>
+                  <AlertComponent />
+                  <GeneralDialog />
+                  <GeneralModal />
+                </DialogContextProvider>
+              </ModalContextProvider>
+            </AlertContextProvider>
+          </ProjectContextProvider>
         </SnackbarProvider>
       </AuthContextProvider>
     </ThemeProvider>

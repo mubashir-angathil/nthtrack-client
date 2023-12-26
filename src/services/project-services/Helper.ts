@@ -11,7 +11,7 @@ export declare type ByUserDetails = {
   email: string;
 };
 // Interface for individual project details
-interface Project {
+export interface Project {
   id: number; // Project ID
   name: string; // Project name
   description: string; // Project description
@@ -21,20 +21,21 @@ interface Project {
   createdByUser: ByUserDetails;
   updatedByUser: ByUserDetails;
   closedByUser: ByUserDetails;
+  statuses: Array<{ id: number; name: string; color: string }>;
 }
 
 interface ProjectWithTaskCount extends Project {
-  status: { id: number; name: string }; // Project status details
   taskCount: number; // Count of tasks associated with the project
 }
 interface Task {
   id: number;
+  task: string;
   description: string;
   createdAt: string;
   updatedAt: string;
   closedAt: string | null;
-  status: { id: number; name: string };
-  tracker: { id: number; name: string };
+  status: { id: number; name: string; color: string };
+  label: { id: number; name: string; color: string };
   assignees: Array<ByUserDetails>;
   createdByUser: ByUserDetails;
   updatedByUser: ByUserDetails;
@@ -46,10 +47,16 @@ export interface ApiRequestWithPaginationAndSearch
   extends ApiRequestWithPagination {
   searchKey?: string; // Optional search key for filtering
 }
-export interface GetAllTasksRequest extends ApiRequestWithPaginationAndSearch {
+export interface ApiRequestWithPaginationParamsAndSearch
+  extends ApiRequestWithPagination {
+  searchKey?: string; // Optional search key for filtering
   projectId: number;
-  trackerId?: number;
-  statusId?: number;
+}
+
+export interface GetAllTasksRequest {
+  projectId: number;
+  labelId?: number;
+  searchKey?: string;
 }
 
 // Interface for the response from the server containing project data
@@ -59,7 +66,13 @@ export interface ProjectsResponse extends ApiResponseWithPagination {
 
 // Interface for the response from the server containing task data
 export interface TaskResponse extends ApiResponseWithPagination {
-  data: Task[]; // Array of project data
+  data: {
+    [key: string]: Task[];
+  };
+}
+
+export interface UpdatedTaskResponse extends NormalApiSuccessResponse {
+  data: Task;
 }
 
 // Interface for the response containing a new access token
@@ -78,17 +91,24 @@ export interface GetTaskByIdResponse {
 
 export interface ManageTaskRequest extends ManageTaskFormInput {
   projectId: number;
+  statusId: number;
 }
 
+export interface ManageTaskResponse extends ApiResponseWithPagination {
+  data: Task; // task data
+}
 export interface UpdateProjectRequest {
   name?: string;
   description?: string;
   projectId: number;
 }
 export interface UpdateTaskRequest {
-  trackerId?: number;
+  labelId?: number;
+  statusId?: number;
   description?: string; // optional
   taskId: number; // required
+  task?: string;
+  assignees?: string[];
   projectId: number; //required
 }
 
@@ -129,5 +149,39 @@ export interface GetProjectMembersResponse extends ApiResponseWithPagination {
     createdAt: string;
     updatedAt: string;
   }>;
+}
+export interface MarkNotificationsAsReadRequest {
+  notificationIds: number[];
+}
+
+export interface StatusInterface {
+  id: number;
+  name: string;
+  color: string;
+}
+export interface CreateStatusResponse extends NormalApiSuccessResponse {
+  data: StatusInterface;
+}
+export interface CreateStatusRequest {
+  name: string;
+  color: string;
+  projectId: number;
+}
+export interface CreateLabelRequest extends CreateStatusRequest {}
+
+export interface CreateLabelResponse extends CreateStatusResponse {}
+
+export interface UpdateStatusRequest {
+  name?: string;
+  color?: string;
+  projectId: number;
+  statusId: number;
+}
+
+export interface UpdateLabelRequest {
+  name?: string;
+  color?: string;
+  projectId: number;
+  labelId: string;
 }
 // Comments provide explanations for each interface, making the code more readable and understandable.

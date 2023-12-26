@@ -180,6 +180,7 @@ export const useProjects = () => {
   }, [apiConfig.page, apiConfig.searchKey]);
 
   useLayoutEffect(() => {
+    sessionStorage.removeItem("project");
     fetchTeams();
   }, []);
 
@@ -198,30 +199,3 @@ export const useProjects = () => {
     handleProjectLoading,
   };
 };
-
-// const pageProjectsApiHelpers = {
-//   // Function to fetch projects from the API
-//   fetchProjects: async (apiConfig: ApiConfig) => {
-//     try {
-//       // Call the API to get projects based on the current API configuration
-//       const response = await projectServices.getAllProjects(apiConfig);
-//       const {
-//         status,
-//         data: { success, message },
-//       } = response;
-
-//       // If the API call is successful, update projects and API configuration
-//       if (status === 200 && success) {
-//         return response.data;
-//       } else {
-//         // If there's an error, log the error message
-//         throw { data: message };
-//       }
-//     } catch (error) {
-//       // Handle API errors
-//       const { data } = error as ApiError;
-//       console.error(data);
-//       return null;
-//     }
-//   },
-// };

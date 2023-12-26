@@ -7,27 +7,29 @@ import { ApiError } from "../../../services/Helper";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 import { enqueueSnackbar } from "notistack";
 import {
-  NavigateFunction,
-  Params,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-import {
   GetTaskByIdResponse,
   ManageTaskRequest,
+  Project,
+  TaskResponse,
   UpdateTaskRequest,
 } from "../../../services/project-services/Helper";
-import routes from "../../../utils/helpers/routes/Routes";
 import { ApiDetailsType } from "../../common/textfield/autocomplete/multi-autocomplete/Helper";
 import dataServices from "../../../services/data-services/DataServices";
+import useSocketHelpers from "../../../socket/Socket";
+import { useDialog } from "../../common/dialog/Helper";
+import { useProjectContext } from "../../../utils/helpers/context/project-context/ProjectContext";
 
 export interface ManageTaskFormProps {
-  updateProjects: () => Promise<void>;
+  values?: GetTaskByIdResponse["data"];
+  activeStatus?: Project["statuses"][0] | null;
+  setTasks?: React.Dispatch<React.SetStateAction<TaskResponse["data"]>>;
+  setRefresh?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 // Define the validation schema for the sign-in form
 export const manageTaskFormSchema = object({
-  trackerId: number().required(),
-  description: string().min(2).max(1000).required(),
+  labelId: number().required(),
+  task: string().required(),
+  description: string().min(2).max(500),
   assignees: array().required().default([]),
 }).required();
 
@@ -35,15 +37,18 @@ export const manageTaskFormSchema = object({
 export type ManageTaskFormInput = InferType<typeof manageTaskFormSchema>;
 
 // Custom hook for handling sign-up logic
-export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
-  const navigate: NavigateFunction = useNavigate();
-  const params: Params = useParams();
-  const [projectId] = useState(
-    params?.projectId ? parseInt(params.projectId) : 0,
-  );
+export const useManageTask = ({
+  values,
+  activeStatus,
+  setTasks,
+  setRefresh,
+}: ManageTaskFormProps) => {
+  const { project } = useProjectContext();
+  const { handleDialogClose } = useDialog();
   const [assigneesApiDetails, setAssigneesApiDetails] =
     useState<ApiDetailsType>({});
 
+  const { pushNotification } = useSocketHelpers();
   // Initialize the React Hook Form with validation resolver and default values
   const {
     handleSubmit,
@@ -55,7 +60,7 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
   } = useForm<ManageTaskFormInput>({
     resolver: yupResolver(manageTaskFormSchema),
     defaultValues: {
-      description: "",
+      task: "",
     },
   });
 
@@ -63,27 +68,30 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
   const onSubmit: SubmitHandler<ManageTaskFormInput> = async (
     newTask: ManageTaskFormInput,
   ) => {
-    const assignees = newTask.assignees.map((value) => value.id);
-
-    newTask.assignees = assignees;
-
-    if (projectId && !values) {
+    const assigneesId = newTask.assignees.map((value) => value.id);
+    if (project && !values && activeStatus) {
+      newTask.assignees = assigneesId;
       await createNewTask({
         ...newTask,
-        projectId,
+        statusId: activeStatus.id,
+        projectId: project.id,
       });
-    } else if (values) {
+    } else if (values && project) {
+      if (touchedFields.assignees) newTask.assignees = assigneesId;
+
       const updatedTask: UpdateTaskRequest = {
         ...newTask,
         taskId: values.id,
-        projectId,
+        projectId: project.id,
       };
       touchedFields?.description === undefined &&
         delete updatedTask.description;
-      touchedFields?.trackerId === undefined && delete updatedTask.trackerId;
+      touchedFields?.labelId === undefined && delete updatedTask.labelId;
+      touchedFields?.task === undefined && delete updatedTask.task;
+      touchedFields?.assignees === undefined && delete updatedTask.assignees;
 
       Object.keys(updatedTask).length > 1
-        ? await updateTask(updatedTask)
+        ? await updateTask(updatedTask, project.id)
         : enqueueSnackbar({
             message: "Couldn't find any changes in the field values",
             variant: "info",
@@ -100,12 +108,35 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
     try {
       const { data, status } = await projectServices.createTask(newTask);
 
-      if (data?.success && status === 200) {
-        generalFunctions.goBack();
+      if (data?.success && status === 201 && setTasks) {
+        if (newTask.assignees.length > 0 && data.data.id) {
+          newTask.assignees.forEach((assigneeId) => {
+            pushNotification({
+              broadcastId: assigneeId,
+              message: `:author assigned you the task (Task ${data.data.id}) of the "${project?.name}" project. `,
+            });
+          });
+        }
+        setTasks((prevTasks) => {
+          if (activeStatus) {
+            return {
+              ...prevTasks,
+              [activeStatus?.name]: [
+                ...(prevTasks[activeStatus?.name] || []),
+                data.data,
+              ],
+            };
+          }
+          return prevTasks;
+        });
+
         enqueueSnackbar({
           message: data.message,
           variant: "success",
         });
+        handleDialogClose();
+      } else {
+        throw new Error(data.message);
       }
     } catch (error) {
       // Handle errors from the sign-ip API
@@ -122,18 +153,23 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
     }
   };
 
-  const updateTask = async (newTask: UpdateTaskRequest) => {
+  const updateTask = async (newTask: UpdateTaskRequest, projectId: number) => {
     try {
       const { data, status } = await projectServices.updateTask({
         ...newTask,
         projectId,
       });
       if (data?.success && status === 200) {
-        generalFunctions.goBack();
+        pushNotification({
+          broadcastId: projectId,
+          message: `:author made changes in the task (Task ${newTask.taskId}) of the "${project?.name}" project.`,
+        });
         enqueueSnackbar({
           message: data?.message,
           variant: "success",
         });
+        setRefresh && setRefresh((prevValue) => !prevValue);
+        handleDialogClose();
       }
     } catch (error) {
       // Handle errors from the sign-ip API
@@ -153,26 +189,28 @@ export const useManageTask = (values?: GetTaskByIdResponse["data"]) => {
 
   useEffect(() => {
     if (values) {
-      setValue("trackerId", values.tracker.id);
+      setValue("labelId", values.label.id);
+      setValue("task", values.task);
       setValue("description", values.description);
     }
     return () => reset();
   }, [setValue, values, reset]);
 
   useEffect(() => {
-    if (projectId === 0) {
-      navigate(routes.projects.path, { replace: true });
-    } else {
+    if (project) {
       setAssigneesApiDetails({
-        api: () => dataServices.getProjectMembers({ projectId }) as any,
+        api: () =>
+          dataServices.getProjectMembers({ projectId: project.id }) as any,
       });
     }
-  }, [navigate, projectId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     isSubmitting,
     handleSubmit,
     setValue,
+    handleDialogClose,
     assigneesApiDetails,
     control,
     onSubmit,

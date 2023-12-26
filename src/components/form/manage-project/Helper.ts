@@ -10,6 +10,7 @@ import {
   GetProjectByIdResponse,
   UpdateProjectRequest,
 } from "../../../services/project-services/Helper";
+import useSocketHelpers from "../../../socket/Socket";
 
 export interface ManageProjectFormProps {
   updateProjects: () => Promise<void>;
@@ -25,6 +26,8 @@ export type ManageProjectFormInput = InferType<typeof manageProjectFormSchema>;
 
 // Custom hook for handling sign-up logic
 export const useManageProject = (values?: GetProjectByIdResponse["data"]) => {
+  const { pushNotification } = useSocketHelpers();
+
   // Initialize the React Hook Form with validation resolver and default values
   const {
     handleSubmit,
@@ -40,6 +43,7 @@ export const useManageProject = (values?: GetProjectByIdResponse["data"]) => {
       name: "",
     },
   });
+
   // Handle form submission
   const onSubmit: SubmitHandler<ManageProjectFormInput> = async (
     newProject: ManageProjectFormInput,
@@ -55,7 +59,11 @@ export const useManageProject = (values?: GetProjectByIdResponse["data"]) => {
         delete updatedProject.description;
 
       if (Object.keys(updatedProject).length > 1) {
-        await updateProject(updatedProject);
+        const message = updatedProject.name
+          ? `Project "${values.name}" renamed as ${updatedProject.name} by :author`
+          : `Project ${values.name}'s description updated by :author`;
+
+        await updateProject({ newProject: updatedProject, message });
       } else {
         enqueueSnackbar({
           message: "Couldn't find any changes in the field values",
@@ -66,7 +74,6 @@ export const useManageProject = (values?: GetProjectByIdResponse["data"]) => {
       await createNewProject(newProject);
     }
   };
-
   const createNewProject = async (newProject: ManageProjectFormInput) => {
     try {
       const { data, status } = await projectServices.createProject(newProject);
@@ -93,10 +100,20 @@ export const useManageProject = (values?: GetProjectByIdResponse["data"]) => {
     }
   };
 
-  const updateProject = async (newProject: UpdateProjectRequest) => {
+  const updateProject = async ({
+    newProject,
+    message,
+  }: {
+    newProject: UpdateProjectRequest;
+    message: string;
+  }) => {
     try {
       const { data, status } = await projectServices.updateProject(newProject);
       if (data?.success && status === 200) {
+        pushNotification({
+          broadcastId: newProject.projectId,
+          message,
+        });
         generalFunctions.goBack();
         enqueueSnackbar({
           message: data?.message,

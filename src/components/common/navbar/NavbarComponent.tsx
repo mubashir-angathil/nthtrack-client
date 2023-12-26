@@ -15,11 +15,17 @@ import cookieServices from "../../../services/storage-services/CookieServices";
 import { useAuthContext } from "../../../utils/helpers/context/auth-context/AuthContext";
 import { initialAuthDetailsState } from "../../../utils/helpers/context/auth-context/Helper";
 import { TitleHelper } from "../../../utils/helpers/constants/Constants";
+import { NotificationComponent } from "../notification/NotificationComponent";
+import { Button } from "@mui/material";
+import { NavigateFunction, useNavigate } from "react-router-dom";
+import { Refresh } from "@mui/icons-material";
+import { useRefreshContext } from "../../../utils/helpers/context/refresh-context/RefreshContext";
 
 export const NavbarComponent = () => {
   const styles = navbarStyes;
+  const navigate: NavigateFunction = useNavigate();
   const { authDetails, setAuthDetails } = useAuthContext();
-
+  const { refresh, setRefresh } = useRefreshContext();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
   );
@@ -60,7 +66,15 @@ export const NavbarComponent = () => {
             {TitleHelper.appName}
           </Typography>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box
+            sx={{
+              flexGrow: 0,
+              display: "flex",
+              alignItems: "center",
+              columnGap: 2,
+            }}
+          >
+            <NotificationComponent />
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar sx={{ width: 36, height: 36 }}>
@@ -96,6 +110,26 @@ export const NavbarComponent = () => {
             </Menu>
           </Box>
         </Toolbar>
+        {refresh.reload && (
+          <Button
+            sx={{
+              position: "absolute",
+              top: 50,
+              width: 100,
+              right: "50%",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+            size="small"
+            onClick={() => {
+              navigate(0);
+              setRefresh({ reload: false });
+            }}
+            endIcon={<Refresh />}
+          >
+            Refresh
+          </Button>
+        )}
       </Container>
     </AppBar>
   );

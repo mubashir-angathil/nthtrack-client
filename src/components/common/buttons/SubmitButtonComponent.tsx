@@ -9,7 +9,6 @@ const SubmitButtonComponent: React.FC<CustomButtonComponentProps> = ({
 }) => {
   return (
     <LoadingButton
-      disabled={reset.disabled}
       type="submit"
       color="success"
       size={size}

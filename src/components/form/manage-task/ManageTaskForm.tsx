@@ -1,27 +1,33 @@
+// Importing necessary dependencies and components
 import { FC } from "react";
 import Box from "@mui/material/Box";
 import { FormHelperText, Button, Grid, InputLabel } from "@mui/material";
 import RhfCKEditorComponent from "../../ck-editor/CkEditorComponent";
 import SubmitButtonComponent from "../../common/buttons/SubmitButtonComponent";
-import { useManageTask } from "./Helper";
-import RhfSelectComponent from "../../common/textfield/select/RhfSelectComponent";
-import dataServices from "../../../services/data-services/DataServices";
-import { GetTaskByIdResponse } from "../../../services/project-services/Helper";
-import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
+import { ManageTaskFormProps, useManageTask } from "./Helper";
 import RhfMultiUsersAutocomplete from "../../common/textfield/autocomplete/multi-autocomplete/RhfMultiUsersAutocomplete";
+import RhfTextfieldComponent from "../../common/textfield/RhfTextFieldComponent";
+import RhfLabelAutocomplete from "../../common/textfield/autocomplete/label-autocomplete/RhfLabelAutocomplete";
 
-const ManageTaskForm: FC<{ values?: GetTaskByIdResponse["data"] }> = ({
+// Functional component for managing task form
+const ManageTaskForm: FC<ManageTaskFormProps> = ({
   values,
+  activeStatus,
+  setTasks,
+  setRefresh,
 }) => {
+  // Destructuring values and functions from the custom hook
   const {
     control,
     setValue,
+    handleDialogClose,
     isSubmitting,
     assigneesApiDetails,
     handleSubmit,
     onSubmit,
-  } = useManageTask(values);
+  } = useManageTask({ values, activeStatus, setTasks, setRefresh });
 
+  // Rendering the task form
   return (
     <Box
       component="form"
@@ -30,25 +36,32 @@ const ManageTaskForm: FC<{ values?: GetTaskByIdResponse["data"] }> = ({
       onSubmit={handleSubmit(onSubmit)}
     >
       <Grid container spacing={2}>
-        <Grid item md={10} xs={8} gap={2}>
-          <FormHelperText sx={{ fontSize: 15 }}>Tracker *</FormHelperText>
-          <RhfSelectComponent
+        <Grid item xs={12} gap={2}>
+          {/* Form helper text for label */}
+          <FormHelperText sx={{ fontSize: 15 }}>Label *</FormHelperText>
+          {/* Label autocomplete component */}
+          <RhfLabelAutocomplete
             control={control}
-            name="trackerId"
+            name="labelId"
             size="small"
             required
-            defaultValue={values?.tracker}
-            apidetails={{ api: dataServices.getTrackers }}
+            defaultValue={values?.label}
+            label=""
           />
+          {/* Form helper text for task */}
+          <FormHelperText sx={{ fontSize: 15 }}>Task *</FormHelperText>
+          {/* Textfield component for entering task */}
+          <RhfTextfieldComponent control={control} name="task" />
+          {/* CKEditor component for entering task description */}
           <RhfCKEditorComponent
             control={control}
             label="Description"
             name="description"
-            required
+            height="150px"
           />
-        </Grid>
-        <Grid item md={2} xs={4}>
+          {/* Input label for assignees */}
           <InputLabel id="assignees-autocomplete">Assignees</InputLabel>
+          {/* Multi-users autocomplete component */}
           <RhfMultiUsersAutocomplete
             useFormHooks={{ control: control, setValue: setValue }}
             label=""
@@ -59,14 +72,17 @@ const ManageTaskForm: FC<{ values?: GetTaskByIdResponse["data"] }> = ({
           />
         </Grid>
         <Grid item md={10} xs={12}>
+          {/* Box for displaying buttons with close and submit actions */}
           <Box display="flex" justifyContent="end" columnGap={1}>
+            {/* Button for closing the dialog */}
             <Button
               variant="outlined"
               color="error"
-              onClick={generalFunctions.goBack}
+              onClick={handleDialogClose}
             >
               Close
             </Button>
+            {/* Submit button component */}
             <SubmitButtonComponent
               title={values ? "Update Task" : "Create Task"}
               loading={isSubmitting}
@@ -78,4 +94,5 @@ const ManageTaskForm: FC<{ values?: GetTaskByIdResponse["data"] }> = ({
   );
 };
 
+// Exporting the component as the default export
 export default ManageTaskForm;

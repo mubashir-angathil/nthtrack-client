@@ -5,6 +5,7 @@ import { Tokens } from "../storage-services/Helper";
 import authenticationServices from "../auth-services/AuthServices";
 import { MessageHelper } from "../../utils/helpers/constants/Constants";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
+import { io } from "socket.io-client";
 
 // Create a new axios instance for project-related API requests
 const projectInstance = axios.create({
@@ -96,4 +97,7 @@ projectInstance.interceptors.response.use(
   },
 );
 
+export const socket = io("http://localhost:5000", {
+  autoConnect: false,
+});
 export default projectInstance;

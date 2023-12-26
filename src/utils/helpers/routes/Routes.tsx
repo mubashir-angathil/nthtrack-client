@@ -8,7 +8,7 @@ import { RouteConfigsType } from "./Helper";
 import PageTeamProjects from "../../../pages/home/team/project/PageTeamProjects";
 import PageManageProject from "../../../pages/home/project/manage-project/PageManageProject";
 import PageManageTask from "../../../pages/home/task/manage-task/PageManageTask";
-import { ManageMembers } from "../../../pages/home/project/manage-members/ManageMembers";
+import PageProjectSettings from "../../../pages/home/project/settings/PageProjectSettings";
 
 // Define your routes using the RouteConfigsType
 const routes: RouteConfigsType = {
@@ -72,9 +72,9 @@ const routes: RouteConfigsType = {
     },
   },
 
-  projectMembers: {
-    path: "member",
-    element: <ManageMembers />,
+  projectSettings: {
+    path: "settings",
+    element: <PageProjectSettings />,
   },
 };
 

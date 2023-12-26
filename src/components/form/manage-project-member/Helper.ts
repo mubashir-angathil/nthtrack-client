@@ -34,8 +34,9 @@ export const useManageProjectMember = (
 
   // Handle form submission
   const onSubmit: SubmitHandler<ManageProjectMemberInput> = async (data) => {
-    if (location.state?.projectId) {
-      const member = { ...data, projectId: location.state.projectId };
+    const project = location.state.project;
+    if (project?.id) {
+      const member = { ...data, projectId: project?.id };
       await addNewMember(member);
     }
   };

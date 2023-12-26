@@ -15,16 +15,17 @@ import {
   AutocompleteResponse,
 } from "../../../../services/data-services/Helper";
 import { ApiError } from "../../../../services/Helper";
+import { ApiRequestWithPaginationAndSearch } from "../../../../services/project-services/Helper";
 
-export interface AutocompleteApiProps {
-  limit: number;
-  searchKey?: string;
-  page: number;
-  cancelToken?: CancelToken;
-}
+// export interface AutocompleteApiProps {
+//   limit: number;
+//   searchKey?: string;
+//   page: number;
+//   cancelToken?: CancelToken;
+// }
 export declare type AutocompleteOptionAPI = (
-  props: AutocompleteApiProps,
-) => Promise<AxiosResponse<AutocompleteResponse, any>>;
+  props: ApiRequestWithPaginationAndSearch,
+) => Promise<AxiosResponse<AutocompleteOptionType, any>>;
 export interface ApiDetailsType {
   api?: AutocompleteOptionAPI;
 }
