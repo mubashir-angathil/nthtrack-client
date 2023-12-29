@@ -70,6 +70,10 @@ input[type="search"]::-webkit-search-cancel-button {
   scale: 0;
 }
 
+.drag-and-drop {
+  border: 3px dotted #666 !important;
+}
+
 @keyframes appear {
   0%,
   50% {
@@ -81,6 +85,7 @@ input[type="search"]::-webkit-search-cancel-button {
     scale: 1;
   }
 }
+
 @keyframes alert {
   0%,
   50% {

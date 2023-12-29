@@ -27,7 +27,7 @@ export interface Project {
 interface ProjectWithTaskCount extends Project {
   taskCount: number; // Count of tasks associated with the project
 }
-interface Task {
+export interface Task {
   id: number;
   task: string;
   description: string;

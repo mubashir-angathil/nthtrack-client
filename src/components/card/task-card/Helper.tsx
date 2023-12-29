@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useDeferredValue, useMemo, useState } from "react";
+import { DragEvent, useDeferredValue, useMemo, useState } from "react";
 import projectServices from "../../../services/project-services/ProjectServices";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { ApiError } from "../../../services/Helper";
@@ -12,7 +12,9 @@ import {
   GetAllTasksRequest,
   Project,
   StatusInterface,
+  Task,
   TaskResponse,
+  UpdateTaskRequest,
 } from "../../../services/project-services/Helper";
 import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
 import ManageTaskForm from "../../form/manage-task/ManageTaskForm";
@@ -21,6 +23,7 @@ import ManageStatusForm from "../../form/manage-status/ManageStatusForm";
 import { useAlertContext } from "../../../utils/helpers/context/alert-context/AlertContext";
 import { useAlert } from "../../common/alert/Helper";
 import { useModalContext } from "../../../utils/helpers/context/modal-context/ModalContext";
+import useSocketHelpers from "../../../socket/Socket";
 
 // Define the form schema for filtering tasks
 export const filterFormSchema = object({
@@ -52,6 +55,7 @@ export const useTaskComponent = () => {
   const { setModal } = useModalContext();
   const { setAlert } = useAlertContext();
   const { handleCloseAlert } = useAlert();
+  const { pushNotification } = useSocketHelpers();
 
   // State and form control
   const [selectedTaskId, setSelectedTaskId] = useState<number>();
@@ -60,6 +64,7 @@ export const useTaskComponent = () => {
   >(null);
   const [search, setSearch] = useState<string>();
   const [tasks, setTasks] = useState<TaskResponse["data"]>({});
+  const [activeTask, setActiveTask] = useState<Task>();
   const differedTasks = useDeferredValue(tasks);
   const [anchorElTaskMenu, setAnchorElTaskMenu] = useState<null | HTMLElement>(
     null,
@@ -304,6 +309,60 @@ export const useTaskComponent = () => {
     }
   };
 
+  // Function to update a task status from the API
+  const updateTaskStatus = async (
+    newTask: UpdateTaskRequest,
+    targetStatus: StatusInterface,
+  ) => {
+    try {
+      const { data, status } = await projectServices.updateTask({
+        ...newTask,
+      });
+      if (data?.success && status === 200) {
+        // Updating the task under corresponding status
+        setTasks((prevTasks) => {
+          if (activeStatus && activeTask) {
+            const dropTask = prevTasks[activeStatus.name].filter(
+              (task) => task.id !== activeTask.id,
+            );
+            const attachedTask = [
+              ...(prevTasks[targetStatus.name] || []),
+              activeTask,
+            ];
+            return {
+              ...prevTasks,
+              [activeStatus?.name]: dropTask,
+              [targetStatus.name]: attachedTask,
+            };
+          }
+          return prevTasks;
+        });
+
+        // Notify changes to the members
+        pushNotification({
+          broadcastId: newTask.projectId,
+          message: `:author made changes in the task (Task ${newTask.taskId}) of the "${project?.name}" project.`,
+        });
+
+        // Notify the success message
+        enqueueSnackbar({
+          message: data?.message,
+          variant: "success",
+        });
+      }
+    } catch (error) {
+      // Handle errors from the sign-ip API
+      const {
+        data: { message },
+      } = error as ApiError;
+
+      enqueueSnackbar({
+        message,
+        variant: "error",
+      });
+    }
+  };
+
   // Function to delete a status from the API
   const deleteStatus = async ({
     statusId,
@@ -367,12 +426,65 @@ export const useTaskComponent = () => {
     }
   }, [differedProject, search, watch("labelId")]);
 
+  // Helper to add `drag-and-drop` class form classList
+  const addDragEffect = (statusId: number) => {
+    const activeContainer = document.getElementById(`status${statusId}`);
+    if (activeContainer) {
+      activeContainer.classList.add("drag-and-drop"); // Corrected typo
+    }
+  };
+
+  // Helper to remove `drag-and-drop` class form classList
+  const removeDragEffect = (statusId: number) => {
+    const activeContainer = document.getElementById(`status${statusId}`);
+    if (activeContainer) {
+      activeContainer.classList.remove("drag-and-drop"); // Corrected typo
+    }
+  };
+
+  // Task drop handler
+  const dropHandler = (
+    event: DragEvent<HTMLDivElement>,
+    status: StatusInterface,
+  ) => {
+    event.preventDefault();
+
+    if (activeTask && project && activeStatus?.id !== status.id) {
+      updateTaskStatus(
+        {
+          taskId: activeTask.id,
+          projectId: project.id,
+          statusId: status.id,
+        },
+        status,
+      );
+    }
+    removeDragEffect(status.id);
+  };
+
+  // Task Drag-hover handler
+  const allowDropHandler = (
+    event: DragEvent<HTMLDivElement>,
+    status: StatusInterface,
+  ) => {
+    event.preventDefault();
+    addDragEffect(status.id);
+  };
+
+  // handle card drag
+  const dragHandler = (task: Task, status: StatusInterface) => {
+    setActiveTask(task);
+    setActiveStatus(status);
+  };
+
   return {
+    removeDragEffect,
     project,
     navigate,
     register,
     control,
     search,
+    activeTask,
     tasks: differedTasks,
     handleChange,
     handleAddNewStatus,
@@ -386,5 +498,8 @@ export const useTaskComponent = () => {
     handleCloseTaskMenu,
     handleCreateTask,
     handleSearchClear,
+    dropHandler,
+    allowDropHandler,
+    dragHandler,
   };
 };

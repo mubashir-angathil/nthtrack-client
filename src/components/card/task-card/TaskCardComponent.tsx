@@ -20,8 +20,12 @@ import { useTaskComponent } from "./Helper";
 import AvatarComponent from "../../common/avatar/AvatarComponent";
 import routes from "../../../utils/helpers/routes/Routes";
 import { Add, Clear, MoreHoriz, MoreVert, Search } from "@mui/icons-material";
-import { StatusInterface } from "../../../services/project-services/Helper";
+import {
+  StatusInterface,
+  Task,
+} from "../../../services/project-services/Helper";
 import RhfLabelAutocomplete from "../../common/textfield/autocomplete/label-autocomplete/RhfLabelAutocomplete";
+import { colors as Colors } from "../../../utils/helpers/configs/Colors";
 
 // Functional component for rendering the Task Card
 const TaskCardComponent: React.FC = () => {
@@ -30,6 +34,7 @@ const TaskCardComponent: React.FC = () => {
     project,
     control,
     tasks,
+    activeTask,
     anchorElStatusMenu,
     handleOpenStatusMenu,
     handleCloseStatusMenu,
@@ -43,7 +48,106 @@ const TaskCardComponent: React.FC = () => {
     handleSearchClear,
     navigate,
     handleCreateTask,
+    allowDropHandler,
+    dragHandler,
+    dropHandler,
+    removeDragEffect,
   } = useTaskComponent();
+
+  // General TaskCard component
+  const TaskCard: React.FC<{
+    task: Task;
+    status: StatusInterface;
+  }> = ({ task, status }) => {
+    return (
+      <Card
+        sx={{
+          width: "100%",
+          p: 2,
+          mb: 1,
+          border: 1,
+          borderColor:
+            activeTask?.id === task.id ? Colors.primary : "transparent",
+          "&:hover": {
+            cursor: "grab",
+            // borderColor: Colors.primary,
+          },
+        }}
+        elevation={0}
+        component="div"
+        draggable
+        onDragStart={(event: any) => {
+          if (event) {
+            event.target.style.border = "1px solid red";
+          }
+
+          dragHandler(task, status);
+        }}
+      >
+        {/* Task Details Section */}
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box display="flex" gap={1}>
+            <Typography>#{task.id}</Typography>
+            <Chip
+              label={task.label.name}
+              size="small"
+              sx={{
+                background: `rgba(${task?.label.color},0.3)`,
+                border: 1,
+                borderColor: `rgb(${task?.label.color})`,
+              }}
+            />
+          </Box>
+          <IconButton
+            size="small"
+            onClick={(e) => handleOpenTaskMenu(e, task.id, status)}
+          >
+            <MoreVert fontSize="small" />
+          </IconButton>
+        </Box>
+        <Typography
+          sx={{
+            lineHeight: 1.5,
+            width: "90%",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            cursor: "pointer",
+            ":hover": {
+              color: "Highlight",
+            },
+          }}
+          onClick={() => navigate(routes.tasks.path.concat(task.id.toString()))}
+          title={task.task}
+        >
+          {task.task}
+        </Typography>
+        <Typography variant="caption" color="gray">
+          Author @{task.createdByUser?.username}
+        </Typography>
+        <AvatarGroup
+          max={7}
+          total={task.assignees.length}
+          componentsProps={{
+            additionalAvatar: {
+              sx: {
+                width: 24,
+                height: 24,
+                fontSize: 15,
+                background: "red",
+              },
+            },
+          }}
+        >
+          {task.assignees.map((profile) => {
+            return (
+              <AvatarComponent profile={true} key={profile.id} {...profile} />
+            );
+          })}
+        </AvatarGroup>
+      </Card>
+    );
+  };
 
   return (
     <Grid container spacing={2}>
@@ -109,11 +213,17 @@ const TaskCardComponent: React.FC = () => {
           return (
             <Box
               key={status.id}
+              component="div"
+              id={`status${status.id}`}
+              onDrop={(e) => dropHandler(e, status)}
+              onDragOver={(e) => allowDropHandler(e, status)}
+              onDragLeave={() => removeDragEffect(status.id)}
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 width: "100%",
-                border: 0,
+                border: 3,
+                borderColor: "transparent",
                 minWidth: 300,
                 gap: 2,
                 borderRadius: 2,
@@ -168,93 +278,7 @@ const TaskCardComponent: React.FC = () => {
                 component="div"
               >
                 {tasks[status.name]?.map((task) => {
-                  return (
-                    <Card
-                      key={task.id}
-                      sx={{
-                        width: "100%",
-                        p: 2,
-                        mb: 1,
-                      }}
-                      elevation={0}
-                      component="div"
-                      draggable
-                    >
-                      {/* Task Details Section */}
-                      <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Box display="flex" gap={1}>
-                          <Typography>#{task.id}</Typography>
-                          <Chip
-                            label={task.label.name}
-                            size="small"
-                            sx={{
-                              background: `rgba(${task?.label.color},0.3)`,
-                              border: 1,
-                              borderColor: `rgb(${task?.label.color})`,
-                            }}
-                          />
-                        </Box>
-                        <IconButton
-                          size="small"
-                          onClick={(e) =>
-                            handleOpenTaskMenu(e, task.id, status)
-                          }
-                        >
-                          <MoreVert fontSize="small" />
-                        </IconButton>
-                      </Box>
-                      <Typography
-                        sx={{
-                          lineHeight: 1.5,
-                          width: "90%",
-                          whiteSpace: "nowrap",
-                          textOverflow: "ellipsis",
-                          overflow: "hidden",
-                          cursor: "pointer",
-                          ":hover": {
-                            color: "Highlight",
-                          },
-                        }}
-                        onClick={() =>
-                          navigate(routes.tasks.path.concat(task.id.toString()))
-                        }
-                        title={task.task}
-                      >
-                        {task.task}
-                      </Typography>
-                      <Typography variant="caption" color="gray">
-                        Author @{task.createdByUser?.username}
-                      </Typography>
-                      <AvatarGroup
-                        max={7}
-                        total={task.assignees.length}
-                        componentsProps={{
-                          additionalAvatar: {
-                            sx: {
-                              width: 24,
-                              height: 24,
-                              fontSize: 15,
-                              background: "red",
-                            },
-                          },
-                        }}
-                      >
-                        {task.assignees.map((profile) => {
-                          return (
-                            <AvatarComponent
-                              profile={true}
-                              key={profile.id}
-                              {...profile}
-                            />
-                          );
-                        })}
-                      </AvatarGroup>
-                    </Card>
-                  );
+                  return <TaskCard key={task.id} task={task} status={status} />;
                 })}
               </Box>
               <Button
