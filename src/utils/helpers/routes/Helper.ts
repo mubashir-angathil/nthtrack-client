@@ -1,10 +1,24 @@
-type keys = "signIn" | "signUp" | "home" | "projects" | "tasks";
+/* eslint-disable no-unused-vars */
+type keys =
+  | "signIn"
+  | "signUp"
+  | "home"
+  | "projects"
+  | "tasks"
+  | "team"
+  | "projectSettings";
+type actions = "create" | "update" | "view";
 
 export type RouteConfigsType = {
-  // eslint-disable-next-line no-unused-vars
   [key in keys]: {
     path: string;
     element: React.ReactNode;
     default?: React.ReactNode;
+  } & {
+    [action in actions]?: {
+      path: string;
+      element: React.ReactNode;
+      default?: React.ReactNode;
+    };
   };
 };

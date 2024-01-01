@@ -34,11 +34,11 @@ const SignInFormComponent: React.FC = () => {
       <FormControl fullWidth>
         <RhfTextfieldComponent
           required
-          type="email"
-          name="username"
-          label="Username"
+          type="text"
+          name="usernameOrEmail"
+          label="Username / Email"
           control={control}
-          placeholder="john@gmail.com"
+          placeholder="John / john@gmail.com"
         />
       </FormControl>
 

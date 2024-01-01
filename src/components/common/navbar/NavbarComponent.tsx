@@ -11,12 +11,21 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import navbarStyes from "./Style";
-
-const settings = ["Profile", "Logout"];
+import cookieServices from "../../../services/storage-services/CookieServices";
+import { useAuthContext } from "../../../utils/helpers/context/auth-context/AuthContext";
+import { initialAuthDetailsState } from "../../../utils/helpers/context/auth-context/Helper";
+import { TitleHelper } from "../../../utils/helpers/constants/Constants";
+import { NotificationComponent } from "../notification/NotificationComponent";
+import { Button } from "@mui/material";
+import { NavigateFunction, useNavigate } from "react-router-dom";
+import { Refresh } from "@mui/icons-material";
+import { useRefreshContext } from "../../../utils/helpers/context/refresh-context/RefreshContext";
 
 export const NavbarComponent = () => {
   const styles = navbarStyes;
-
+  const navigate: NavigateFunction = useNavigate();
+  const { authDetails, setAuthDetails } = useAuthContext();
+  const { refresh, setRefresh } = useRefreshContext();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
   );
@@ -30,6 +39,18 @@ export const NavbarComponent = () => {
     setAnchorElUser(null);
   };
 
+  const settings = [
+    {
+      item: "Logout",
+      action: () => {
+        handleCloseUserMenu();
+
+        cookieServices.clearAuthDetails();
+        setAuthDetails(initialAuthDetailsState);
+      },
+    },
+  ];
+
   return (
     <AppBar position="fixed">
       <Container maxWidth="xl">
@@ -42,17 +63,23 @@ export const NavbarComponent = () => {
             href="/home"
             sx={styles.logo}
           >
-            BUGTRACK
+            {TitleHelper.appName}
           </Typography>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box
+            sx={{
+              flexGrow: 0,
+              display: "flex",
+              alignItems: "center",
+              columnGap: 2,
+            }}
+          >
+            <NotificationComponent />
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar
-                  alt="Remy Sharp"
-                  src="/static/images/avatar/2.jpg"
-                  sx={{ width: 36, height: 36 }}
-                />
+                <Avatar sx={{ width: 36, height: 36 }}>
+                  {authDetails.user.username?.charAt(0)}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu
@@ -71,14 +98,38 @@ export const NavbarComponent = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
+              <MenuItem disabled sx={{ display: "grid" }}>
+                <Typography>{authDetails.user.username}</Typography>
+                <Typography>{authDetails.user.email}</Typography>
+              </MenuItem>
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting.item} onClick={setting.action}>
+                  <Typography textAlign="center">{setting.item}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
         </Toolbar>
+        {refresh.reload && (
+          <Button
+            sx={{
+              position: "absolute",
+              top: 50,
+              width: 100,
+              right: "50%",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+            size="small"
+            onClick={() => {
+              navigate(0);
+              setRefresh({ reload: false });
+            }}
+            endIcon={<Refresh />}
+          >
+            Refresh
+          </Button>
+        )}
       </Container>
     </AppBar>
   );

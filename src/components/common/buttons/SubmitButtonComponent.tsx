@@ -4,10 +4,17 @@ import { LoadingButton } from "@mui/lab";
 
 const SubmitButtonComponent: React.FC<CustomButtonComponentProps> = ({
   title,
+  size = "small",
   ...reset
 }) => {
   return (
-    <LoadingButton type="submit" color="success" variant="contained" {...reset}>
+    <LoadingButton
+      type="submit"
+      color="success"
+      size={size}
+      variant="contained"
+      {...reset}
+    >
       {title}
     </LoadingButton>
   );

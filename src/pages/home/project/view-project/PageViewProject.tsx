@@ -3,20 +3,23 @@ import {
   Grid,
   Typography,
   Box,
-  TextField,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  IconButton,
   Skeleton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Divider,
+  ButtonGroup,
 } from "@mui/material";
-import { Search as SearchIcon, Clear as ClearIcon } from "@mui/icons-material";
+import {
+  ExpandMore as ExpandMoreIcon,
+  Settings,
+  Update,
+} from "@mui/icons-material";
 import { FC } from "react";
-import PluseIcon from "@mui/icons-material/Add";
 import { useViewProject } from "./Helper";
-import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
-import ManageIssueForm from "../../../../components/form/manage-issue/ManageIssueForm";
+import AvatarComponent from "../../../../components/common/avatar/AvatarComponent";
+import routes from "../../../../utils/helpers/routes/Routes";
+
 import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
 
 /**
@@ -24,148 +27,117 @@ import TaskCardComponent from "../../../../components/card/task-card/TaskCardCom
  * Utilizes the custom hook `useViewProject` for managing state and logic.
  */
 const PageViewProject: FC = () => {
-  // Extract necessary functions and state variables from the custom hook
-  const { setDialog } = useDialogContext();
-  const {
-    project,
-    tasks,
-    apiConfig,
-    fetchCloseProjectById,
-    handleTaskLoading,
-    handleChange,
-    handleSearchClear,
-  } = useViewProject();
+  // Destructure values from the custom hook
+  const { project, navigate, projectMembers, handleUpdateProject } =
+    useViewProject();
 
   return (
-    <Grid container gap={2}>
+    <Grid container spacing={2} display="flex">
       {/* Project Details Section */}
       <Grid item xs={12} display="flex" justifyContent="space-between" mt={2}>
-        {project.projectName === "" ? (
+        {!project?.name ? (
+          // Skeleton while project details are loading
           <Skeleton width={200} height={40} />
         ) : (
-          <Typography variant="h4">{project.projectName}</Typography>
-        )}
-
-        <Box component="div" display="flex" flexGrow={0} gap={2}>
-          {/* Close Project Button */}
-          <Button
-            variant="contained"
-            color="error"
-            onClick={async () => await fetchCloseProjectById()}
-          >
-            Close Project
-          </Button>
-          {/* Create Issue Button */}
-          <Button
-            variant="contained"
-            startIcon={<PluseIcon />}
-            onClick={() => {
-              setDialog({
-                open: true,
-                form: {
-                  title: "Create Issue",
-                  body: <ManageIssueForm />,
-                },
-              });
-            }}
-          >
-            Create Issue
-          </Button>
-        </Box>
-      </Grid>
-
-      {/* Project Description Section */}
-      <Grid item xs={12}>
-        {project.description === "" ? (
-          <>
-            <Skeleton />
-            <Skeleton />
-            <Skeleton />
-          </>
-        ) : (
-          <Typography variant="body1" color="GrayText">
-            {project.description}
+          // Display project name
+          <Typography variant="h5" overflow="auto" flexWrap="wrap">
+            {project?.name}
           </Typography>
         )}
+        {/* Buttons for project update and settings */}
+        <Box>
+          {project && (
+            <ButtonGroup>
+              <Button
+                endIcon={<Update />}
+                color="inherit"
+                onClick={handleUpdateProject}
+              >
+                Update
+              </Button>
+              <Button
+                endIcon={<Settings />}
+                color="inherit"
+                onClick={() =>
+                  navigate(routes.projectSettings.path, {
+                    state: {
+                      project: { id: project?.id, name: project?.name },
+                    },
+                  })
+                }
+              >
+                Settings
+              </Button>
+            </ButtonGroup>
+          )}
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Divider />
       </Grid>
 
-      {/* Filters and Search Section */}
-      <Grid item xs={12} display="flex" justifyContent="end" gap={2}>
-        {/* Tracker Filter */}
-        <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-disabled">Tracker</InputLabel>
-          <Select
-            labelId="demo-simple-select-disabled-label"
-            id="demo-simple-select-disabled"
-            value={0}
-            label="Age"
-            size="small"
-            onChange={() => {}}
-          >
-            <MenuItem value={0}>
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-          </Select>
-        </FormControl>
-
-        {/* Status Filter */}
-        <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-disabled">Status</InputLabel>
-          <Select
-            labelId="demo-simple-select-disabled-label"
-            id="demo-simple-select-disabled"
-            value={0}
-            label="Age"
-            size="small"
-            onChange={() => {}}
-          >
-            <MenuItem value={0}>
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value={"Opened"}>Opened</MenuItem>
-            <MenuItem value={"Closed"}>Closed</MenuItem>
-          </Select>
-        </FormControl>
-
-        {/* Search Input */}
-        <TextField
-          id="task-search-field"
-          variant="outlined"
-          type="search"
-          size="small"
-          placeholder="Search project here.."
-          onChange={handleChange}
-          // Change input color to error if there are no tasks and there's a search key
-          color={
-            tasks.length === 0 && apiConfig.searchKey ? "error" : undefined
-          }
-          InputProps={{
-            // End adornment for search input
-            endAdornment: (
-              <>
-                {/* Show search icon or clear icon based on search key existence */}
-                {apiConfig.searchKey === undefined ? (
-                  <SearchIcon fontSize="small" />
-                ) : (
-                  <IconButton onClick={handleSearchClear}>
-                    <ClearIcon fontSize="small" />
-                  </IconButton>
-                )}
-              </>
-            ),
-          }}
-        />
+      <Grid item xs={12} display="flex" columnGap={5}>
+        {/* Project Description Section */}
+        <Grid item mb={2} xs={12}>
+          <Accordion defaultExpanded>
+            <AccordionSummary
+              aria-controls="panel1d-content"
+              id="panel1d-header"
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Typography variant="h6">Meta data</Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ display: "flex" }}>
+              <Grid item md={10}>
+                {/* Display project description */}
+                <Typography>Description</Typography>
+                <Box
+                  dangerouslySetInnerHTML={{
+                    __html: project?.description ? project?.description : "",
+                  }}
+                  sx={{ overflow: "auto", textAlign: "justify", pr: 2 }}
+                />
+              </Grid>
+              {projectMembers.length > 0 && (
+                // Contributors section
+                <Grid item md={2}>
+                  <Typography variant="subtitle1">Contributors</Typography>
+                  <Box
+                    mt={1}
+                    display="flex"
+                    flexWrap="wrap"
+                    alignItems="center"
+                    sx={{ height: "auto", overflowY: "auto" }}
+                    gap={2}
+                  >
+                    {/* Display contributors */}
+                    {projectMembers.map((profileDetails, index) => {
+                      return (
+                        <Box key={profileDetails.id} pt={index > 0 ? 1 : 0}>
+                          <AvatarComponent
+                            profile
+                            width={28}
+                            height={28}
+                            {...profileDetails}
+                          />
+                          <Typography variant="subtitle2">
+                            {profileDetails.username}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Grid>
+              )}
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
       </Grid>
 
       {/* Task Cards Section */}
-      <Grid item xs={12}>
-        <TaskCardComponent
-          tasks={tasks}
-          handleTaskLoading={handleTaskLoading}
-        />
+      <Grid item xs={12} display="flex">
+        {/* Include TaskCardComponent */}
+        <TaskCardComponent />
       </Grid>
     </Grid>
   );

@@ -1,3 +1,5 @@
+import { CancelToken } from "axios";
+
 /**
  * ApiError
  *
@@ -34,6 +36,7 @@ export interface ApiResponseWithPagination extends NormalApiSuccessResponse {
 export interface ApiRequestWithPagination {
   page: number; // Page number for pagination
   limit: number; // Limit for the number of items per page
+  cancelToken?: CancelToken;
 }
 
 export interface NormalApiSuccessResponse {

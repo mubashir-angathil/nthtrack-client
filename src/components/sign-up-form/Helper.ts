@@ -13,7 +13,8 @@ import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 
 // Define the validation schema for the sign-up form
 export const signUpFormSchema = object({
-  username: string().email().required(),
+  username: string().required(),
+  email: string().email().required(),
   password: string().min(4).required(),
   confirmPassword: string().min(4).required(),
 }).required();
@@ -29,6 +30,7 @@ export const useSignUp = () => {
     resolver: yupResolver(signUpFormSchema),
     defaultValues: {
       username: "",
+      email: "",
       password: "",
       confirmPassword: "",
     },
@@ -48,17 +50,18 @@ export const useSignUp = () => {
   const handleSignUp = async (props: SignUpFormInputs) => {
     try {
       // Call the sign-up API from authenticationServices
-      const { authDetails } = await authenticationServices.doSignUp({
+      const { data, success } = await authenticationServices.doSignUp({
         username: props.username,
+        email: props.email,
         password: props.password,
       });
 
       // If sign-up is successful, set authentication details in cookies
-      if (authDetails) {
-        cookieServices.setAuthDetails(authDetails);
+      if (data && success) {
+        cookieServices.setAuthDetails(data);
         setAuthDetails({
           auth: true,
-          user: authDetails,
+          user: data,
         });
       }
     } catch (error) {
@@ -74,7 +77,9 @@ export const useSignUp = () => {
       if (location.state) {
         navigate(location.state.from, { replace: true });
       } else {
-        navigate(routes.home.path, { replace: true });
+        navigate(routes.home.path, {
+          replace: true,
+        });
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, navigate]);

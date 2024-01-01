@@ -1,6 +1,7 @@
+// modalStyle: Styles for the modal component.
+
 export const modalStyle = {
   dialog: {
-    backgroundColor: "background.paper",
     color: "black",
     p: 2,
   },

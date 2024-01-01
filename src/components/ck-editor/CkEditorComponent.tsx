@@ -24,11 +24,18 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
   name,
   control,
   label,
-  required,
+  required = false,
   rules,
+  height,
+  onBlur,
 }: RhfCkEditorProps<TField>): JSX.Element => {
   // Custom hook for CKEditor functionality
-  const { handleEditorChange, handleEditorOnReady } = useCkEditorComponent();
+  const {
+    handleEditorChange,
+    handleEditorBlur,
+    handleEditorOnReady,
+    handleEditorOnFocus,
+  } = useCkEditorComponent();
 
   return (
     <Controller
@@ -57,15 +64,21 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
             </FormHelperText>
 
             {/* CKEditor with error handling and character/word count */}
-            <Box component="div" sx={errorStyle}>
+            <Box component="div" sx={errorStyle} border={5}>
               <CKEditor
                 editor={ClassicEditor}
                 data={editorData}
                 config={editorConfiguration}
-                onChange={(_: any, editor: any) =>
-                  handleEditorChange(_, editor, field)
+                onChange={(event: any, editor: ClassicEditor) =>
+                  handleEditorChange(event, editor, field)
                 }
-                onReady={handleEditorOnReady}
+                onReady={(editor) => handleEditorOnReady(editor, height)}
+                onFocus={handleEditorOnFocus}
+                onBlur={(event: any, editor: ClassicEditor) =>
+                  handleEditorBlur(event, editor, field, onBlur)
+                }
+                ref={field.ref}
+                disabled={field.disabled}
               />
 
               {/* Error messages and character/word count display */}

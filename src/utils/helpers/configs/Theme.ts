@@ -10,5 +10,9 @@ export const theme = createTheme({
     secondary: {
       main: colors.secondary,
     },
+    divider: colors.secondaryText,
+  },
+  typography: {
+    fontFamily: "Open Sans",
   },
 });

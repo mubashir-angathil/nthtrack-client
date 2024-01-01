@@ -22,10 +22,11 @@ const generalFunctions = {
    * @returns {ApiError | AxiosError} Standardized API error format.
    */
   customError: (error: AxiosError<ApiError>): ApiError => {
-    if (error?.response?.data) {
+    if (error?.response?.data?.data) {
+      const { data } = error.response.data;
       return {
-        status: 2,
-        data: error?.response?.data.data,
+        status: error.response.status,
+        data: data,
       } as ApiError;
     } else {
       return {
@@ -45,17 +46,15 @@ const generalFunctions = {
    * @param {UseFormSetError<any>} setError - React Hook Form's setError function.
    * @returns {undefined} Void.
    */
-  fieldErrorsHandler: (
-    apiError: ApiError,
-    setError: UseFormSetError<any>,
-  ): void => {
-    const {
-      data: { error },
-    } = apiError;
-    if (error?.fieldErrors)
-      error.fieldErrors.forEach((value) => {
+  fieldErrorsHandler: (apiError: ApiError, setError: UseFormSetError<any>) => {
+    const { data } = apiError;
+    if (data.error?.fieldErrors) {
+      data.error.fieldErrors.forEach((value) => {
         return setError(value.field, { message: value.message });
       });
+      return true;
+    }
+    return false;
   },
   customResponse: (response: AxiosResponse) => {
     if (response)
@@ -79,6 +78,7 @@ const generalFunctions = {
     }
     return false;
   },
+  goBack: () => history.back(),
 };
 
 export default generalFunctions;

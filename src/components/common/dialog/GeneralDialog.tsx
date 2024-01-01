@@ -1,27 +1,19 @@
-import React from "react";
-import { useDialog } from "./Helper";
+// GeneralDialog: React component for displaying a general dialog.
+
+import React, { useEffect } from "react";
 import {
-  AppBar,
   Box,
   Dialog,
+  DialogContent,
+  DialogTitle,
+  Divider,
   IconButton,
-  Slide,
-  Toolbar,
-  Typography,
+  Paper,
 } from "@mui/material";
-import { modalStyle } from "./Style";
-import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
 import CloseIcon from "@mui/icons-material/Close";
-import { TransitionProps } from "@mui/material/transitions";
-
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+import { modalStyle } from "./Style";
+import { useDialog } from "./Helper";
+import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
 
 const GeneralDialog: React.FC = () => {
   const styles = modalStyle;
@@ -33,36 +25,45 @@ const GeneralDialog: React.FC = () => {
   } = useDialogContext();
   const { handleDialogClose } = useDialog();
 
+  // Close dialog when user presses browser navigation
+  useEffect(() => {
+    const handlePopstate = () => {
+      handleDialogClose();
+    };
+
+    window.addEventListener("popstate", handlePopstate);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopstate);
+    };
+  }, [handleDialogClose]);
+
   return (
     <Dialog
-      fullScreen
       open={open}
-      onClose={handleDialogClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
-      TransitionComponent={Transition}
-      transitionDuration={600}
+      transitionDuration={300}
+      PaperProps={{
+        component: Paper,
+        elevation: 3,
+      }}
     >
-      <AppBar position="relative" variant="elevation" elevation={0}>
-        <Toolbar
-          variant="dense"
-          sx={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <Typography variant="h5">{title}</Typography>
-          <IconButton
-            edge="end"
-            color="inherit"
-            onClick={handleDialogClose}
-            aria-label="close"
-            sx={{ float: "right" }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <Box sx={styles.dialog}>
+      <DialogTitle
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        height={50}
+      >
+        {title}
+        <IconButton onClick={handleDialogClose} size="small">
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <Divider />
+      <DialogContent sx={styles.dialog}>
         <Box>{body}</Box>
-      </Box>
+      </DialogContent>
     </Dialog>
   );
 };

@@ -19,6 +19,8 @@ const RhfTextfieldComponent = <TField extends FieldValues>({
   label = "",
   size = "small",
   autoComplete = "off",
+  autoFocus = false,
+  onBlur,
   ...rest
 }: RhfTextfieldProps<TField>): JSX.Element => {
   return (
@@ -30,10 +32,15 @@ const RhfTextfieldComponent = <TField extends FieldValues>({
         return (
           <TextField
             {...field}
+            onBlur={() => {
+              field.onBlur();
+              onBlur && onBlur(field.value);
+            }}
             fullWidth
             label={label}
             variant="outlined"
             size={size}
+            autoFocus={autoFocus}
             error={Boolean(error)}
             autoComplete={autoComplete}
             helperText={error && error.message}

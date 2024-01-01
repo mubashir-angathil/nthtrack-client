@@ -4,6 +4,8 @@ import cookieServices from "../storage-services/CookieServices";
 import { Tokens } from "../storage-services/Helper";
 import authenticationServices from "../auth-services/AuthServices";
 import { MessageHelper } from "../../utils/helpers/constants/Constants";
+import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
+import { io } from "socket.io-client";
 
 // Create a new axios instance for project-related API requests
 const projectInstance = axios.create({
@@ -75,7 +77,7 @@ projectInstance.interceptors.response.use(
       } catch (error: any) {
         // Handle any errors during token refresh or retry
         if (error?.data) {
-          if (error.data.error === "jwt expired" && error.status === 403) {
+          if (error.data.success === false) {
             if (confirm(MessageHelper.reSignInAlert)) {
               // Clear authentication details and redirect to the login page
               cookieServices.clearAuthDetails();
@@ -86,6 +88,8 @@ projectInstance.interceptors.response.use(
         // Reject the promise with the error
         return Promise.reject(error);
       }
+    } else if (error.response.status === 403) {
+      generalFunctions.goBack();
     }
 
     // Reject the promise with the original error for other cases
@@ -93,4 +97,7 @@ projectInstance.interceptors.response.use(
   },
 );
 
+export const socket = io("http://localhost:5000", {
+  autoConnect: false,
+});
 export default projectInstance;

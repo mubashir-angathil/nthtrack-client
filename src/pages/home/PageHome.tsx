@@ -4,6 +4,7 @@ import { Outlet, Navigate, useLocation } from "react-router-dom";
 import routes from "../../utils/helpers/routes/Routes";
 import { OutletContainer } from "../../components/common/container/OutletContainer";
 import { useAuthContext } from "../../utils/helpers/context/auth-context/AuthContext";
+import { RefreshContextProvider } from "../../utils/helpers/context/refresh-context/RefreshContextProvider";
 
 const PageHome: React.FC = () => {
   const {
@@ -15,7 +16,9 @@ const PageHome: React.FC = () => {
     <>
       {auth ? (
         <>
-          <NavbarComponent />
+          <RefreshContextProvider>
+            <NavbarComponent />
+          </RefreshContextProvider>
           <OutletContainer>
             <Outlet />
           </OutletContainer>

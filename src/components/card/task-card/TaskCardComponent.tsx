@@ -1,80 +1,361 @@
-import React from "react";
-import { Card, Typography, Box, colors, Button } from "@mui/material";
-import { TaskCardComponentProps } from "./Helper";
-import { useNavigate } from "react-router-dom";
-import routes from "../../../utils/helpers/routes/Routes";
-import noDataImage from "../../../assets/noData.svg";
+// TaskCardComponent: A functional component representing the task management view with status columns.
 
-// TaskCardComponent component
-const TaskCardComponent: React.FC<TaskCardComponentProps> = ({
-  tasks,
-  handleTaskLoading,
-}) => {
-  // React router navigation hook
-  const navigate = useNavigate();
+import React from "react";
+import {
+  Box,
+  Grid,
+  Card,
+  IconButton,
+  Typography,
+  TextField,
+  Button,
+  Menu,
+  MenuItem,
+  colors,
+  Badge,
+  AvatarGroup,
+  Chip,
+} from "@mui/material";
+import { useTaskComponent } from "./Helper";
+import AvatarComponent from "../../common/avatar/AvatarComponent";
+import routes from "../../../utils/helpers/routes/Routes";
+import { Add, Clear, MoreHoriz, MoreVert, Search } from "@mui/icons-material";
+import {
+  StatusInterface,
+  Task,
+} from "../../../services/project-services/Helper";
+import RhfLabelAutocomplete from "../../common/textfield/autocomplete/label-autocomplete/RhfLabelAutocomplete";
+import { colors as Colors } from "../../../utils/helpers/configs/Colors";
+
+// Functional component for rendering the Task Card
+const TaskCardComponent: React.FC = () => {
+  // Extracted values and functions from the custom hook
+  const {
+    project,
+    control,
+    tasks,
+    activeTask,
+    anchorElStatusMenu,
+    handleOpenStatusMenu,
+    handleCloseStatusMenu,
+    anchorElTaskMenu,
+    handleChange,
+    search,
+    handleCloseTaskMenu,
+    handleDeleteTask,
+    handleOpenTaskMenu,
+    handleAddNewStatus,
+    handleSearchClear,
+    navigate,
+    handleCreateTask,
+    allowDropHandler,
+    dragHandler,
+    dropHandler,
+    removeDragEffect,
+  } = useTaskComponent();
+
+  // General TaskCard component
+  const TaskCard: React.FC<{
+    task: Task;
+    status: StatusInterface;
+  }> = ({ task, status }) => {
+    return (
+      <Card
+        sx={{
+          width: "100%",
+          p: 2,
+          mb: 1,
+          border: 1,
+          borderColor:
+            activeTask?.id === task.id ? Colors.primary : "transparent",
+          "&:hover": {
+            cursor: "grab",
+            // borderColor: Colors.primary,
+          },
+        }}
+        elevation={0}
+        component="div"
+        draggable
+        onDragStart={(event: any) => {
+          if (event) {
+            event.target.style.border = "1px solid red";
+          }
+
+          dragHandler(task, status);
+        }}
+      >
+        {/* Task Details Section */}
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box display="flex" gap={1}>
+            <Typography>#{task.id}</Typography>
+            <Chip
+              label={task.label.name}
+              size="small"
+              sx={{
+                background: `rgba(${task?.label.color},0.3)`,
+                border: 1,
+                borderColor: `rgb(${task?.label.color})`,
+              }}
+            />
+          </Box>
+          <IconButton
+            size="small"
+            onClick={(e) => handleOpenTaskMenu(e, task.id, status)}
+          >
+            <MoreVert fontSize="small" />
+          </IconButton>
+        </Box>
+        <Typography
+          sx={{
+            lineHeight: 1.5,
+            width: "90%",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            cursor: "pointer",
+            ":hover": {
+              color: "Highlight",
+            },
+          }}
+          onClick={() => navigate(routes.tasks.path.concat(task.id.toString()))}
+          title={task.task}
+        >
+          {task.task}
+        </Typography>
+        <Typography variant="caption" color="gray">
+          Author @{task.createdByUser?.username}
+        </Typography>
+        <AvatarGroup
+          max={7}
+          total={task.assignees.length}
+          componentsProps={{
+            additionalAvatar: {
+              sx: {
+                width: 24,
+                height: 24,
+                fontSize: 15,
+                background: "red",
+              },
+            },
+          }}
+        >
+          {task.assignees.map((profile) => {
+            return (
+              <AvatarComponent profile={true} key={profile.id} {...profile} />
+            );
+          })}
+        </AvatarGroup>
+      </Card>
+    );
+  };
 
   return (
-    // Container for task cards
-    <Box
-      component="div"
-      gap={1}
-      sx={{ overflowY: "auto", height: "calc(100vh - 44vh)" }}
-      onScroll={handleTaskLoading}
-    >
-      {tasks.length > 0 ? (
-        // Displaying task cards
-        tasks.map(({ id, status, tracker, description, createdAt }) => {
-          const taskStatus = status.name === "Opened";
+    <Grid container spacing={2}>
+      {/* Search and Label Filter Section */}
+      <Grid
+        item
+        xs={12}
+        component="form"
+        display="flex"
+        alignItems="center"
+        gap={2}
+        mt={2}
+      >
+        {/* Search Input Field */}
+        <TextField
+          id="task-search-field"
+          variant="outlined"
+          type="search"
+          size="small"
+          fullWidth
+          placeholder="Search task here.."
+          onChange={handleChange}
+          // Change input color to error if there are no tasks and there's a search key
+          color={search ? "error" : undefined}
+          InputProps={{
+            // End adornment for search input
+            endAdornment: (
+              <>
+                {/* Show search icon or clear icon based on search key existence */}
+                {search === undefined ? (
+                  <Search fontSize="small" />
+                ) : (
+                  <IconButton onClick={handleSearchClear}>
+                    <Clear fontSize="small" />
+                  </IconButton>
+                )}
+              </>
+            ),
+          }}
+        />
+        {/* Tracker Filter */}
+        <RhfLabelAutocomplete
+          control={control}
+          name="labelId"
+          label="Label"
+          size="small"
+          fullWidth
+          addNewOption={false}
+        />
+      </Grid>
+
+      {/* Task Status Columns Section */}
+      <Grid
+        item
+        xs={12}
+        display="flex"
+        gap={2}
+        mb={4}
+        sx={{ overflowX: "auto", "::-webkit-scrollbar": { display: "none" } }}
+      >
+        {/* Map through each status and render the corresponding column */}
+        {project?.statuses?.map((status: StatusInterface) => {
           return (
-            <Card
-              key={id}
-              elevation={0}
-              className="btn"
+            <Box
+              key={status.id}
+              component="div"
+              id={`status${status.id}`}
+              onDrop={(e) => dropHandler(e, status)}
+              onDragOver={(e) => allowDropHandler(e, status)}
+              onDragLeave={() => removeDragEffect(status.id)}
               sx={{
                 display: "flex",
-                justifyContent: "space-between",
-                p: "1em",
-                backgroundColor: "transparent",
-                border: 1,
-                gap: 1,
-                m: 2,
-                borderColor: taskStatus ? colors.red.A200 : colors.blue[500],
+                flexDirection: "column",
+                width: "100%",
+                border: 3,
+                borderColor: "transparent",
+                minWidth: 300,
+                gap: 2,
+                borderRadius: 2,
+                p: 1,
+                background: colors.grey[900],
               }}
-              onClick={() => navigate(routes.tasks.path.concat(id.toString()))}
             >
-              <Typography>#{id}</Typography>
-              <Typography variant="body1">{tracker.name}</Typography>
-              <Typography>{taskStatus ? "New" : status.name}</Typography>
-              <Typography width={350}>{description}</Typography>
-              <Typography>{new Date(createdAt).toLocaleString()}</Typography>
-              <Button
-                variant={taskStatus ? "contained" : "text"}
-                size="small"
-                sx={{ height: 40 }}
-                color={taskStatus ? "error" : "primary"}
-                disabled={!taskStatus}
+              {/* Header section for each status column */}
+              <Box
+                gap={2}
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{
+                  background: "black",
+                  border: "1px solid white",
+                  p: 1,
+                  borderRadius: 2,
+                }}
               >
-                {taskStatus ? "Close" : "Closed"}
+                {/* Status Title, Color Indicator, and Task Count Badge */}
+                <Box display="flex" alignItems="center" gap={2}>
+                  <Box
+                    component="span"
+                    sx={{
+                      border: 2,
+                      borderColor: `rgb(${status.color})`,
+                      borderRadius: 2,
+                      width: 20,
+                      height: 20,
+                    }}
+                  />
+                  <Typography variant="subtitle1">{status.name}</Typography>
+                  <Badge
+                    badgeContent={tasks[status.name]?.length}
+                    color="success"
+                  />
+                </Box>
+                {/* Menu button for status actions */}
+                <IconButton onClick={(e) => handleOpenStatusMenu(e, status)}>
+                  <MoreHoriz />
+                </IconButton>
+              </Box>
+
+              {/* Task Cards within each status column */}
+              <Box
+                sx={{
+                  height: "55dvh",
+                  overflow: "auto",
+                  p: 1,
+                }}
+                component="div"
+              >
+                {tasks[status.name]?.map((task) => {
+                  return <TaskCard key={task.id} task={task} status={status} />;
+                })}
+              </Box>
+              <Button
+                variant="outlined"
+                onClick={() => handleCreateTask(status)}
+              >
+                New Task
               </Button>
-            </Card>
+            </Box>
           );
-        })
-      ) : (
-        // Display when there are no tasks
-        <Box
-          justifyContent="center"
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          height={300}
+        })}
+        {/* Button for adding a new status column */}
+        <Button
+          sx={{
+            width: "100%",
+            border: 0,
+            minWidth: 300,
+            gap: 2,
+            borderRadius: 2,
+            p: 1,
+            background: colors.grey[900],
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+          component="div"
+          onClick={handleAddNewStatus}
         >
-          <Box component="img" width={300} height={200} src={noDataImage} />
-          <Typography margin={2} variant="h5">
-            No Tasks
-          </Typography>
-        </Box>
-      )}
-    </Box>
+          <Typography>New Column</Typography>
+          <Add />
+        </Button>
+      </Grid>
+
+      {/* Context Menus for Status and Task Actions */}
+      <Menu
+        open={Boolean(anchorElStatusMenu)}
+        id="status-menu"
+        anchorEl={anchorElStatusMenu}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={handleCloseStatusMenu}
+      >
+        {/* Menu items for status actions */}
+        <MenuItem onClick={() => handleCloseStatusMenu("Manage status")}>
+          Manage status
+        </MenuItem>
+        <MenuItem onClick={() => handleCloseStatusMenu("Delete status")}>
+          Delete status
+        </MenuItem>
+      </Menu>
+      <Menu
+        open={Boolean(anchorElTaskMenu)}
+        id="menu-task-item"
+        anchorEl={anchorElTaskMenu}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={handleCloseTaskMenu}
+      >
+        {/* Menu item for task deletion */}
+        <MenuItem onClick={handleDeleteTask}>Delete Task</MenuItem>
+      </Menu>
+    </Grid>
   );
 };
 

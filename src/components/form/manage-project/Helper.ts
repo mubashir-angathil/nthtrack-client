@@ -1,19 +1,23 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { object, string, InferType } from "yup";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDialog } from "../../common/dialog/Helper";
 import projectServices from "../../../services/project-services/ProjectServices";
 import { ApiError } from "../../../services/Helper";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 import { enqueueSnackbar } from "notistack";
+import {
+  GetProjectByIdResponse,
+  UpdateProjectRequest,
+} from "../../../services/project-services/Helper";
+import useSocketHelpers from "../../../socket/Socket";
 
 export interface ManageProjectFormProps {
   updateProjects: () => Promise<void>;
 }
 // Define the validation schema for the sign-in form
 export const manageProjectFormSchema = object({
-  projectName: string().min(2).max(52).required(),
+  name: string().min(2).max(52).required(),
   description: string().min(2).max(1002).required(),
 }).required();
 
@@ -21,15 +25,22 @@ export const manageProjectFormSchema = object({
 export type ManageProjectFormInput = InferType<typeof manageProjectFormSchema>;
 
 // Custom hook for handling sign-up logic
-export const useManageProject = () => {
-  const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const { handleDialogClose } = useDialog();
+export const useManageProject = (values?: GetProjectByIdResponse["data"]) => {
+  const { pushNotification } = useSocketHelpers();
+
   // Initialize the React Hook Form with validation resolver and default values
-  const { handleSubmit, control, setError } = useForm<ManageProjectFormInput>({
+  const {
+    handleSubmit,
+    control,
+    setError,
+    setValue,
+    reset,
+    formState: { touchedFields, isSubmitting },
+  } = useForm<ManageProjectFormInput>({
     resolver: yupResolver(manageProjectFormSchema),
     defaultValues: {
       description: "",
-      projectName: "",
+      name: "",
     },
   });
 
@@ -37,24 +48,43 @@ export const useManageProject = () => {
   const onSubmit: SubmitHandler<ManageProjectFormInput> = async (
     newProject: ManageProjectFormInput,
   ) => {
-    setIsSubmit(true);
-    await createNewProject(newProject);
-    // console.log(data);
-  };
+    if (values) {
+      const updatedProject: UpdateProjectRequest = {
+        ...newProject,
+        projectId: values.id,
+      };
 
+      touchedFields?.name === undefined && delete updatedProject.name;
+      touchedFields?.description === undefined &&
+        delete updatedProject.description;
+
+      if (Object.keys(updatedProject).length > 1) {
+        const message = updatedProject.name
+          ? `Project "${values.name}" renamed as ${updatedProject.name} by :author`
+          : `Project ${values.name}'s description updated by :author`;
+
+        await updateProject({ newProject: updatedProject, message });
+      } else {
+        enqueueSnackbar({
+          message: "Couldn't find any changes in the field values",
+          variant: "info",
+        });
+      }
+    } else {
+      await createNewProject(newProject);
+    }
+  };
   const createNewProject = async (newProject: ManageProjectFormInput) => {
     try {
       const { data, status } = await projectServices.createProject(newProject);
-      setIsSubmit(false);
-      if (data?.success && status === 200) {
-        handleDialogClose();
+      if (data?.success && status === 201) {
+        generalFunctions.goBack();
         enqueueSnackbar({
           message: data?.message,
           variant: "success",
         });
       }
     } catch (error) {
-      setIsSubmit(false);
       // Handle errors from the sign-ip API
       const {
         data: { message },
@@ -70,10 +100,53 @@ export const useManageProject = () => {
     }
   };
 
+  const updateProject = async ({
+    newProject,
+    message,
+  }: {
+    newProject: UpdateProjectRequest;
+    message: string;
+  }) => {
+    try {
+      const { data, status } = await projectServices.updateProject(newProject);
+      if (data?.success && status === 200) {
+        pushNotification({
+          broadcastId: newProject.projectId,
+          message,
+        });
+        generalFunctions.goBack();
+        enqueueSnackbar({
+          message: data?.message,
+          variant: "success",
+        });
+      }
+    } catch (error) {
+      // Handle errors from the sign-ip API
+      const {
+        data: { message },
+      } = error as ApiError;
+
+      generalFunctions.fieldErrorsHandler(error as ApiError, setError);
+      message.split(",").map((value) => {
+        enqueueSnackbar({
+          message: value,
+          variant: "error",
+        });
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (values?.name && values?.description) {
+      setValue("name", values.name);
+      setValue("description", values.description);
+    }
+
+    return () => reset();
+  }, [reset, setValue, values]);
   return {
-    isSubmit,
+    isSubmitting,
     handleSubmit,
-    handleDialogClose,
     control,
     onSubmit,
   };

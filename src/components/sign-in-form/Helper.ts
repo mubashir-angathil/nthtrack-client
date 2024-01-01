@@ -10,10 +10,11 @@ import { Location, useLocation, useNavigate } from "react-router-dom";
 import routes from "../../utils/helpers/routes/Routes";
 import { ApiError } from "../../services/Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
+import { enqueueSnackbar } from "notistack";
 
 // Define the validation schema for the sign-in form
 export const signInFormSchema = object({
-  username: string().email().required(),
+  usernameOrEmail: string().required(),
   password: string().min(4).required(),
 }).required();
 
@@ -28,7 +29,7 @@ export const useSignIn = () => {
   const { handleSubmit, control, setError } = useForm<SignInFormInputs>({
     resolver: yupResolver(signInFormSchema),
     defaultValues: {
-      username: "",
+      usernameOrEmail: "",
       password: "",
     },
   });
@@ -51,25 +52,34 @@ export const useSignIn = () => {
   const handleSignIn = async (props: SignInFormInputs) => {
     try {
       // Call the sign-in API from authenticationServices
-      const { authDetails, success } = await authenticationServices.doSignIn({
-        username: props.username,
+      const {
+        data: { success, data },
+      } = await authenticationServices.doSignIn({
+        usernameOrEmail: props.usernameOrEmail,
         password: props.password,
       });
-
       // If sign-in is successful, set authentication details in cookies
-      if (success && authDetails) {
-        cookieServices.setAuthDetails(authDetails);
+      if (success && data) {
+        cookieServices.setAuthDetails(data);
         setAuthDetails({
           auth: true,
-          user: authDetails,
+          user: data,
         });
-        // navigate(routes.home.path, { replace: true });
+        navigate(routes.home.path, {
+          replace: true,
+        });
       }
     } catch (error) {
+      const {
+        data: { message },
+      } = error as ApiError;
       // Handle errors from the sign-ip API
       generalFunctions.fieldErrorsHandler(error as ApiError, setError);
 
-      console.error("SignIn:", error);
+      enqueueSnackbar({
+        message,
+        variant: "error",
+      });
     }
   };
   useEffect(() => {

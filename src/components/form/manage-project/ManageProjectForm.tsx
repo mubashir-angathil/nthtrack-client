@@ -6,18 +6,21 @@ import { Button, FormHelperText } from "@mui/material";
 import { useManageProject } from "./Helper";
 import RhfTextfieldComponent from "../../common/textfield/RhfTextFieldComponent";
 import SubmitButtonComponent from "../../common/buttons/SubmitButtonComponent";
+import { GetProjectByIdResponse } from "../../../services/project-services/Helper";
+import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 
-const ManageProjectForm: FC = () => {
-  const { control, isSubmit, handleDialogClose, handleSubmit, onSubmit } =
-    useManageProject();
-
+const ManageProjectForm: FC<{ values?: GetProjectByIdResponse["data"] }> = ({
+  values,
+}) => {
+  const { control, isSubmitting, handleSubmit, onSubmit } =
+    useManageProject(values);
   return (
     <Box p={2} component="form" onSubmit={handleSubmit(onSubmit)}>
       <Stack gap={2} mt={2} mb={2}>
         <FormHelperText sx={{ fontSize: 15 }}>Project Title *</FormHelperText>
         <RhfTextfieldComponent
           control={control}
-          name="projectName"
+          name="name"
           size="small"
           required
         />
@@ -28,10 +31,17 @@ const ManageProjectForm: FC = () => {
           required
         />
         <Box display="flex" justifyContent="end" columnGap={1}>
-          <Button variant="outlined" color="error" onClick={handleDialogClose}>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={generalFunctions.goBack}
+          >
             Close
           </Button>
-          <SubmitButtonComponent title="Create Project" loading={isSubmit} />
+          <SubmitButtonComponent
+            title={values ? "Update Project" : "Create Project"}
+            loading={isSubmitting}
+          />
         </Box>
       </Stack>
     </Box>

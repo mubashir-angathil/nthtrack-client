@@ -21,7 +21,7 @@ const cookieServices = {
    *
    * @param {AuthResponse["authDetails"]} authDetails - Authentication details to be stored.
    */
-  setAuthDetails: (authDetails: AuthResponse["authDetails"]): void => {
+  setAuthDetails: (authDetails: AuthResponse["data"]): void => {
     cookie.set(authDetailsCookie, JSON.stringify(authDetails));
   },
 
@@ -32,7 +32,7 @@ const cookieServices = {
    *
    * @returns {AuthResponse["authDetails"] | undefined} Stored authentication details.
    */
-  getAuthDetails: (): AuthResponse["authDetails"] | undefined => {
+  getAuthDetails: (): AuthResponse["data"] | undefined => {
     const authDetails = cookie.get(authDetailsCookie);
     return authDetails;
   },

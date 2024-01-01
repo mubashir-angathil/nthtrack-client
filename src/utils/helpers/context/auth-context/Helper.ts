@@ -23,6 +23,7 @@ interface AuthDetailsProps {
   auth: boolean;
   user: {
     id: number | null;
+    email: string | null;
     username: string | null;
     accessToken: string | null;
     refreshToken: string | null;
@@ -41,6 +42,7 @@ export const initialAuthDetailsState: AuthDetailsProps = {
   auth: false,
   user: {
     id: null,
+    email: null,
     username: null,
     accessToken: null,
     refreshToken: null,
