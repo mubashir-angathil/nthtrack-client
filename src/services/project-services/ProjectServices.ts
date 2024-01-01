@@ -27,6 +27,9 @@ import {
   UpdateLabelRequest,
   UpdateStatusRequest,
   UpdatedTaskResponse,
+  RemoveLabelRequest,
+  GetProjectLabelsRequest,
+  GetProjectLabelsResponse,
 } from "./Helper";
 import { ApiError, NormalApiSuccessResponse } from "../Helper";
 import { ManageProjectFormInput } from "../../components/form/manage-project/Helper";
@@ -512,13 +515,7 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
-  deleteLabel: async ({
-    projectId,
-    labelId,
-  }: {
-    projectId: number;
-    labelId: number;
-  }) => {
+  deleteLabel: async ({ projectId, labelId }: RemoveLabelRequest) => {
     try {
       return await axios.delete<NormalApiSuccessResponse>(
         `/project/${projectId}/label/${labelId}/delete`,
@@ -561,6 +558,22 @@ const projectServices = {
 
       // Return the response
       return response;
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  getProjectLabels: async ({
+    projectId,
+    ...props
+  }: GetProjectLabelsRequest): Promise<
+    AxiosResponse<GetProjectLabelsResponse>
+  > => {
+    try {
+      return await axios.post<GetProjectLabelsResponse>(
+        `/project/${projectId}/labels`,
+        { ...props },
+      );
     } catch (error) {
       // Throw a custom error using a helper function
       throw generalFunctions.customError(error as AxiosError<ApiError>);

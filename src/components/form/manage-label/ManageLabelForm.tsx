@@ -2,11 +2,11 @@
 import React from "react";
 import { Button, Chip, Grid, TextField } from "@mui/material";
 import ColorSelector from "../../common/color-selector/ColorSelector";
-import { useManageLabel } from "./Helper";
+import { ManageLabelFormInterface, useManageLabel } from "./Helper";
 import SubmitButtonComponent from "../../common/buttons/SubmitButtonComponent";
 
 // Component for managing labels in a form
-const ManageLabelForm: React.FC = () => {
+const ManageLabelForm: React.FC<ManageLabelFormInterface> = (props) => {
   // Destructuring values and functions from the custom hook
   const {
     handleSubmit,
@@ -15,7 +15,7 @@ const ManageLabelForm: React.FC = () => {
     setNewLabel,
     handleChange,
     handleModalClose,
-  } = useManageLabel();
+  } = useManageLabel(props);
 
   // Rendering the label management form
   return (
@@ -81,7 +81,10 @@ const ManageLabelForm: React.FC = () => {
         <Button onClick={handleModalClose} variant="outlined" color="error">
           Cancel
         </Button>
-        <SubmitButtonComponent title="Add" size="small" />
+        <SubmitButtonComponent
+          title={props.values ? "Update" : "Add"}
+          size="small"
+        />
       </Grid>
     </Grid>
   );

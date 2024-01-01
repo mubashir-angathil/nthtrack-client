@@ -4,6 +4,7 @@ import {
   ApiResponseWithPagination,
   NormalApiSuccessResponse,
 } from "../Helper";
+import { LabelAutocompleteOptionType } from "../data-services/Helper";
 
 export declare type ByUserDetails = {
   id: number;
@@ -133,7 +134,6 @@ export interface RemoveMemberRequest {
 export interface GetProjectMembersRequest extends ApiRequestWithPagination {
   projectId: number;
 }
-
 export interface GetProjectMembersResponse extends ApiResponseWithPagination {
   data: Array<{
     id: number;
@@ -182,6 +182,19 @@ export interface UpdateLabelRequest {
   name?: string;
   color?: string;
   projectId: number;
-  labelId: string;
+  labelId: number;
 }
+
+export interface RemoveLabelRequest {
+  projectId: number;
+  labelId: number;
+}
+export interface GetProjectLabelsRequest extends ApiRequestWithPagination {
+  projectId: number;
+}
+
+export interface GetProjectLabelsResponse extends ApiResponseWithPagination {
+  data: LabelAutocompleteOptionType[];
+}
+
 // Comments provide explanations for each interface, making the code more readable and understandable.
