@@ -19,9 +19,10 @@ import { useModal } from "../../common/modal/Helper";
 
 export interface ManageStatusFormProps {
   values?: GetTaskByIdResponse["data"]["status"];
+  setTableLoading?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-// Define the validation schema for the sign-in form
+// Define the validation schema for the manage status form
 export const manageStatusFormSchema = object({
   name: string().required(),
   color: string().required().default(labelColors.green),
@@ -30,8 +31,11 @@ export const manageStatusFormSchema = object({
 // Define the type for the form inputs based on the schema
 export type ManageStatusFormInput = InferType<typeof manageStatusFormSchema>;
 
-// Custom hook for handling sign-up logic
-export const useManageStatus = ({ values }: ManageStatusFormProps) => {
+// Custom hook for handling manage status logic
+export const useManageStatus = ({
+  values,
+  setTableLoading,
+}: ManageStatusFormProps) => {
   const { project, setProject } = useProjectContext();
   const { handleModalClose } = useModal();
   const [activeColor, setActiveColor] = useState<string>(labelColors.green);
@@ -81,6 +85,7 @@ export const useManageStatus = ({ values }: ManageStatusFormProps) => {
     }
   };
 
+  // Function to create new status
   const createNewStatus = async (props: CreateStatusRequest) => {
     try {
       const response = await projectServices.createStatus(props);
@@ -94,6 +99,9 @@ export const useManageStatus = ({ values }: ManageStatusFormProps) => {
           return null;
         });
         enqueueSnackbar({ message: response.data.message, variant: "success" });
+        if (setTableLoading) {
+          setTableLoading((prevLoading) => !prevLoading);
+        }
         handleModalClose();
       } else {
         throw { data: { message: response.data.message } };
@@ -114,6 +122,7 @@ export const useManageStatus = ({ values }: ManageStatusFormProps) => {
     }
   };
 
+  // Function to update status
   const updateStatus = async (newStatus: UpdateStatusRequest) => {
     try {
       const { data, status } = await projectServices.updateStatus(newStatus);
@@ -141,12 +150,15 @@ export const useManageStatus = ({ values }: ManageStatusFormProps) => {
 
         pushNotification({
           broadcastId: newStatus.projectId,
-          message: `:author made changes in the Status (Status ${newStatus.statusId}) of the "${project?.name}" project.`,
+          message: `:author made changes in the status (status ${newStatus.statusId}) of the "${project?.name}" project.`,
         });
         enqueueSnackbar({
           message: data?.message,
           variant: "success",
         });
+        if (setTableLoading) {
+          setTableLoading((prevLoading) => !prevLoading);
+        }
         handleModalClose();
       } else {
         throw { data };
@@ -167,6 +179,7 @@ export const useManageStatus = ({ values }: ManageStatusFormProps) => {
     }
   };
 
+  // Effect to set default values to update
   useEffect(() => {
     if (values) {
       setValue("name", values.name);
@@ -176,9 +189,11 @@ export const useManageStatus = ({ values }: ManageStatusFormProps) => {
     return () => reset();
   }, [values]);
 
+  // Effect to set activeColor
   useEffect(() => {
     setValue("color", activeColor);
   }, [activeColor]);
+
   return {
     watch,
     activeColor,

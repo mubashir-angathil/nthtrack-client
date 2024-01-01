@@ -189,6 +189,10 @@ export interface RemoveLabelRequest {
   projectId: number;
   labelId: number;
 }
+export interface RemoveStatusRequest {
+  projectId: number;
+  statusId: number;
+}
 export interface GetProjectLabelsRequest extends ApiRequestWithPagination {
   projectId: number;
 }
@@ -197,4 +201,11 @@ export interface GetProjectLabelsResponse extends ApiResponseWithPagination {
   data: LabelAutocompleteOptionType[];
 }
 
+export interface GetProjectStatusesRequest extends ApiRequestWithPagination {
+  projectId: number;
+}
+
+export interface GetProjectStatusesResponse extends ApiResponseWithPagination {
+  data: StatusInterface[];
+}
 // Comments provide explanations for each interface, making the code more readable and understandable.

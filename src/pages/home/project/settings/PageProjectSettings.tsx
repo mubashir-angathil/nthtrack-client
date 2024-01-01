@@ -8,6 +8,7 @@ import { Box, Button, Divider, Typography } from "@mui/material";
 import ProjectMemberTableComponent from "../../../../components/table/project-member-table/ProjectMemberTableComponent";
 import { Stack } from "@mui/system";
 import ProjectLabelTableComponent from "../../../../components/table/project-label-table/ProjectLabelTableComponent";
+import ProjectStatusTableComponent from "../../../../components/table/project-status-table/ProjectStatusTableComponent";
 
 const PageProjectSettings: FC = () => {
   const { dangerZoneItems, tab, handleTabChange } = useManageProjectSettings();
@@ -82,7 +83,7 @@ const PageProjectSettings: FC = () => {
           <ProjectLabelTableComponent />
         </TabPanel>
         <TabPanel value="3">
-          <ProjectLabelTableComponent />
+          <ProjectStatusTableComponent />
         </TabPanel>
         <TabPanel value="4">
           <DangerZoneSection />

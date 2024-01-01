@@ -30,6 +30,9 @@ import {
   RemoveLabelRequest,
   GetProjectLabelsRequest,
   GetProjectLabelsResponse,
+  GetProjectStatusesRequest,
+  GetProjectStatusesResponse,
+  RemoveStatusRequest,
 } from "./Helper";
 import { ApiError, NormalApiSuccessResponse } from "../Helper";
 import { ManageProjectFormInput } from "../../components/form/manage-project/Helper";
@@ -499,13 +502,7 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
-  deleteStatus: async ({
-    projectId,
-    statusId,
-  }: {
-    statusId: number;
-    projectId: number;
-  }) => {
+  deleteStatus: async ({ projectId, statusId }: RemoveStatusRequest) => {
     try {
       return await axios.delete<NormalApiSuccessResponse>(
         `/project/${projectId}/status/${statusId}/delete`,
@@ -572,6 +569,22 @@ const projectServices = {
     try {
       return await axios.post<GetProjectLabelsResponse>(
         `/project/${projectId}/labels`,
+        { ...props },
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  getProjectStatuses: async ({
+    projectId,
+    ...props
+  }: GetProjectStatusesRequest): Promise<
+    AxiosResponse<GetProjectStatusesResponse>
+  > => {
+    try {
+      return await axios.post<GetProjectStatusesResponse>(
+        `/project/${projectId}/statuses`,
         { ...props },
       );
     } catch (error) {

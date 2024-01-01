@@ -43,7 +43,7 @@ const ProjectMemberTableComponent: FC = () => {
         alignItems="center"
         p={3}
       >
-        <Typography variant="h4">Project Members</Typography>
+        <Typography variant="h4">Members</Typography>
         {/* Button to add a new member */}
         <Button
           variant="contained"
@@ -62,7 +62,7 @@ const ProjectMemberTableComponent: FC = () => {
           New Member
         </Button>
       </Box>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table sx={{ minWidth: 650 }} aria-label="members-table">
         {/* Table Header */}
         <TableHead>
           <TableRow>
