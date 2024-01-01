@@ -16,14 +16,7 @@ export const useUpdateProject = ({ type }: ManageProjectProps) => {
     params?.projectId ? parseInt(params.projectId) : 0,
   );
   // State variables for project and tasks, as well as API configuration
-  const [project, setProject] = useState<GetProjectByIdResponse["data"]>({
-    id: 0,
-    name: "",
-    description: "",
-    createdAt: "",
-    updatedAt: "",
-    closedAt: "",
-  });
+  const [project, setProject] = useState<GetProjectByIdResponse["data"]>();
 
   // Function to fetch project details from the API
   const fetchProjectById = async () => {

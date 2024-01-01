@@ -17,15 +17,7 @@ export const useUpdateTask = ({ type }: ManageTaskProps) => {
     projectId: params.projectId ? parseInt(params.projectId) : 0,
   });
 
-  const [task, setTask] = useState<GetTaskByIdResponse["data"]>({
-    id: 0,
-    description: "",
-    tracker: { id: 0, name: "" },
-    status: { id: 0, name: "" },
-    createdAt: "",
-    updatedAt: "",
-    closedAt: null,
-  });
+  const [task, setTask] = useState<GetTaskByIdResponse["data"]>();
   // Function to fetch project details from the API
   const fetchTaskById = async () => {
     try {
