@@ -24,7 +24,11 @@ const PageHome: React.FC = () => {
           </OutletContainer>
         </>
       ) : (
-        <Navigate to={routes.signIn.path} state={{ from: location }} replace />
+        <Navigate
+          to={routes.authentication.path}
+          state={{ from: location }}
+          replace
+        />
       )}
     </>
   );
