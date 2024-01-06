@@ -21,6 +21,8 @@ const RhfTextfieldComponent = <TField extends FieldValues>({
   autoComplete = "off",
   autoFocus = false,
   onBlur,
+  startAdornment,
+  endAdornment,
   ...rest
 }: RhfTextfieldProps<TField>): JSX.Element => {
   return (
@@ -44,6 +46,10 @@ const RhfTextfieldComponent = <TField extends FieldValues>({
             error={Boolean(error)}
             autoComplete={autoComplete}
             helperText={error && error.message}
+            InputProps={{
+              startAdornment: startAdornment ? startAdornment : undefined,
+              endAdornment: endAdornment ? endAdornment : undefined,
+            }}
             {...rest}
           />
         );

@@ -8,13 +8,7 @@ const SubmitButtonComponent: React.FC<CustomButtonComponentProps> = ({
   ...reset
 }) => {
   return (
-    <LoadingButton
-      type="submit"
-      color="success"
-      size={size}
-      variant="contained"
-      {...reset}
-    >
+    <LoadingButton type="submit" size={size} variant="contained" {...reset}>
       {title}
     </LoadingButton>
   );

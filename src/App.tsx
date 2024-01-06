@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import DialogContextProvider from "./utils/helpers/context/dialog-context/DialogContextProvider";
-import { theme } from "./utils/helpers/configs/Theme";
 import routes from "./utils/helpers/routes/Routes";
 import GeneralDialog from "./components/common/dialog/GeneralDialog";
 import { CssBaseline, IconButton, ThemeProvider } from "@mui/material";
@@ -12,8 +11,11 @@ import AlertComponent from "./components/common/alert/AlertComponent";
 import { ProjectContextProvider } from "./utils/helpers/context/project-context/ProjectContextProvider";
 import ModalContextProvider from "./utils/helpers/context/modal-context/ModalContextProvider";
 import GeneralModal from "./components/common/modal/GeneralModal";
+import { useThemeContext } from "./utils/helpers/context/theme-context/ThemeContext";
 
 const App: React.FC = () => {
+  const { theme } = useThemeContext();
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -36,11 +38,7 @@ const App: React.FC = () => {
               <ModalContextProvider>
                 <DialogContextProvider>
                   <Routes>
-                    <Route index element={routes.signIn.element} />
-                    <Route
-                      path={routes.signUp.path}
-                      element={routes.signUp.element}
-                    />
+                    <Route index element={routes.authentication.element} />
                     <Route
                       path={routes.home.path}
                       element={routes.home.default}

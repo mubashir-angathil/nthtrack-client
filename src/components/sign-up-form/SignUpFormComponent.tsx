@@ -1,8 +1,16 @@
 import React from "react";
-import { Box, FormControl } from "@mui/material";
+import { Box, Button, FormControl, IconButton } from "@mui/material";
 import SubmitButtonComponent from "../common/buttons/SubmitButtonComponent";
 import { useSignUp } from "./Helper";
 import RhfTextfieldComponent from "../common/textfield/RhfTextFieldComponent";
+import GoogleSvg from "../../assets/google.svg";
+import {
+  Email,
+  Lock,
+  Person,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 
 /**
  * SignUpFormComponent
@@ -20,15 +28,26 @@ import RhfTextfieldComponent from "../common/textfield/RhfTextFieldComponent";
  */
 const SignUpFormComponent: React.FC = () => {
   // Destructure properties from the useSignUp hook
-  const { onSubmit, control, handleSubmit } = useSignUp();
+  const {
+    onSubmit,
+    isVisiblePassword,
+    setIsVisiblePassword,
+    control,
+    handleSubmit,
+  } = useSignUp();
 
   return (
     <Box
       component="form"
-      p={1}
       display="grid"
       gap={2}
       onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          height: "45px",
+          borderRadius: 5,
+        },
+      }}
     >
       {/* Username Input */}
       <FormControl fullWidth>
@@ -36,8 +55,9 @@ const SignUpFormComponent: React.FC = () => {
           required
           type="text"
           name="username"
-          label="Username"
+          placeholder="User name"
           control={control}
+          startAdornment={<Person fontSize="small" />}
         />
       </FormControl>
       {/* Username Input */}
@@ -46,9 +66,9 @@ const SignUpFormComponent: React.FC = () => {
           required
           type="email"
           name="email"
-          label="Email"
           control={control}
-          placeholder="jhon@gmail.com"
+          placeholder="Email"
+          startAdornment={<Email fontSize="small" />}
         />
       </FormControl>
 
@@ -57,10 +77,21 @@ const SignUpFormComponent: React.FC = () => {
         <RhfTextfieldComponent
           required
           name="password"
-          type="password"
-          label="Password"
+          type={isVisiblePassword ? "text" : "password"}
           control={control}
-          placeholder="password"
+          placeholder="Password"
+          startAdornment={<Lock fontSize="small" />}
+          endAdornment={
+            <IconButton
+              onClick={() => setIsVisiblePassword((prevValue) => !prevValue)}
+            >
+              {isVisiblePassword ? (
+                <Visibility fontSize="small" />
+              ) : (
+                <VisibilityOff fontSize="small" />
+              )}
+            </IconButton>
+          }
         />
       </FormControl>
 
@@ -71,14 +102,31 @@ const SignUpFormComponent: React.FC = () => {
           size="small"
           type="password"
           control={control}
-          placeholder="password"
+          placeholder="Confirm Password"
           name="confirmPassword"
-          label="Confirm Password"
+          startAdornment={<Lock fontSize="small" />}
         />
       </FormControl>
 
       {/* Submit Button */}
-      <SubmitButtonComponent title="Create Account" sx={{ mt: 2 }} />
+      <SubmitButtonComponent
+        title="Create New Account"
+        sx={{ mt: 1, height: "40px", borderRadius: 5 }}
+        // loading={isLoading}
+      />
+      <Button
+        sx={{
+          height: "40px",
+          background: "white",
+          color: "black",
+          borderRadius: 5,
+          boxShadow: 1,
+        }}
+        variant="outlined"
+        startIcon={<img src={GoogleSvg} width={28} height={28} />}
+      >
+        Sign in with google
+      </Button>
     </Box>
   );
 };
