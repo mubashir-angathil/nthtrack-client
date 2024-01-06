@@ -2,8 +2,7 @@ import PageHome from "../../../pages/home/PageHome";
 import PageTaskView from "../../../pages/home/task/PageTaskView";
 import PageProjects from "../../../pages/home/project/PageProjects";
 import PageViewProject from "../../../pages/home/project/view-project/PageViewProject";
-import PageSignIn from "../../../pages/public/sign-in/PageSignIn";
-import PageSignUp from "../../../pages/public/sign-up/PageSignUp";
+import { PageAuthentication } from "../../../pages/public/sign-in/PageAuthentication";
 import { RouteConfigsType } from "./Helper";
 import PageTeamProjects from "../../../pages/home/team/project/PageTeamProjects";
 import PageManageProject from "../../../pages/home/project/manage-project/PageManageProject";
@@ -12,16 +11,10 @@ import PageProjectSettings from "../../../pages/home/project/settings/PageProjec
 
 // Define your routes using the RouteConfigsType
 const routes: RouteConfigsType = {
-  // Sign In Route
-  signIn: {
+  // Authentication Route
+  authentication: {
     path: "/",
-    element: <PageSignIn />, // React component to render
-  },
-
-  // Sign Up Route
-  signUp: {
-    path: "/sign-up",
-    element: <PageSignUp />, // React component to render
+    element: <PageAuthentication />, // React component to render
   },
 
   // Home Route

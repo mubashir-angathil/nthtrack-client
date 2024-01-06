@@ -7,7 +7,7 @@ import cookieServices from "../../services/storage-services/CookieServices";
 import { useAuthContext } from "../../utils/helpers/context/auth-context/AuthContext";
 import { Location, useLocation, useNavigate } from "react-router-dom";
 import routes from "../../utils/helpers/routes/Routes";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ApiError } from "../../services/Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 
@@ -25,6 +25,8 @@ export type SignUpFormInputs = InferType<typeof signUpFormSchema>;
 // Custom hook for handling sign-up logic
 export const useSignUp = () => {
   const location: Location = useLocation();
+  const [isVisiblePassword, setIsVisiblePassword] = useState<boolean>(false);
+
   // Initialize the React Hook Form with validation resolver and default values
   const { handleSubmit, control, setError } = useForm<SignUpFormInputs>({
     resolver: yupResolver(signUpFormSchema),
@@ -43,7 +45,11 @@ export const useSignUp = () => {
 
   // Handle form submission
   const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
-    await handleSignUp(data);
+    if (data.password === data.confirmPassword) {
+      await handleSignUp(data);
+    } else {
+      setError("confirmPassword", { message: "Password does not match!!" });
+    }
   };
 
   // Function to handle sign-up logic
@@ -85,5 +91,11 @@ export const useSignUp = () => {
   }, [auth, navigate]);
 
   // Return the necessary properties for the form
-  return { control, handleSubmit, onSubmit };
+  return {
+    isVisiblePassword,
+    setIsVisiblePassword,
+    control,
+    handleSubmit,
+    onSubmit,
+  };
 };

@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 type keys =
-  | "signIn"
-  | "signUp"
+  | "authentication"
   | "home"
   | "projects"
   | "tasks"

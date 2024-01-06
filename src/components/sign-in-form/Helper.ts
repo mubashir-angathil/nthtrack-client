@@ -25,6 +25,8 @@ export type SignInFormInputs = InferType<typeof signInFormSchema>;
 export const useSignIn = () => {
   const location: Location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
   // Initialize the React Hook Form with validation resolver and default values
   const { handleSubmit, control, setError } = useForm<SignInFormInputs>({
     resolver: yupResolver(signInFormSchema),
@@ -93,5 +95,12 @@ export const useSignIn = () => {
   }, [auth, navigate]);
 
   // Return the necessary properties for the form
-  return { isLoading, control, handleSubmit, onSubmit };
+  return {
+    isLoading,
+    control,
+    handleSubmit,
+    onSubmit,
+    isVisible,
+    setIsVisible,
+  };
 };

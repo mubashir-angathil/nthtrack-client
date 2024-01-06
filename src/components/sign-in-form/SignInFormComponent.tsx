@@ -1,9 +1,10 @@
 import React from "react";
-import { Box, FormControl } from "@mui/material";
+import { Box, Button, FormControl, IconButton, useTheme } from "@mui/material";
 import SubmitButtonComponent from "../common/buttons/SubmitButtonComponent";
 import { useSignIn } from "./Helper";
 import RhfTextfieldComponent from "../common/textfield/RhfTextFieldComponent";
-
+import { Lock, Person, Visibility, VisibilityOff } from "@mui/icons-material";
+import GoogleSvg from "../../assets/google.svg";
 /**
  * SignInFormComponent
  *
@@ -20,15 +21,30 @@ import RhfTextfieldComponent from "../common/textfield/RhfTextFieldComponent";
  */
 const SignInFormComponent: React.FC = () => {
   // Destructure properties from the useSignIn hook
-  const { isLoading, control, handleSubmit, onSubmit } = useSignIn();
-
+  const {
+    isLoading,
+    control,
+    isVisible,
+    setIsVisible,
+    handleSubmit,
+    onSubmit,
+  } = useSignIn();
+  const theme = useTheme();
   return (
     <Box
       component="form"
-      p={1}
+      width={"100%"}
       display="grid"
       gap={2}
       onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          // background: colors.grey[700],
+          height: "45px",
+          borderRadius: 5,
+          // color: "white",
+        },
+      }}
     >
       {/* Username Input */}
       <FormControl fullWidth>
@@ -36,9 +52,9 @@ const SignInFormComponent: React.FC = () => {
           required
           type="text"
           name="usernameOrEmail"
-          label="Username / Email"
           control={control}
-          placeholder="John / john@gmail.com"
+          placeholder="Username / Email"
+          startAdornment={<Person fontSize="small" />}
         />
       </FormControl>
 
@@ -47,19 +63,45 @@ const SignInFormComponent: React.FC = () => {
         <RhfTextfieldComponent
           required
           name="password"
-          type="password"
-          label="Password"
+          type={isVisible ? "text" : "password"}
           control={control}
-          placeholder="password"
+          placeholder="Password"
+          startAdornment={<Lock fontSize="small" />}
+          endAdornment={
+            <IconButton
+              size="small"
+              title={isVisible ? "Invisible" : "Visible"}
+              onClick={() => setIsVisible((prevValue) => !prevValue)}
+            >
+              {isVisible ? (
+                <Visibility fontSize="small" />
+              ) : (
+                <VisibilityOff fontSize="small" />
+              )}
+            </IconButton>
+          }
         />
       </FormControl>
 
       {/* Submit Button */}
       <SubmitButtonComponent
         title="Sign in"
-        sx={{ mt: 2 }}
+        sx={{ mt: 1, height: "40px", borderRadius: 5, boxShadow: 0 }}
         loading={isLoading}
       />
+      <Button
+        sx={{
+          height: "40px",
+          background:
+            theme.palette.mode === "light" ? "rgba(0,0,0,0.05)" : "white",
+          color: "black",
+          borderRadius: 5,
+        }}
+        variant="outlined"
+        startIcon={<img src={GoogleSvg} width={28} height={28} />}
+      >
+        Sign in with google
+      </Button>
     </Box>
   );
 };

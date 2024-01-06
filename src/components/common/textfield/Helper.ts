@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { SxProps } from "@mui/system";
-import { HTMLInputTypeAttribute } from "react";
+import React, { HTMLInputTypeAttribute } from "react";
 import { Control, FieldValues, Path } from "react-hook-form";
 
 export interface RhfTextfieldProps<TField extends FieldValues> {
@@ -16,5 +16,7 @@ export interface RhfTextfieldProps<TField extends FieldValues> {
   autoComplete?: string;
   autoFocus?: boolean;
   sx?: SxProps;
+  startAdornment?: JSX.Element;
+  endAdornment?: React.JSX.Element;
   onBlur?: (value?: string) => void;
 }
