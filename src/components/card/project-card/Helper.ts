@@ -29,13 +29,6 @@ export const useManageProjectCard = (
   // State to track overflow status for each project
   const [more, setMore] = useState<{ [key: string]: boolean }>({});
 
-  // Function to toggle 'more' status for a specific project
-  const handleSetMore = (id: number) => {
-    setMore((more) => {
-      return { ...more, [id]: !more[id] };
-    });
-  };
-
   // Effect to set overflow status based on description length
   useEffect(() => {
     if (projects.length > 0) {
@@ -52,5 +45,5 @@ export const useManageProjectCard = (
   }, [projects]);
 
   // Return state, navigation function, and toggle function
-  return { more, navigate, handleSetMore };
+  return { more, navigate };
 };

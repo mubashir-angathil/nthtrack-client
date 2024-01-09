@@ -22,11 +22,14 @@ export interface Project {
   createdByUser: ByUserDetails;
   updatedByUser: ByUserDetails;
   closedByUser: ByUserDetails;
+  contributors: ByUserDetails[];
+  currentProgress: number;
   statuses: Array<{ id: number; name: string; color: string }>;
 }
 
 interface ProjectWithTaskCount extends Project {
-  taskCount: number; // Count of tasks associated with the project
+  tasksCount: number; // Count of tasks associated with the project
+  completedTasks: number; // Count of completed tasks associated with the project
 }
 export interface Task {
   id: number;

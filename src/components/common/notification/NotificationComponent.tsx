@@ -3,9 +3,9 @@ import {
   Badge,
   Box,
   Divider,
-  IconButton,
   Menu,
   MenuItem,
+  ToggleButton,
   Tooltip,
   Typography,
   colors,
@@ -23,14 +23,18 @@ export const NotificationComponent: React.FC = () => {
   return (
     <>
       <Tooltip title="Notifications">
-        <IconButton onClick={handleOpenNotifications}>
+        <ToggleButton
+          sx={{ width: 24, height: 24, borderRadius: 2 }}
+          value="notification"
+          onChange={handleOpenNotifications}
+        >
           <Badge
             badgeContent={notificationDetails.notificationCount}
             color="error"
           >
-            <Notifications />
+            <Notifications fontSize="small" />
           </Badge>
-        </IconButton>
+        </ToggleButton>
       </Tooltip>
       <Menu
         id="notification-menu"

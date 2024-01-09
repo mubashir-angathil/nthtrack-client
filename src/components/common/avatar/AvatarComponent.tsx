@@ -1,4 +1,4 @@
-import { Avatar, Tooltip, colors } from "@mui/material";
+import { Avatar, Tooltip } from "@mui/material";
 import { FC } from "react";
 import MemberProfileCardComponent from "../card/MemberProfileCardComponent";
 import { AvatarComponentProps } from "./Helper";
@@ -8,16 +8,9 @@ const AvatarComponent: FC<AvatarComponentProps> = ({
   sx,
   height = 24,
   width = 24,
+  color,
   ...rest
 }) => {
-  const COLORS = [
-    colors.amber[800],
-    colors.cyan[400],
-    colors.yellow[900],
-    colors.blue[700],
-    colors.orange[900],
-    colors.green[700],
-  ];
   return (
     <Tooltip
       arrow
@@ -28,7 +21,8 @@ const AvatarComponent: FC<AvatarComponentProps> = ({
           ...sx,
           width,
           height,
-          background: COLORS[Math.ceil(Math.random() * 5)],
+          color: "#ffff",
+          background: color,
         }}
       >
         {rest.username?.charAt(0)}

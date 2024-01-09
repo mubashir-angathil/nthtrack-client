@@ -23,7 +23,7 @@ interface ApiConfig extends ApiRequestWithPaginationAndSearch {
 
 const initialApiConfiguration: ApiConfig = {
   page: 1,
-  limit: 4,
+  limit: 10,
   hasMore: true,
   searchKey: undefined,
 };
