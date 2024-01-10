@@ -47,6 +47,10 @@ const App: React.FC = () => {
                       >
                         <Route index element={routes.home.element} />
                         <Route
+                          path={routes.profile.path}
+                          element={routes.profile.element}
+                        />
+                        <Route
                           path={routes.projects.create?.path}
                           element={routes.projects.create?.element}
                         />

@@ -181,15 +181,22 @@ const PageHome: React.FC = () => {
               <ListSubheader sx={{ lineHeight: 2.2 }}>Account</ListSubheader>
               <List>
                 {[
-                  { icons: <Person fontSize="small" />, item: "Profile" },
+                  {
+                    icons: <Person fontSize="small" />,
+                    item: "Profile",
+                    path: routes.profile.path,
+                  },
                   {
                     icons: <Notifications fontSize="small" />,
                     item: "Notifications",
+                    path: routes.notification.path,
                   },
                 ].map((item) => (
                   <ListItemButton
                     key={item.item}
                     sx={{ borderRadius: 8, m: 1 }}
+                    onClick={() => navigate(item.path)}
+                    selected={item.path === location.pathname.split("/")[2]}
                   >
                     <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
                       {item.icons}

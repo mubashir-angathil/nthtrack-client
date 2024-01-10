@@ -1,6 +1,7 @@
 import Cookies from "universal-cookie";
 import { AuthResponse } from "../auth-services/Helper";
 import { Tokens } from "./Helper";
+import { AuthContextProps } from "../../utils/helpers/context/auth-context/Helper";
 
 // Create an instance of universal-cookie
 const cookie = new Cookies();
@@ -53,6 +54,16 @@ const cookieServices = {
     }
     return undefined;
   },
+  updateUserName: (
+    username: string,
+  ): AuthContextProps["authDetails"]["user"] | undefined => {
+    const authDetails = cookie.get(authDetailsCookie);
+    if (authDetails) {
+      const newAuthDetails = { ...authDetails, username };
+      cookieServices.setAuthDetails(newAuthDetails);
+      return newAuthDetails;
+    }
+  },
 
   /**
    * getAuthTokens
@@ -76,9 +87,14 @@ const cookieServices = {
    *
    * Clears the stored authentication details from the cookie.
    */
-  clearAuthDetails: (): void => {
+  clearAuthDetails: (): boolean => {
     // Remove the authentication details cookie
-    return cookie.remove(authDetailsCookie);
+    try {
+      cookie.remove(authDetailsCookie);
+      return true;
+    } catch (error) {
+      return false;
+    }
   },
 
   /**

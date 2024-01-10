@@ -57,6 +57,7 @@ const SignUpFormComponent: React.FC = () => {
           name="username"
           placeholder="User name"
           control={control}
+          autoCapitalize
           startAdornment={<Person fontSize="small" />}
         />
       </FormControl>

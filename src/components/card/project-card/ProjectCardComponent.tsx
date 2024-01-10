@@ -37,7 +37,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
       component="div"
       sx={{
         overflowY: "auto",
-        height: "calc(100vh - 25vh)",
+        height: "calc(100dvh - 25dvh)",
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "start",
@@ -195,10 +195,15 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
           display="flex"
           flexDirection="column"
           alignItems="center"
-          height={400}
+          height="calc(100dvh - 25dvh)"
+          width="100%"
         >
-          <Box component="img" width={300} height={200} src={noDataImage} />
-          <Typography margin={2} variant="h5">
+          <Box
+            component="img"
+            style={{ maxHeight: 200, aspectRatio: "5/2" }}
+            src={noDataImage}
+          />
+          <Typography margin={0} variant="body1" color="GrayText">
             No Projects
           </Typography>
         </Box>

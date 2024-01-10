@@ -2,12 +2,13 @@ import PageHome from "../../../pages/home/PageHome";
 import PageTaskView from "../../../pages/home/task/PageTaskView";
 import PageProjects from "../../../pages/home/project/PageProjects";
 import PageViewProject from "../../../pages/home/project/view-project/PageViewProject";
-import { PageAuthentication } from "../../../pages/public/sign-in/PageAuthentication";
+import { PageAuthentication } from "../../../pages/public/authentication/PageAuthentication";
 import { RouteConfigsType } from "./Helper";
 import PageTeamProjects from "../../../pages/home/team/project/PageTeamProjects";
 import PageManageProject from "../../../pages/home/project/manage-project/PageManageProject";
 import PageManageTask from "../../../pages/home/task/manage-task/PageManageTask";
 import PageProjectSettings from "../../../pages/home/project/settings/PageProjectSettings";
+import PageProfile from "../../../pages/home/profile/PageProfile";
 
 // Define your routes using the RouteConfigsType
 const routes: RouteConfigsType = {
@@ -68,6 +69,15 @@ const routes: RouteConfigsType = {
   projectSettings: {
     path: "settings",
     element: <PageProjectSettings />,
+  },
+
+  profile: {
+    path: "profile",
+    element: <PageProfile />,
+  },
+  notification: {
+    path: "notification",
+    element: <PageProfile />,
   },
 };
 

@@ -57,13 +57,17 @@ export const useSignUp = () => {
     try {
       // Call the sign-up API from authenticationServices
       const { data, success } = await authenticationServices.doSignUp({
-        username: props.username,
+        username: generalFunctions.capitalizeString(props.username),
         email: props.email,
         password: props.password,
       });
 
       // If sign-up is successful, set authentication details in cookies
       if (data && success) {
+        location.state.from = routes.home.path.concat(
+          "/",
+          routes.projects.path,
+        );
         cookieServices.setAuthDetails(data);
         setAuthDetails({
           auth: true,
