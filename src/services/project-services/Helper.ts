@@ -145,6 +145,7 @@ export interface GetProjectMembersResponse extends ApiResponseWithPagination {
       email: string;
       username: string;
     };
+    status: string;
     permission: {
       id: number;
       name: string;
@@ -152,9 +153,6 @@ export interface GetProjectMembersResponse extends ApiResponseWithPagination {
     createdAt: string;
     updatedAt: string;
   }>;
-}
-export interface MarkNotificationsAsReadRequest {
-  notificationIds: number[];
 }
 
 export interface StatusInterface {

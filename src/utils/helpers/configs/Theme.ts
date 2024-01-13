@@ -31,6 +31,31 @@ export const darkTheme = createTheme({
     values,
   },
   components: {
+    // MuiTabs: {
+    //   styleOverrides: {
+    //     root: {
+    //       minHeight: "35px",
+    //     },
+    //     indicator: {
+    //       display: "none",
+    //     },
+    //   },
+    // },
+    // MuiTab: {
+    //   styleOverrides: {
+    //     root: {
+    //       minHeight: "35px",
+    //       height: "35px",
+    //       border: "1px solid transparent",
+    //       borderRadius: 50,
+
+    //       "&.Mui-selected": {
+    //         borderColor: "#33691e",
+    //         background: "#101e1b",
+    //       },
+    //     },
+    //   },
+    // },
     MuiDrawer: {
       styleOverrides: {
         paper: {
@@ -70,7 +95,7 @@ export const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#dcedc890",
+      main: "#ffbf00", //"#dcedc890",
     },
     background: {
       default: "rgba(220, 237, 200, 0.082)",

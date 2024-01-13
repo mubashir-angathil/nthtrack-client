@@ -2,9 +2,15 @@ import { AxiosError, AxiosResponse } from "axios";
 import axios from "../api-instance/Instance";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 import { ApiError, NormalApiSuccessResponse } from "../Helper";
-import { UerProfileResponse, UpdateProfileDetails } from "./Helper";
+import {
+  GetNotificationRequest,
+  GetNotificationResponse,
+  MarkNotificationsAsReadRequest,
+  UerProfileResponse,
+  UpdateProfileDetails,
+} from "./Helper";
 
-const Services = {
+const services = {
   getProfileDetails: async ({
     userId,
   }: {
@@ -47,5 +53,35 @@ const Services = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+  getNotifications: async (
+    { page, limit, type }: GetNotificationRequest,
+    newNotificationsOnly?: boolean,
+  ): Promise<AxiosResponse<GetNotificationResponse>> => {
+    try {
+      return await axios.get<GetNotificationResponse>("/user/notifications", {
+        params: {
+          page,
+          limit,
+          type,
+          unread: newNotificationsOnly,
+        },
+      });
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  markNotificationsAsRead: async (
+    props: MarkNotificationsAsReadRequest,
+  ): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      return await axios.patch<NormalApiSuccessResponse>(
+        `/user/notifications/read`,
+        props,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
 };
-export default Services;
+export default services;

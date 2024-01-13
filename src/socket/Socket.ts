@@ -39,7 +39,11 @@ const useSocketHelpers = () => {
       message = message.replace(":author", `${authDetails.user.username}`);
 
       // Emit a "push-notification" event to the server with message, userId, and broadcastId
-      socket.emit("push-notification", { message, userId, broadcastId });
+      socket.emit("push-notification", {
+        content: message,
+        author: userId,
+        broadcastIds: [broadcastId],
+      });
     }
   };
 

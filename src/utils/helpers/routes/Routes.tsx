@@ -9,6 +9,7 @@ import PageManageProject from "../../../pages/home/project/manage-project/PageMa
 import PageManageTask from "../../../pages/home/task/manage-task/PageManageTask";
 import PageProjectSettings from "../../../pages/home/project/settings/PageProjectSettings";
 import PageProfile from "../../../pages/home/profile/PageProfile";
+import PageNotification from "../../../pages/home/notification/PageNotification";
 
 // Define your routes using the RouteConfigsType
 const routes: RouteConfigsType = {
@@ -77,7 +78,7 @@ const routes: RouteConfigsType = {
   },
   notification: {
     path: "notification",
-    element: <PageProfile />,
+    element: <PageNotification />,
   },
 };
 
