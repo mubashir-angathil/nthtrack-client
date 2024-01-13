@@ -19,6 +19,7 @@ import { FC } from "react";
 import { useManageProjectMembers } from "./Helper";
 import AvatarComponent from "../../common/avatar/AvatarComponent";
 import ManageProjectMember from "../../form/manage-project-member/ManageProjectMember";
+import { labelColors } from "../../../utils/helpers/configs/Colors";
 
 // Function Component for Managing Project Members
 const ProjectMemberTableComponent: FC = () => {
@@ -78,40 +79,52 @@ const ProjectMemberTableComponent: FC = () => {
 
         {/* Table Body */}
         <TableBody>
-          {tableConfig.members.map((row) => (
+          {tableConfig.members.map((row, index) => (
             <TableRow key={row.id}>
               {/* Displaying Member Information */}
               <TableCell>{row.id}</TableCell>
               <TableCell>
-                <AvatarComponent {...row.user} />
+                <AvatarComponent
+                  {...row.user}
+                  color={`rgb(${Object.values(labelColors).at(index)})`}
+                  width={30}
+                  height={30}
+                />
               </TableCell>
               <TableCell component="th" scope="row">
                 {row.user.username}
               </TableCell>
               <TableCell>{row.user.email}</TableCell>
-              <TableCell>pending..</TableCell>
+              <TableCell>
+                {row.status === "Pending"
+                  ? row.status.concat("...")
+                  : row.status}
+              </TableCell>
 
               {/* Permission Selection Dropdown */}
               <TableCell>
-                <Select
-                  disabled={row.permission.name.includes("Super Admin")}
-                  value={row.permission.id}
-                  onChange={(e) =>
-                    handlePermissionChange({
-                      memberId: row.id,
-                      permissionId: parseInt(e.target.value as string),
-                      userId: row.user.id,
-                    })
-                  }
-                  sx={{ borderRadius: 5, height: 28 }}
-                  size="small"
-                >
-                  {permissionOptions.map((option) => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                {row.status === "Super Admin" ? (
+                  "Super Admin"
+                ) : (
+                  <Select
+                    value={row.permission.id}
+                    onChange={(e) =>
+                      handlePermissionChange({
+                        memberId: row.id,
+                        permissionId: parseInt(e.target.value as string),
+                        userId: row.user.id,
+                      })
+                    }
+                    sx={{ borderRadius: 5, height: 28 }}
+                    size="small"
+                  >
+                    {permissionOptions.map((option) => (
+                      <MenuItem key={option.id} value={option.id}>
+                        {option.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
               </TableCell>
 
               {/* Delete Member Button */}

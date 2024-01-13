@@ -22,11 +22,14 @@ export interface Project {
   createdByUser: ByUserDetails;
   updatedByUser: ByUserDetails;
   closedByUser: ByUserDetails;
+  contributors: ByUserDetails[];
+  currentProgress: number;
   statuses: Array<{ id: number; name: string; color: string }>;
 }
 
 interface ProjectWithTaskCount extends Project {
-  taskCount: number; // Count of tasks associated with the project
+  tasksCount: number; // Count of tasks associated with the project
+  completedTasks: number; // Count of completed tasks associated with the project
 }
 export interface Task {
   id: number;
@@ -142,6 +145,7 @@ export interface GetProjectMembersResponse extends ApiResponseWithPagination {
       email: string;
       username: string;
     };
+    status: string;
     permission: {
       id: number;
       name: string;
@@ -149,9 +153,6 @@ export interface GetProjectMembersResponse extends ApiResponseWithPagination {
     createdAt: string;
     updatedAt: string;
   }>;
-}
-export interface MarkNotificationsAsReadRequest {
-  notificationIds: number[];
 }
 
 export interface StatusInterface {

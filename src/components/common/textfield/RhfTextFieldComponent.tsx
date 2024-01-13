@@ -22,6 +22,7 @@ const RhfTextfieldComponent = <TField extends FieldValues>({
   autoFocus = false,
   onBlur,
   startAdornment,
+  autoCapitalize = false,
   endAdornment,
   ...rest
 }: RhfTextfieldProps<TField>): JSX.Element => {
@@ -46,6 +47,9 @@ const RhfTextfieldComponent = <TField extends FieldValues>({
             error={Boolean(error)}
             autoComplete={autoComplete}
             helperText={error && error.message}
+            inputProps={{
+              style: { textTransform: autoCapitalize ? "capitalize" : "none" },
+            }}
             InputProps={{
               startAdornment: startAdornment ? startAdornment : undefined,
               endAdornment: endAdornment ? endAdornment : undefined,

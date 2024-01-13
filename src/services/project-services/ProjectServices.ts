@@ -16,7 +16,6 @@ import {
   GetTaskByIdResponse,
   ManageTaskRequest,
   ManageTaskResponse,
-  MarkNotificationsAsReadRequest,
   ProjectsResponse,
   RemoveMemberRequest,
   TaskResponse,
@@ -401,19 +400,6 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
-  markNotificationsAsRead: async (
-    props: MarkNotificationsAsReadRequest,
-  ): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
-    try {
-      return await axios.patch<NormalApiSuccessResponse>(
-        `/project/notification/all/mark-as-read`,
-        props,
-      );
-    } catch (error) {
-      // Throw a custom error using a helper function
-      throw generalFunctions.customError(error as AxiosError<ApiError>);
-    }
-  },
   deleteProject: async ({ projectId }: { projectId: number }) => {
     try {
       return await axios.delete<NormalApiSuccessResponse>(
@@ -589,6 +575,32 @@ const projectServices = {
       );
     } catch (error) {
       // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  acceptInvitation: async ({
+    projectId,
+  }: {
+    projectId: number;
+  }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      return await axios.patch<NormalApiSuccessResponse>(
+        `/project/${projectId}/invitation/accept`,
+      );
+    } catch (error) {
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+  rejectInvitation: async ({
+    projectId,
+  }: {
+    projectId: number;
+  }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
+    try {
+      return await axios.patch<NormalApiSuccessResponse>(
+        `/project/${projectId}/invitation/reject`,
+      );
+    } catch (error) {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },

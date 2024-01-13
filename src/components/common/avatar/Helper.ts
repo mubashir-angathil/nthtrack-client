@@ -6,4 +6,5 @@ export interface AvatarComponentProps extends MemberProfile {
   sx?: SxProps;
   width?: number;
   height?: number;
+  color?: string;
 }

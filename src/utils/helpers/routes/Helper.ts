@@ -5,6 +5,8 @@ type keys =
   | "projects"
   | "tasks"
   | "team"
+  | "profile"
+  | "notification"
   | "projectSettings";
 type actions = "create" | "update" | "view";
 

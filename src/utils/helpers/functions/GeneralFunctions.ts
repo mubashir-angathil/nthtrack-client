@@ -79,6 +79,60 @@ const generalFunctions = {
     return false;
   },
   goBack: () => history.back(),
+
+  formateNumber: (number: number) => {
+    const formatter = new Intl.NumberFormat("en-US", {
+      notation: "compact",
+      compactDisplay: "short",
+    });
+
+    return formatter.format(number);
+  },
+  capitalizeString: (str: string) => {
+    return str
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  },
+  formatNotificationTimestamp: (date: string) => {
+    const now = new Date();
+    const notificationDate = new Date(date); // Parse the string into a Date object
+    const dateDiff = now.getTime() - notificationDate.getTime(); // Use getTime() to get numeric representation
+    const diffInSeconds = Math.floor(dateDiff / 1000);
+
+    if (diffInSeconds < 60) {
+      // Less than a minute ago
+      return "Just now";
+    } else if (diffInSeconds < 3600) {
+      // Minutes ago
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+    } else if (diffInSeconds < 86400) {
+      // Hours ago
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+    } else if (diffInSeconds < 172800) {
+      // Yesterday
+      const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      return `Yesterday at ${yesterday.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`;
+    } else {
+      // Show date and time
+      return (
+        notificationDate.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }) +
+        " " +
+        notificationDate.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
+    }
+  },
 };
 
 export default generalFunctions;

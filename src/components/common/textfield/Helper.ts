@@ -16,6 +16,7 @@ export interface RhfTextfieldProps<TField extends FieldValues> {
   autoComplete?: string;
   autoFocus?: boolean;
   sx?: SxProps;
+  autoCapitalize?: boolean;
   startAdornment?: JSX.Element;
   endAdornment?: React.JSX.Element;
   onBlur?: (value?: string) => void;

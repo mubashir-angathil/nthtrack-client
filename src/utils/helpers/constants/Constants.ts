@@ -4,5 +4,5 @@ export enum MessageHelper {
 }
 
 export enum TitleHelper {
-  appName = "TaskTracker",
+  appName = "QuickPulse",
 }

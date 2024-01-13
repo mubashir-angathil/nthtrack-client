@@ -3,108 +3,56 @@ import {
   Badge,
   Box,
   Divider,
-  IconButton,
-  Menu,
-  MenuItem,
+  Drawer,
+  ToggleButton,
+  Toolbar,
   Tooltip,
   Typography,
-  colors,
 } from "@mui/material";
 import { useNotifications } from "./Helper";
+import NotificationPanelComponent from "./notification-panels/NotificationPanelComponent";
 
 export const NotificationComponent: React.FC = () => {
   const {
-    handleNotificationLoading,
-    notificationDetails,
     handleCloseNotifications,
     handleOpenNotifications,
     anchorElNotifications,
+    pushNotification,
   } = useNotifications();
   return (
     <>
       <Tooltip title="Notifications">
-        <IconButton onClick={handleOpenNotifications}>
-          <Badge
-            badgeContent={notificationDetails.notificationCount}
-            color="error"
-          >
-            <Notifications />
+        <ToggleButton
+          sx={{ width: 24, height: 24, borderRadius: 2 }}
+          value="notification"
+          onChange={handleOpenNotifications}
+        >
+          <Badge badgeContent={pushNotification.count} color="error">
+            <Notifications fontSize="small" />
           </Badge>
-        </IconButton>
+        </ToggleButton>
       </Tooltip>
-      <Menu
-        id="notification-menu"
-        anchorEl={anchorElNotifications}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
+
+      <Drawer
         open={Boolean(anchorElNotifications)}
+        anchor="right"
         onClose={handleCloseNotifications}
-        slotProps={{
-          paper: {
-            style: {
-              minWidth: 350,
-              minHeight: 350,
-            },
-          },
-        }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            width: "100%",
-            p: "5px 15px 5px 15px",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography variant="subtitle1">Notifications</Typography>
+        <Box width={450}>
+          <Toolbar>
+            <Typography variant="h5" fontWeight={600} letterSpacing={1}>
+              Notifications
+            </Typography>
+          </Toolbar>
+          <Divider />
+          {Boolean(anchorElNotifications) && (
+            <NotificationPanelComponent
+              maxContainerHeight={"calc(100dvh - 120px)"}
+              newNotificationsOnly
+            />
+          )}
         </Box>
-        <Divider />
-        <Box
-          sx={{ height: 350, overflowY: "auto" }}
-          onScroll={handleNotificationLoading}
-        >
-          {notificationDetails.notifications.map((notification) => (
-            <MenuItem
-              key={notification.id}
-              sx={{
-                background: colors.green[400],
-                m: "10px 10px",
-                borderRadius: 2,
-              }}
-              disableRipple
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  width: "100%",
-                }}
-              >
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    overflowWrap: "break-word",
-                  }}
-                >
-                  {notification.message}
-                </Typography>
-                <Typography variant="caption" textAlign="end">
-                  {new Date(notification.createdAt).toLocaleString()}
-                </Typography>
-              </Box>
-            </MenuItem>
-          ))}
-        </Box>
-      </Menu>
+      </Drawer>
     </>
   );
 };

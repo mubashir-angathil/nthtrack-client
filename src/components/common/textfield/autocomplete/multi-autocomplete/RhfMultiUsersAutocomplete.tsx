@@ -74,6 +74,7 @@ const RhfMultiUsersAutocomplete = <TField extends FieldValues>({
               }
             }}
             onChange={(_, options: ByUserDetails[]) => {
+              field.onBlur();
               return onChange(options || []);
             }}
             noOptionsText={noOptionsText}

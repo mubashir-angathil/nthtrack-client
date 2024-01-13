@@ -78,7 +78,6 @@ export const useManageTask = ({
       });
     } else if (values && project) {
       if (touchedFields.assignees) newTask.assignees = assigneesId;
-
       const updatedTask: UpdateTaskRequest = {
         ...newTask,
         taskId: values.id,
