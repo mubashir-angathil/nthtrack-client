@@ -6,6 +6,7 @@ import {
   IconButton,
   TextField,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { useProjects } from "./Helper";
 import { Add, Clear, Search } from "@mui/icons-material";
@@ -23,56 +24,73 @@ const PageProjects: React.FC = () => {
     apiConfig,
   } = useProjects();
 
+  // Media query
+  const matches = useMediaQuery("(min-width:600px)");
+
+  // Search component
+  const SearchComponent = () => (
+    <TextField
+      fullWidth={!matches}
+      id="project-search-field"
+      variant="outlined"
+      type="search"
+      size="small"
+      placeholder="Search project here.."
+      onChange={handleChange}
+      // Change input color to error if there are no projects and there's a search key
+      color={projects.length === 0 && apiConfig.searchKey ? "error" : undefined}
+      InputProps={{
+        // End adornment for search input
+        endAdornment: (
+          <>
+            {/* Show search icon or clear icon based on search key existence */}
+            {apiConfig.searchKey === undefined ? (
+              <Search fontSize="small" />
+            ) : (
+              <IconButton onClick={handleClear}>
+                <Clear fontSize="small" />
+              </IconButton>
+            )}
+          </>
+        ),
+      }}
+    />
+  );
+
+  // Create new project component
+  const CreateNewProjectButton = () => (
+    <Button
+      variant="contained"
+      endIcon={<Add />}
+      onClick={handleCreateProject}
+      size="small"
+    >
+      {matches ? "New Project" : "New"}
+    </Button>
+  );
+
   return (
     <Grid container spacing={1}>
       <Grid
-        xs={12}
         item
-        display="flex"
-        justifyContent="space-between"
-        flexWrap="wrap"
+        xs={12}
         gap={1}
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="space-between"
       >
         <Typography variant="h5" fontWeight={700}>
           Projects
         </Typography>
-        <Box display="flex" gap={1}>
-          <TextField
-            id="project-search-field"
-            variant="outlined"
-            type="search"
-            size="small"
-            placeholder="Search project here.."
-            onChange={handleChange}
-            // Change input color to error if there are no projects and there's a search key
-            color={
-              projects.length === 0 && apiConfig.searchKey ? "error" : undefined
-            }
-            InputProps={{
-              // End adornment for search input
-              endAdornment: (
-                <>
-                  {/* Show search icon or clear icon based on search key existence */}
-                  {apiConfig.searchKey === undefined ? (
-                    <Search fontSize="small" />
-                  ) : (
-                    <IconButton onClick={handleClear}>
-                      <Clear fontSize="small" />
-                    </IconButton>
-                  )}
-                </>
-              ),
-            }}
-          />
-          <Button
-            variant="contained"
-            endIcon={<Add />}
-            onClick={handleCreateProject}
-            sx={{ flexShrink: 0 }}
-            size="small"
-          >
-            Create Project
-          </Button>
+        {!matches && <CreateNewProjectButton />}
+        <Box
+          gap={1}
+          display="flex"
+          justifyContent="end"
+          width={!matches ? "100%" : "auto"}
+        >
+          <SearchComponent />
+          {matches && <CreateNewProjectButton />}
         </Box>
       </Grid>
       <Grid item xs={12}>

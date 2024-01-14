@@ -4,17 +4,18 @@ import {
   Divider,
   Typography,
   Box,
-  LinearProgress,
-  LinearProgressProps,
   AvatarGroup,
   Tooltip,
+  useMediaQuery,
 } from "@mui/material";
 import { ProjectCardComponentProps, useManageProjectCard } from "./Helper";
 import routes from "../../../utils/helpers/routes/Routes";
 import noDataImage from "../../../assets/noData.svg";
 import { CalendarMonth } from "@mui/icons-material";
 import AvatarComponent from "../../common/avatar/AvatarComponent";
-import { labelColors } from "../../../utils/helpers/configs/Colors";
+import { projectCardStyle } from "./Style";
+import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
+import LinearProgressWithLabel from "../../common/linear-progress/LinearProgressWithLabel";
 
 /**
  * ProjectCardComponent
@@ -31,18 +32,13 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
 }) => {
   // Custom hook for managing project cards
   const { navigate, more } = useManageProjectCard(projects);
+  const matches = useMediaQuery("(min-width:600px)");
+  const style = projectCardStyle;
 
   return (
     <Box
       component="div"
-      sx={{
-        overflowY: "auto",
-        height: "calc(100dvh - 25dvh)",
-        display: "flex",
-        flexWrap: "wrap",
-        justifyContent: "start",
-        alignItems: "baseline",
-      }}
+      sx={style.projectCardWrapper}
       onScroll={handleProjectLoading}
     >
       {projects.length > 0 ? (
@@ -62,16 +58,8 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                 key={id}
                 className="appear"
                 sx={{
-                  m: 2,
-                  minWidth: 250,
-                  flexBasis: 300,
-                  flexGrow: 1,
-                  height: 220,
-                  maxWidth: projects.length === 1 ? 250 : 500,
-                  borderRadius: 2,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
+                  ...style.cardStyle,
+                  maxWidth: projects.length === 1 && matches ? 250 : 520,
                 }}
                 elevation={1}
               >
@@ -79,16 +67,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                   <Typography
                     variant="body1"
                     fontWeight={700}
-                    sx={{
-                      whiteSpace: "nowrap",
-                      textOverflow: "ellipsis",
-                      overflow: "hidden",
-                      cursor: "pointer",
-                      "&:hover": {
-                        color: "Highlight",
-                        textDecoration: "underline",
-                      },
-                    }}
+                    sx={style.projectTitle}
                     onClick={() =>
                       navigate(routes.projects.path.concat(id.toString()))
                     }
@@ -114,12 +93,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                         ? description.slice(0, 130).concat("...")
                         : description,
                     }}
-                    sx={{
-                      height: 70,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "normal",
-                    }}
+                    sx={style.description}
                   />
                   <LinearProgressWithLabel
                     color="info"
@@ -128,15 +102,7 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                   />
                 </Box>
                 <Divider />
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    p: 1,
-                    paddingInline: 1.8,
-                  }}
-                >
+                <Box sx={style.footerWrapper}>
                   <Tooltip
                     title="Contributors"
                     arrow
@@ -148,22 +114,14 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
                       max={4}
                       variant="circular"
                       componentsProps={{
-                        additionalAvatar: {
-                          sx: {
-                            width: 24,
-                            height: 24,
-                            fontSize: 15,
-                            background: getColor(),
-                            color: "white",
-                          },
-                        },
+                        additionalAvatar: style.additionalAvatarStyle,
                       }}
                     >
                       {contributors?.map((profile, index) => (
                         <AvatarComponent
                           key={profile.id}
                           {...profile}
-                          color={getColor(index)}
+                          color={generalFunctions.getColor(index)}
                           width={24}
                           height={24}
                         />
@@ -213,35 +171,3 @@ const ProjectCardComponent: React.FC<ProjectCardComponentProps> = ({
 };
 
 export default ProjectCardComponent;
-
-function LinearProgressWithLabel(
-  props: LinearProgressProps & { value: number },
-) {
-  return (
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
-      <Box display="flex" justifyContent="space-between">
-        <Typography variant="body2" color="text.secondary" fontWeight={600}>
-          Progress
-        </Typography>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value,
-        )}%`}</Typography>
-      </Box>
-      <Box sx={{ width: "100%", mt: 0.5 }}>
-        <LinearProgress
-          variant="determinate"
-          {...props}
-          sx={{ borderRadius: 5 }}
-        />
-      </Box>
-    </Box>
-  );
-}
-
-const getColor = (index?: number) => {
-  const currentColor = index
-    ? Object.values(labelColors).at(index)
-    : "51, 171, 5";
-
-  return `rgb(${currentColor})`;
-};
