@@ -1,0 +1,56 @@
+import { labelColors } from "../../../utils/helpers/configs/Colors";
+
+export const profileStyle = {
+  avatarStyle: {
+    width: 170,
+    height: 170,
+    border: 5,
+    borderColor: "inherit",
+    fontSize: 80,
+    color: "inherit",
+    background: `rgb(${labelColors.yellow})`,
+  },
+  usernameStyle: {
+    borderRadius: 10,
+    display: "flex",
+    justifyContent: "center",
+    textAlign: "center",
+  },
+  emailStyle: {
+    borderRadius: 10,
+    pb: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 1,
+    flex: "wrap",
+  },
+  joinedAtStyle: {
+    borderRadius: 10,
+    pb: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 1,
+  },
+  staticsButtonStyle: {
+    borderRadius: 8,
+    lineHeight: 2.5,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingInline: 2,
+    color: "white",
+  },
+  dangerZoneItem: {
+    p: 2,
+    mt: 1,
+    gap: 2,
+    border: 1,
+    display: "flex",
+    flexWrap: "wrap",
+    borderRadius: 5,
+    borderColor: "red",
+    justifyContent: "space-between",
+  },
+};

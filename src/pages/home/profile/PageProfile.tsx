@@ -5,12 +5,13 @@ import {
   Grid,
   TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
 import React from "react";
-import { labelColors } from "../../../utils/helpers/configs/Colors";
-import { Email, Person, Save } from "@mui/icons-material";
+import { Edit, Email, Person, Save } from "@mui/icons-material";
 import { useProfileManagement } from "./Helper";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
+import { profileStyle } from "./Style";
 
 const PageProfile: React.FC = () => {
   const {
@@ -22,84 +23,66 @@ const PageProfile: React.FC = () => {
     handleSaveChanges,
     handleDeleteAccount,
   } = useProfileManagement();
+  const theme = useTheme();
+  const style = profileStyle;
+
   return (
-    <Grid
-      container
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      gap={3}
-      paddingInline={5}
-    >
+    <Grid container gap={2} paddingInline={3}>
       <Grid item xs={12}>
-        <Typography fontWeight={700} variant="h5">
+        <Typography fontWeight={700} variant="h5" letterSpacing={2}>
           Profile
         </Typography>
       </Grid>
       <Grid
         item
         xs={12}
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 2,
-        }}
+        gap={3}
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="center"
       >
-        <Grid display="flex" alignItems="center" gap={5}>
-          <Avatar
+        <Avatar
+          sx={style.avatarStyle}
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpsmCZLrpVMSnE39oznevfPDh185AMoQRCyg&usqp=CAU"
+        >
+          {profileDetails.username.charAt(0)}
+        </Avatar>
+        <Box
+          gap={1}
+          display="flex"
+          justifyContent="center"
+          flexDirection="column"
+        >
+          {form.username === null ? (
+            <Typography variant="h3" sx={style.usernameStyle} fontWeight={600}>
+              {profileDetails.username}
+            </Typography>
+          ) : (
+            <TextField
+              onChange={handleChange}
+              value={form.username}
+              error={Boolean(error?.username)}
+              helperText={error?.username}
+              autoFocus
+              inputProps={{ style: { textTransform: "capitalize" } }}
+            />
+          )}
+          <Box
+            display="flex"
+            width="100%"
+            justifyContent="center"
+            flexWrap="wrap"
             sx={{
-              width: 200,
-              height: 200,
-              border: 3,
-              borderColor: "inherit",
-              fontSize: 80,
-              color: "inherit",
-              background: `rgb(${labelColors.yellow})`,
+              columnGap: 2,
+              [theme.breakpoints.down("sm")]: {
+                columnGap: 1,
+              },
             }}
           >
-            {profileDetails.username.charAt(0)}
-          </Avatar>
-          <Grid
-            display="flex"
-            flexDirection="column"
-            justifyContent="start"
-            alignItems="start"
-          >
-            {form.username === null ? (
-              <Typography
-                variant="h3"
-                sx={{
-                  borderRadius: 10,
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-                fontWeight={600}
-              >
-                {profileDetails.username}
-              </Typography>
-            ) : (
-              <TextField
-                onChange={handleChange}
-                value={form.username}
-                error={Boolean(error?.username)}
-                helperText={error?.username}
-                autoFocus
-                inputProps={{ style: { textTransform: "capitalize" } }}
-              />
-            )}
-
             <Typography
               variant="subtitle1"
               color="GrayText"
-              sx={{
-                borderRadius: 10,
-                pb: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 1,
-              }}
+              sx={style.emailStyle}
             >
               <Email fontSize="small" />
               {profileDetails.email}
@@ -107,14 +90,7 @@ const PageProfile: React.FC = () => {
             <Typography
               variant="caption"
               color="GrayText"
-              sx={{
-                borderRadius: 10,
-                pb: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 1,
-              }}
+              sx={style.joinedAtStyle}
             >
               <Person fontSize="small" />
               {profileDetails.createdAt !== "" && (
@@ -123,97 +99,104 @@ const PageProfile: React.FC = () => {
                 </>
               )}
             </Typography>
-            <Grid
-              item
-              xs={12}
-              display="flex"
-              gap={1}
-              alignItems="center"
-              justifyContent="start"
+          </Box>
+          <Box display="flex" gap={2} justifyContent="center" flexWrap="wrap">
+            <Typography
+              variant="subtitle2"
+              sx={{
+                ...style.staticsButtonStyle,
+                maxWidth: 200,
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255,255,255,0.2)"
+                    : "rgba(0,0,0,0.9)",
+              }}
             >
-              <Typography
-                variant="subtitle2"
-                sx={{
-                  border: 1,
-                  borderRadius: 8,
-                  p: 0.5,
-                  paddingInline: 2,
-                }}
-              >
+              <Box component="span">
                 {generalFunctions.formateNumber(profileDetails.totalProjects)}
-                &nbsp;Projects
-              </Typography>
-              <Typography
-                variant="subtitle2"
-                sx={{
-                  border: 1,
-                  borderRadius: 8,
-                  p: 0.5,
-                  paddingInline: 2,
-                }}
-              >
-                {generalFunctions.formateNumber(
-                  profileDetails.totalContributedProjects,
-                )}
-                &nbsp; Contributed Projects
-              </Typography>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid>
-          {form.username !== null ? (
-            <Button
-              variant="outlined"
-              size="medium"
-              color="error"
-              sx={{ mr: 1 }}
-              onClick={handleChangeUserName}
+              </Box>
+              &nbsp;Projects
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                maxWidth: 260,
+                ...style.staticsButtonStyle,
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255,255,255,0.2)"
+                    : "rgba(0,0,0,0.9)",
+              }}
             >
-              Cancel
-            </Button>
-          ) : (
+              {generalFunctions.formateNumber(
+                profileDetails.totalContributedProjects + 10000000,
+              )}
+              &nbsp; Contributed Projects
+            </Typography>
+          </Box>
+        </Box>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        display="flex"
+        sx={{
+          justifyContent: "end",
+          [theme.breakpoints.down("sm")]: {
+            justifyContent: "center",
+          },
+        }}
+      >
+        {form.username !== null ? (
+          <Button
+            variant="outlined"
+            size="medium"
+            color="error"
+            sx={{ mr: 1 }}
+            onClick={handleChangeUserName}
+          >
+            Cancel
+          </Button>
+        ) : (
+          <Button
+            size="medium"
+            variant="contained"
+            onClick={handleChangeUserName}
+            endIcon={<Edit />}
+          >
+            Change username
+          </Button>
+        )}
+        {form.username !== null &&
+          form.username !== profileDetails.username && (
             <Button
               size="medium"
               color="info"
-              // endIcon={<Edit fontSize="small" />}
+              endIcon={<Save fontSize="small" />}
               variant="contained"
-              onClick={handleChangeUserName}
+              onClick={handleSaveChanges}
             >
-              Change username
+              Save
             </Button>
           )}
-          {form.username !== null &&
-            form.username !== profileDetails.username && (
-              <Button
-                size="medium"
-                color="info"
-                endIcon={<Save fontSize="small" />}
-                variant="contained"
-                onClick={handleSaveChanges}
-              >
-                Save
-              </Button>
-            )}
-        </Grid>
       </Grid>
       <Grid item xs={12}>
         <Typography variant="h4">Danger Zone</Typography>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            border: 1,
-            mt: 1,
-            borderColor: "red",
-            borderRadius: 5,
-            p: 3,
-          }}
-        >
-          <Typography>Delete Account Permanently</Typography>
+        <Box sx={style.dangerZoneItem}>
+          <Typography sx={{ whiteSpace: "pre-wrap" }}>
+            Delete Account Permanently
+          </Typography>
           <Button
             color="error"
             variant="outlined"
             onClick={handleDeleteAccount}
+            sx={{
+              minWidth: 200,
+              display: "flex",
+              [theme.breakpoints.down(550)]: {
+                flex: 1,
+              },
+            }}
           >
             Delete Account
           </Button>
