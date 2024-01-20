@@ -77,6 +77,7 @@ export const useCkEditorComponent = () => {
         {
           height: height ? height : "200px",
           "background-color": "transparent",
+          "border-radius": 4,
           color: theme.palette.mode === "dark" ? "white" : "text.primary",
         },
         editor.editing.view.document.getRoot(),

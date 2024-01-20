@@ -64,7 +64,14 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
             </FormHelperText>
 
             {/* CKEditor with error handling and character/word count */}
-            <Box component="div" sx={errorStyle} border={5}>
+            <Box
+              component="div"
+              sx={errorStyle}
+              border={1}
+              overflow="hidden"
+              borderRadius={5}
+              borderColor="rgba(0,0,0,0.1)"
+            >
               <CKEditor
                 editor={ClassicEditor}
                 data={editorData}
@@ -86,7 +93,7 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
                 display="flex"
                 justifyContent="space-between"
                 sx={{
-                  backgroundColor: "background.paper.main",
+                  backgroundColor: "white",
                   border: 1,
                   p: 1,
                   borderColor: "transparent",
@@ -101,7 +108,10 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
                 </Box>
 
                 {/* Displaying word and character count */}
-                <FormHelperText variant="standard" sx={{ fontSize: 12 }}>
+                <FormHelperText
+                  variant="standard"
+                  sx={{ fontSize: 12, color: "GrayText" }}
+                >
                   Word: {wordCount} &nbsp; Characters: {characterCount}/1000
                 </FormHelperText>
               </Box>
