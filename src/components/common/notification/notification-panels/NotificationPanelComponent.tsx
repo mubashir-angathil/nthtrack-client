@@ -174,7 +174,7 @@ const InviteCardComponent: React.FC<{
               {notification.content}
             </Typography>
           </Grid>
-          <Grid display="flex" justifyContent="flex-end">
+          <Grid display="flex" justifyContent="flex-end" mt={1}>
             <Button
               sx={{ mr: 1 }}
               disabled={notification.readersIds.length > 0}

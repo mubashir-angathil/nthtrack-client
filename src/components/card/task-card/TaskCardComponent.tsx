@@ -34,6 +34,7 @@ import { StatusInterface } from "../../../services/project-services/Helper";
 import RhfLabelAutocomplete from "../../common/textfield/autocomplete/label-autocomplete/RhfLabelAutocomplete";
 import { colors as Colors } from "../../../utils/helpers/configs/Colors";
 import { taskCardStyle } from "./Style";
+import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 
 // Functional component for rendering the Task Card
 const TaskCardComponent: React.FC = () => {
@@ -285,12 +286,13 @@ const TaskCardComponent: React.FC = () => {
                         total={task.assignees.length}
                         componentsProps={style.additionalAvatar}
                       >
-                        {task.assignees.map((profile) => {
+                        {task.assignees.map((profile, index) => {
                           return (
                             <AvatarComponent
                               profile={true}
                               key={profile.id}
                               {...profile}
+                              color={generalFunctions.getColor(index)}
                             />
                           );
                         })}

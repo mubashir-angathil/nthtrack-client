@@ -1,9 +1,10 @@
-import { Notifications } from "@mui/icons-material";
+import { Close, Notifications } from "@mui/icons-material";
 import {
   Badge,
   Box,
   Divider,
   Drawer,
+  IconButton,
   ToggleButton,
   Toolbar,
   Tooltip,
@@ -38,11 +39,14 @@ export const NotificationComponent: React.FC = () => {
         anchor="right"
         onClose={handleCloseNotifications}
       >
-        <Box width={450}>
-          <Toolbar>
+        <Box minWidth={320} maxWidth={450}>
+          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="h5" fontWeight={600} letterSpacing={1}>
               Notifications
             </Typography>
+            <IconButton size="small" onClick={handleCloseNotifications}>
+              <Close fontSize="small" />
+            </IconButton>
           </Toolbar>
           <Divider />
           {Boolean(anchorElNotifications) && (
