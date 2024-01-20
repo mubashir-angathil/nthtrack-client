@@ -76,16 +76,16 @@ const PageProjectSettings: FC = () => {
             <Tab label="Danger Zone" value="4" />
           </TabList>
         </Box>
-        <TabPanel value="1">
+        <TabPanel value="1" sx={{ p: 1 }}>
           <ProjectMemberTableComponent />
         </TabPanel>
-        <TabPanel value="2">
+        <TabPanel value="2" sx={{ p: 1 }}>
           <ProjectLabelTableComponent />
         </TabPanel>
-        <TabPanel value="3">
+        <TabPanel value="3" sx={{ p: 1 }}>
           <ProjectStatusTableComponent />
         </TabPanel>
-        <TabPanel value="4">
+        <TabPanel value="4" sx={{ p: 1 }}>
           <DangerZoneSection />
         </TabPanel>
       </TabContext>

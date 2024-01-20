@@ -17,6 +17,7 @@ import { enqueueSnackbar } from "notistack";
 import projectServices from "../../../services/project-services/ProjectServices";
 import { ApiError } from "../../../services/Helper";
 import dataServices from "../../../services/data-services/DataServices";
+import ManageProjectMember from "../../form/manage-project-member/ManageProjectMember";
 
 // Defining the interface for table data
 interface TableData extends ApiRequestWithPaginationAndSearch {
@@ -60,6 +61,16 @@ export const useManageProjectMembers = () => {
       return { ...prevConfig, limit: parseInt(event.target.value), page: 1 };
     });
   };
+
+  // Function to open dialog
+  const handleOpenDialog = () =>
+    setDialog({
+      open: true,
+      form: {
+        body: <ManageProjectMember refresh={setTableLoading} />,
+        title: "New Member",
+      },
+    });
 
   // Function to handle permission change for a member
   const handlePermissionChange = ({
@@ -256,11 +267,10 @@ export const useManageProjectMembers = () => {
   return {
     tableConfig,
     permissionOptions,
-    setTableLoading,
     handleChangePage,
     handleChangeRowsPerPage,
     handlePermissionChange,
-    setDialog,
+    handleOpenDialog,
     handleRemoveMember,
   };
 };

@@ -106,7 +106,7 @@ export const useManageProjectStatuses = () => {
       open: true,
       form: {
         body: <ManageStatusForm setTableLoading={setTableLoading} />,
-        title: "New Member",
+        title: "New Status",
       },
     });
 

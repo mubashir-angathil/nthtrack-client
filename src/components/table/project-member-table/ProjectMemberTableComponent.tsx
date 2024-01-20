@@ -13,13 +13,15 @@ import {
   Select,
   MenuItem,
   TablePagination,
+  useMediaQuery,
+  Tooltip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FC } from "react";
 import { useManageProjectMembers } from "./Helper";
 import AvatarComponent from "../../common/avatar/AvatarComponent";
-import ManageProjectMember from "../../form/manage-project-member/ManageProjectMember";
 import { labelColors } from "../../../utils/helpers/configs/Colors";
+import { Add } from "@mui/icons-material";
 
 // Function Component for Managing Project Members
 const ProjectMemberTableComponent: FC = () => {
@@ -28,12 +30,14 @@ const ProjectMemberTableComponent: FC = () => {
     tableConfig,
     permissionOptions,
     handleRemoveMember,
-    setTableLoading,
     handlePermissionChange,
-    setDialog,
+    handleOpenDialog,
     handleChangePage,
     handleChangeRowsPerPage,
   } = useManageProjectMembers();
+
+  // Media query
+  const matches = useMediaQuery("(min-width:600px)");
 
   return (
     <TableContainer component={Paper}>
@@ -46,22 +50,26 @@ const ProjectMemberTableComponent: FC = () => {
       >
         <Typography variant="h4">Members</Typography>
         {/* Button to add a new member */}
-        <Button
-          variant="contained"
-          sx={{ fontSize: 12 }}
-          size="small"
-          onClick={() =>
-            setDialog({
-              open: true,
-              form: {
-                body: <ManageProjectMember refresh={setTableLoading} />,
-                title: "New Member",
-              },
-            })
-          }
-        >
-          New Member
-        </Button>
+        {matches ? (
+          <Button
+            variant="contained"
+            sx={{ fontSize: 12 }}
+            size="small"
+            onClick={handleOpenDialog}
+          >
+            New Member
+          </Button>
+        ) : (
+          <Tooltip title="Add New Member">
+            <IconButton
+              size="small"
+              onClick={handleOpenDialog}
+              sx={{ backgroundColor: "primary.main" }}
+            >
+              <Add fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
       <Table sx={{ minWidth: 650 }} aria-label="members-table">
         {/* Table Header */}

@@ -12,11 +12,13 @@ import {
   Typography,
   TablePagination,
   Chip,
+  Tooltip,
+  useMediaQuery,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FC } from "react";
 import { useManageProjectStatuses } from "./Helper";
-import { Edit } from "@mui/icons-material";
+import { Add, Edit } from "@mui/icons-material";
 
 // Function Component for Managing Project statuses
 const ProjectStatusTableComponent: FC = () => {
@@ -30,6 +32,9 @@ const ProjectStatusTableComponent: FC = () => {
     handleChangeRowsPerPage,
   } = useManageProjectStatuses();
 
+  // Media query
+  const matches = useMediaQuery("(min-width:600px)");
+
   return (
     <TableContainer component={Paper}>
       {/* Status Section */}
@@ -41,14 +46,26 @@ const ProjectStatusTableComponent: FC = () => {
       >
         <Typography variant="h4">Statuses</Typography>
         {/* Button to add a new status */}
-        <Button
-          variant="contained"
-          sx={{ fontSize: 12 }}
-          size="small"
-          onClick={handleCreateStatus}
-        >
-          New Status
-        </Button>
+        {matches ? (
+          <Button
+            variant="contained"
+            sx={{ fontSize: 12 }}
+            size="small"
+            onClick={handleCreateStatus}
+          >
+            New Status
+          </Button>
+        ) : (
+          <Tooltip title="New Status">
+            <IconButton
+              size="small"
+              onClick={handleCreateStatus}
+              sx={{ backgroundColor: "primary.main" }}
+            >
+              <Add fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
       <Table sx={{ minWidth: 650 }} aria-label="status-table">
         {/* Table Header */}
