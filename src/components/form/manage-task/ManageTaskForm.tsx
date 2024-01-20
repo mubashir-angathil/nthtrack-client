@@ -32,7 +32,7 @@ const ManageTaskForm: FC<ManageTaskFormProps> = ({
     <Box
       component="form"
       display="flex"
-      p={2}
+      paddingInline={{ md: 1, xs: 0 }}
       onSubmit={handleSubmit(onSubmit)}
     >
       <Grid container spacing={2}>
@@ -71,7 +71,7 @@ const ManageTaskForm: FC<ManageTaskFormProps> = ({
             apiDetails={assigneesApiDetails}
           />
         </Grid>
-        <Grid item md={10} xs={12}>
+        <Grid item xs={12}>
           {/* Box for displaying buttons with close and submit actions */}
           <Box display="flex" justifyContent="end" columnGap={1}>
             {/* Button for closing the dialog */}
