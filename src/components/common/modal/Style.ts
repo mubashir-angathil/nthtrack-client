@@ -7,7 +7,7 @@ export const modalStyle = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 400, // Set the width of the modal
+    width: { md: 400, xs: 300 },
     backgroundColor: "background.paper", // Background color of the modal
     boxShadow: 24, // Box shadow for a subtle elevation effect
   },
