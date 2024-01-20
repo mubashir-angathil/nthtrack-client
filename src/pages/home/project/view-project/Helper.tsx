@@ -15,8 +15,8 @@ import {
   GetProjectMemberRequest,
   GetProjectMemberResponse,
 } from "../../../../services/data-services/Helper";
-import projectServices from "../../../../services/project-services/ProjectServices";
 import { useProjectContext } from "../../../../utils/helpers/context/project-context/ProjectContext";
+import { useProjectContextHelpers } from "../../../../utils/helpers/context/project-context/Helper";
 
 // Define the shape of the API configuration
 
@@ -28,8 +28,8 @@ export const useViewProject = () => {
   // Extract necessary parameters and functions from React Router
   const params: Params = useParams();
   const navigate: NavigateFunction = useNavigate();
-  const { project, setProject } = useProjectContext();
-
+  const { project } = useProjectContext();
+  const { fetchProjectById } = useProjectContextHelpers();
   const [projectMembers, setProjectMembers] = useState<
     GetProjectMemberResponse["data"]
   >([]);
@@ -47,32 +47,6 @@ export const useViewProject = () => {
   const handleUpdateProject = () => {
     if (routes.projects.update?.path) {
       navigate(routes.projects.update.path);
-    }
-  };
-  // Function to fetch project details from the API
-  const fetchProjectById = async ({ projectId }: { projectId: number }) => {
-    try {
-      // Call the API to get project details based on the current API configuration
-      const response = await projectServices.getProjectById({
-        projectId,
-      });
-
-      const {
-        status,
-        data: { data, message, success },
-      } = response;
-
-      // If the API call is successful, update project details
-      if (status === 200 && success) {
-        setProject(data);
-      } else {
-        // If there's an error, log the error message
-        throw { data: message };
-      }
-    } catch (error) {
-      // Handle API errors
-      const { data } = error as ApiError;
-      console.error(data);
     }
   };
 

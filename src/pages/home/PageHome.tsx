@@ -34,13 +34,13 @@ import {
   Source,
 } from "@mui/icons-material";
 import { labelColors } from "../../utils/helpers/configs/Colors";
-import { useProjects } from "./project/Helper";
 import cookieServices from "../../services/storage-services/CookieServices";
 import { initialAuthDetailsState } from "../../utils/helpers/context/auth-context/Helper";
 import { useAlertContext } from "../../utils/helpers/context/alert-context/AlertContext";
 import { useAlert } from "../../components/common/alert/Helper";
 import { useDrawerContext } from "../../utils/helpers/context/drawer-context/DrawerContext";
 import { TitleHelper } from "../../utils/helpers/constants/Constants";
+import { useHome } from "./Helper";
 
 const PageHome: React.FC = () => {
   const {
@@ -49,7 +49,6 @@ const PageHome: React.FC = () => {
   } = useAuthContext();
   const location: Location = useLocation();
   const navigate: NavigateFunction = useNavigate();
-  const { teams } = useProjects();
   const { setAlert } = useAlertContext();
   const { handleCloseAlert } = useAlert();
   const handleLogout = () => {
@@ -70,6 +69,7 @@ const PageHome: React.FC = () => {
       },
     });
   };
+  const { teams } = useHome();
   const { drawer, setDrawer } = useDrawerContext();
   const matches = useMediaQuery("(min-width:960px)");
 

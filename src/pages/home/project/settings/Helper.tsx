@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
 import projectServices from "../../../../services/project-services/ProjectServices";
 import { useAlert } from "../../../../components/common/alert/Helper";
@@ -8,6 +8,8 @@ import DeleteProject from "../../../../components/form/delete-project/DeleteProj
 import useSocketHelpers from "../../../../socket/Socket";
 import { useProjectContext } from "../../../../utils/helpers/context/project-context/ProjectContext";
 import { useAlertContext } from "../../../../utils/helpers/context/alert-context/AlertContext";
+import { useParams } from "react-router-dom";
+import { useProjectContextHelpers } from "../../../../utils/helpers/context/project-context/Helper";
 
 export const useManageProjectSettings = () => {
   // Destructuring and initializing state and context hooks
@@ -15,8 +17,10 @@ export const useManageProjectSettings = () => {
   const { handleCloseAlert } = useAlert();
   const { setDialog } = useDialogContext();
   const { pushNotification } = useSocketHelpers();
-  const { project, setProject } = useProjectContext();
+  const { project } = useProjectContext();
+  const { fetchProjectById } = useProjectContextHelpers();
   const [tab, setTab] = useState("1");
+  const params = useParams();
 
   // Function to handle tab changes
   const handleTabChange = (_: React.SyntheticEvent, newValue: string) => {
@@ -153,33 +157,6 @@ export const useManageProjectSettings = () => {
     }
   };
 
-  // Function to fetch project details by ID
-  const fetchProjectById = async ({ projectId }: { projectId: number }) => {
-    try {
-      // Call the API to get project details based on the current API configuration
-      const response = await projectServices.getProjectById({
-        projectId,
-      });
-
-      const {
-        status,
-        data: { data, message, success },
-      } = response;
-
-      // If the API call is successful, update project details
-      if (status === 200 && success) {
-        setProject(data);
-      } else {
-        // If there's an error, log the error message
-        throw { data: message };
-      }
-    } catch (error) {
-      // Handle API errors
-      const { data } = error as ApiError;
-      console.error(data);
-    }
-  };
-
   // Array of items for the danger zone (e.g., reopening, closing, deleting projects)
   const dangerZoneItems = [
     {
@@ -203,6 +180,15 @@ export const useManageProjectSettings = () => {
       condition: true,
     },
   ];
+
+  useMemo(() => {
+    const projectId = params.projectId && parseInt(params.projectId);
+
+    if (project === null && projectId) {
+      fetchProjectById({ projectId });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     setDialog,

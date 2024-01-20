@@ -20,6 +20,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType, array, number, object, string } from "yup";
 import ManageTaskForm from "../../../components/form/manage-task/ManageTaskForm";
 import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
+import { useProjectContextHelpers } from "../../../utils/helpers/context/project-context/Helper";
 
 interface UpdateTaskInput {
   task?: string;
@@ -46,6 +47,7 @@ export const useTask = () => {
   const { setAlert } = useAlertContext();
   const { setDialog } = useDialogContext();
   const { handleCloseAlert } = useAlert();
+  const { fetchProjectById } = useProjectContextHelpers();
   const { project } = useProjectContext();
   const [refresh, setRefresh] = useState<boolean>(false);
   const [task, setTask] = useState<GetTaskByIdResponse["data"] | undefined>();
@@ -243,6 +245,11 @@ export const useTask = () => {
     const taskId = params?.taskId && parseInt(params.taskId);
     if (project && taskId) {
       fetchTaskById({ projectId: project.id, taskId });
+    } else {
+      if (project === null) {
+        const projectId = params?.projectId && parseInt(params.projectId);
+        projectId && fetchProjectById({ projectId });
+      }
     }
   }, [project, refresh]);
 

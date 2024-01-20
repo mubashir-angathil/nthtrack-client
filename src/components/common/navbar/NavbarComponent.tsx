@@ -7,7 +7,7 @@ import Avatar from "@mui/material/Avatar";
 import navbarStyes from "./Style";
 import { useAuthContext } from "../../../utils/helpers/context/auth-context/AuthContext";
 import { TitleHelper } from "../../../utils/helpers/constants/Constants";
-import { NotificationComponent } from "../notification/NotificationComponent";
+// import { NotificationComponent } from "../notification/NotificationComponent";
 import {
   Button,
   IconButton,
@@ -72,7 +72,7 @@ export const NavbarComponent = () => {
               columnGap: 2,
             }}
           >
-            <NotificationComponent />
+            {/* <NotificationComponent /> */}
             <Tooltip title={darkMode ? "Light Mode" : "Dark Mode"}>
               <ToggleButton
                 value="theme"
