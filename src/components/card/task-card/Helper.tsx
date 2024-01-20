@@ -69,6 +69,10 @@ export const useTaskComponent = () => {
   const [anchorElTaskMenu, setAnchorElTaskMenu] = useState<null | HTMLElement>(
     null,
   );
+  const [toggleComponent, setToggleComponent] = useState({
+    search: false,
+    filter: false,
+  });
   const [anchorElStatusMenu, setAnchorElStatusMenu] =
     useState<null | HTMLElement>(null);
   const { getValues, control, watch, register } = useForm({
@@ -477,14 +481,23 @@ export const useTaskComponent = () => {
     setActiveStatus(status);
   };
 
+  // Handle search and filter panel toggle
+  const handleComponentToggle = (key: "search" | "filter") => {
+    setToggleComponent((prevState) => {
+      return { ...prevState, [key]: !prevState[key] };
+    });
+  };
+
   return {
     removeDragEffect,
     project,
+    handleComponentToggle,
     navigate,
     register,
     control,
     search,
     activeTask,
+    toggleComponent,
     tasks: differedTasks,
     handleChange,
     handleAddNewStatus,
