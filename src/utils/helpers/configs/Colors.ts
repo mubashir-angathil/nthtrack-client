@@ -1,4 +1,3 @@
-// import Colors from "@mui/material/colors";
 /* eslint-disable no-unused-vars */
 export enum colors {
   primary = "rgb(16, 55, 95)",

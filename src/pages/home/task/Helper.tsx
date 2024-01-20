@@ -49,6 +49,8 @@ export const useTask = () => {
   const { project } = useProjectContext();
   const [refresh, setRefresh] = useState<boolean>(false);
   const [task, setTask] = useState<GetTaskByIdResponse["data"] | undefined>();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   // Initialize the React Hook Form with validation resolver and default values
   const { control, watch, setValue, reset, resetField } =
@@ -56,6 +58,12 @@ export const useTask = () => {
       resolver: yupResolver(manageTaskFormSchema),
     });
 
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
   const handelSetFormValues = ({
     key,
     value,
@@ -241,8 +249,12 @@ export const useTask = () => {
   return {
     task,
     control,
+    open,
+    anchorEl,
     watch,
     resetField,
+    handleMenuClose,
+    handleMenuOpen,
     handelSetFormValues,
     handleTaskUpdate,
     handleTaskFormUpdate,

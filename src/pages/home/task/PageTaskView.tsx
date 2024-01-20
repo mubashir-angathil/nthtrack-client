@@ -5,8 +5,11 @@ import {
   Grid,
   Typography,
   Divider,
-  ButtonGroup,
   Button,
+  Menu,
+  useMediaQuery,
+  MenuItem,
+  IconButton,
 } from "@mui/material";
 import { useTask } from "./Helper";
 import AvatarComponent from "../../../components/common/avatar/AvatarComponent";
@@ -15,95 +18,102 @@ import { LabelAutocompleteOptionType } from "../../../services/data-services/Hel
 import RhfStatusAutocomplete from "../../../components/common/textfield/autocomplete/status-autocomplete/RhfStatusAutocomplete";
 import RhfCKEditorComponent from "../../../components/ck-editor/CkEditorComponent";
 import RhfTextfieldComponent from "../../../components/common/textfield/RhfTextFieldComponent";
-import { Edit } from "@mui/icons-material";
+import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
+import { MoreVert } from "@mui/icons-material";
 
 const PageTaskView: FC = () => {
   // Destructure values from the custom hook
   const {
     control,
+    open,
     watch,
     resetField,
     handleTaskUpdate,
     handelSetFormValues,
     handleTaskFormUpdate,
     task,
+    anchorEl,
+    handleMenuClose,
+    handleMenuOpen,
   } = useTask();
+
+  // Media query
+  const matches = useMediaQuery("(min-width:600px)");
 
   return (
     <>
       {task ? (
-        <Grid container spacing={1}>
+        <Grid container spacing={1} gap={2} paddingInline={1}>
           {/* Task ID and Task Name Section */}
-          <Grid
-            item
-            xs={12}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="baseline"
-          >
+          <Grid item xs={12}>
             <Box
               display="flex"
-              alignItems="baseline"
+              alignItems="center"
               justifyContent="space-between"
+              pb={1}
             >
-              {/* Task ID */}
-              <Typography variant="h4" mr={1}>
-                #{task.id}
-              </Typography>
               {/* Editable Task Name */}
-              <Typography
-                variant="h4"
-                sx={{
-                  ":hover": {
-                    cursor: "text",
-                  },
-                }}
-                onDoubleClick={() =>
-                  handelSetFormValues({ key: "task", value: task.task })
-                }
-              >
-                {watch("task") !== undefined ? (
-                  <RhfTextfieldComponent
-                    control={control}
-                    label=""
-                    name="task"
-                    autoFocus
-                    size="small"
-                    onBlur={(newTask?: string) => {
-                      if (newTask !== task.task) {
-                        handleTaskUpdate({ task: newTask });
-                      } else {
-                        resetField("task");
-                      }
-                    }}
-                  />
-                ) : (
-                  task?.task
-                )}
-              </Typography>
-            </Box>
-            {/* Task Update Button */}
-            <ButtonGroup>
+              <Box display="flex" flexWrap="wrap">
+                <Typography variant="h5" fontWeight="bold">
+                  #{task.id}
+                </Typography>
+                <Typography
+                  variant="h5"
+                  fontWeight="bold"
+                  title="Double click to update"
+                  sx={{
+                    ":hover": {
+                      cursor: "text",
+                    },
+                  }}
+                  onDoubleClick={() =>
+                    handelSetFormValues({ key: "task", value: task.task })
+                  }
+                >
+                  {watch("task") !== undefined ? (
+                    <RhfTextfieldComponent
+                      control={control}
+                      label=""
+                      name="task"
+                      autoFocus
+                      size="small"
+                      onBlur={(newTask?: string) => {
+                        if (newTask !== task.task) {
+                          handleTaskUpdate({ task: newTask });
+                        } else {
+                          resetField("task");
+                        }
+                      }}
+                    />
+                  ) : (
+                    task?.task
+                  )}
+                </Typography>
+              </Box>
               <Button
-                endIcon={<Edit />}
-                color="inherit"
-                size="small"
                 onClick={handleTaskFormUpdate}
+                variant="contained"
+                sx={{ display: !matches ? "none" : "inline-block" }}
               >
                 Update
               </Button>
-            </ButtonGroup>
-          </Grid>
-          <Grid item xs={12}>
+              <IconButton
+                onClick={handleMenuOpen}
+                sx={{ display: matches ? "none" : "inline-block" }}
+              >
+                <MoreVert />
+              </IconButton>
+            </Box>
             <Divider />
           </Grid>
 
           {/* Project Details Section */}
           <Grid
             item
+            xs={12}
             md={10}
+            width="auto"
             gap={2}
-            pr={2}
             display="flex"
             flexDirection="column"
           >
@@ -137,6 +147,7 @@ const PageTaskView: FC = () => {
                 ) : (
                   // Display Status Chip
                   <Chip
+                    title="Double click to update"
                     onDoubleClick={() =>
                       handelSetFormValues({
                         key: "status",
@@ -170,6 +181,7 @@ const PageTaskView: FC = () => {
                 ) : (
                   // Display Label Chip
                   <Chip
+                    title="Double click to update"
                     label={task?.label.name}
                     sx={{
                       background: `rgb(${task?.label.color},0.3)`,
@@ -198,7 +210,7 @@ const PageTaskView: FC = () => {
                   control={control}
                   label=""
                   name="description"
-                  height="250px"
+                  height="150px"
                   onBlur={(description?: string) => {
                     if (description !== task.description) {
                       handleTaskUpdate({ description });
@@ -210,6 +222,7 @@ const PageTaskView: FC = () => {
               ) : (
                 // Display Description
                 <Typography
+                  title="Double click to update"
                   component="div"
                   textAlign="justify"
                   dangerouslySetInnerHTML={{ __html: task?.description ?? "" }}
@@ -247,8 +260,9 @@ const PageTaskView: FC = () => {
           {/* Assignees Section */}
           <Grid
             item
-            md={2}
             gap={1}
+            flex={1}
+            mb={2}
             display="flex"
             flexDirection="column"
             justifyContent="start"
@@ -256,15 +270,18 @@ const PageTaskView: FC = () => {
           >
             <Typography variant="h6">Assignees</Typography>
             {/* Display Assignees with Avatar and Username */}
-            {task?.assignees.map((profileDetails) => {
+            {task?.assignees.map((profileDetails, index) => {
               return (
                 <Box key={profileDetails.id} display="flex" gap={1} p="2px">
                   <AvatarComponent
                     key={profileDetails.id}
                     profile
                     {...profileDetails}
+                    color={generalFunctions.getColor(index)}
                   />
-                  <Typography>{profileDetails.username}</Typography>
+                  <Typography flexShrink={0}>
+                    {profileDetails.username}
+                  </Typography>
                 </Box>
               );
             })}
@@ -274,6 +291,24 @@ const PageTaskView: FC = () => {
         // Display when no task is found
         <>No Task found</>
       )}
+      <Menu
+        id="long-menu"
+        MenuListProps={{
+          "aria-labelledby": "long-button",
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleMenuClose}
+      >
+        <MenuItem
+          onClick={() => {
+            handleMenuClose();
+            handleTaskFormUpdate();
+          }}
+        >
+          Update{" "}
+        </MenuItem>
+      </Menu>
     </>
   );
 };

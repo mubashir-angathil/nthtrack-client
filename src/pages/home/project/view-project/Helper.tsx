@@ -106,6 +106,15 @@ export const useViewProject = () => {
     }
   };
 
+  // Function to navigate to settings
+  const handleSettingsNavigation = () => {
+    navigate(routes.projectSettings.path, {
+      state: {
+        project: { id: project?.id, name: project?.name },
+      },
+    });
+  };
+
   useEffect(() => {
     const projectId = params?.projectId ? parseInt(params?.projectId) : null;
     if (projectId) {
@@ -113,14 +122,15 @@ export const useViewProject = () => {
       fetchProjectById({ projectId });
     }
   }, []);
+
   return {
     project,
     open,
     anchorEl,
+    handleSettingsNavigation,
     handleMenuOpen,
     handleMenuClose,
     projectMembers,
     handleUpdateProject,
-    navigate,
   };
 };

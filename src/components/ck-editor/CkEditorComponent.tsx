@@ -89,7 +89,7 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
                   backgroundColor: "background.paper.main",
                   border: 1,
                   p: 1,
-                  borderColor: "rgba(0,0,0,0.2)",
+                  borderColor: "transparent",
                 }}
               >
                 <Box display="-ms-flexbox">

@@ -23,7 +23,6 @@ import {
 import { FC } from "react";
 import { useViewProject } from "./Helper";
 import AvatarComponent from "../../../../components/common/avatar/AvatarComponent";
-import routes from "../../../../utils/helpers/routes/Routes";
 
 import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
 import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
@@ -40,7 +39,7 @@ const PageViewProject: FC = () => {
     anchorEl,
     handleMenuClose,
     handleMenuOpen,
-    navigate,
+    handleSettingsNavigation,
     projectMembers,
     handleUpdateProject,
   } = useViewProject();
@@ -75,13 +74,7 @@ const PageViewProject: FC = () => {
                 <Button
                   endIcon={<Settings />}
                   color="inherit"
-                  onClick={() =>
-                    navigate(routes.projectSettings.path, {
-                      state: {
-                        project: { id: project?.id, name: project?.name },
-                      },
-                    })
-                  }
+                  onClick={handleSettingsNavigation}
                 >
                   Settings
                 </Button>
@@ -182,8 +175,22 @@ const PageViewProject: FC = () => {
         open={open}
         onClose={handleMenuClose}
       >
-        <MenuItem>Update </MenuItem>
-        <MenuItem>Settings</MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleMenuClose();
+            handleUpdateProject();
+          }}
+        >
+          Update
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleMenuClose();
+            handleSettingsNavigation();
+          }}
+        >
+          Settings
+        </MenuItem>
       </Menu>
     </Grid>
   );
