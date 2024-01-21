@@ -1,4 +1,7 @@
-import axios from "../api-instance/AuthInstance";
+import {
+  authInstance as axios,
+  googleAuthInstance,
+} from "../api-instance/AuthInstance";
 import {
   AuthRequest,
   AuthResponse,
@@ -25,6 +28,26 @@ import { AxiosResponse } from "axios";
  * @exports {Object} authenticationServices
  */
 const authenticationServices = {
+  googleAuth: async (accessToken: string) => {
+    try {
+      const response = await googleAuthInstance.get("/", {
+        headers: {
+          Authorization: "Bearer ".concat(accessToken),
+        },
+      });
+      const { status, data } = response;
+
+      if (status >= 200 && status < 400) {
+        return data;
+      } else {
+        throw new Error(`Request failed with status ${status}`);
+      }
+    } catch (error) {
+      console.error("Google authentication failed:", error);
+      throw error;
+    }
+  },
+
   /**
    * Handles user registration (sign-up) and returns an AuthResponse.
    *
@@ -52,6 +75,28 @@ const authenticationServices = {
   ): Promise<AxiosResponse<AuthResponse>> => {
     return await axios
       .post<AuthResponse>("/login", props)
+      .then((response) => response)
+      .catch((error) => {
+        // Re-throw the error with the custom error type
+        throw generalFunctions.customError(error);
+      });
+  },
+
+  /**
+   * Handles google authentication (sign-in) and returns an AuthResponse.
+   *
+   * @param {AuthRequest} props - User authentication details.
+   * @returns {Promise<AuthResponse>} User authentication response.
+   */
+  doGoogleSignIn: async ({
+    email,
+    picture,
+  }: {
+    email: string;
+    picture?: string;
+  }): Promise<AxiosResponse<AuthResponse>> => {
+    return await axios
+      .post<AuthResponse>("/signIn/google", { email, picture })
       .then((response) => response)
       .catch((error) => {
         // Re-throw the error with the custom error type

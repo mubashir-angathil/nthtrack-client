@@ -1,9 +1,8 @@
 import React from "react";
-import { Box, Button, FormControl, IconButton } from "@mui/material";
+import { Box, FormControl, IconButton } from "@mui/material";
 import SubmitButtonComponent from "../common/buttons/SubmitButtonComponent";
 import { useSignUp } from "./Helper";
 import RhfTextfieldComponent from "../common/textfield/RhfTextFieldComponent";
-import GoogleSvg from "../../assets/google.svg";
 import {
   Email,
   Lock,
@@ -11,6 +10,7 @@ import {
   Visibility,
   VisibilityOff,
 } from "@mui/icons-material";
+import GoogleAuthButtonComponent from "../common/buttons/GoogleAuthButtonComponent";
 
 /**
  * SignUpFormComponent
@@ -33,6 +33,7 @@ const SignUpFormComponent: React.FC = () => {
     isVisiblePassword,
     setIsVisiblePassword,
     control,
+    doGoogleSignUp,
     handleSubmit,
   } = useSignUp();
 
@@ -115,19 +116,9 @@ const SignUpFormComponent: React.FC = () => {
         sx={{ mt: 1, height: "40px", borderRadius: 5 }}
         // loading={isLoading}
       />
-      <Button
-        sx={{
-          height: "40px",
-          background: "white",
-          color: "black",
-          borderRadius: 5,
-          boxShadow: 1,
-        }}
-        variant="outlined"
-        startIcon={<img src={GoogleSvg} width={28} height={28} />}
-      >
-        Sign in with google
-      </Button>
+      <GoogleAuthButtonComponent onClick={() => doGoogleSignUp()}>
+        Google sign Up
+      </GoogleAuthButtonComponent>
     </Box>
   );
 };

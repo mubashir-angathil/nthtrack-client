@@ -41,10 +41,7 @@ const PageProfile: React.FC = () => {
         flexWrap="wrap"
         justifyContent="center"
       >
-        <Avatar
-          sx={style.avatarStyle}
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpsmCZLrpVMSnE39oznevfPDh185AMoQRCyg&usqp=CAU"
-        >
+        <Avatar sx={style.avatarStyle} src={profileDetails?.picture}>
           {profileDetails.username.charAt(0)}
         </Avatar>
         <Box
@@ -129,7 +126,7 @@ const PageProfile: React.FC = () => {
               }}
             >
               {generalFunctions.formateNumber(
-                profileDetails.totalContributedProjects + 10000000,
+                profileDetails.totalContributedProjects,
               )}
               &nbsp; Contributed Projects
             </Typography>

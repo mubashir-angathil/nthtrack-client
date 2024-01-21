@@ -27,6 +27,7 @@ interface AuthDetailsProps {
     username: string | null;
     accessToken: string | null;
     refreshToken: string | null;
+    picture?: string;
   };
 }
 

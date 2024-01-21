@@ -7,6 +7,7 @@ import { ByUserDetails } from "../project-services/Helper";
 
 export interface UerProfileResponse extends NormalApiSuccessResponse {
   data: ByUserDetails & {
+    picture?: string;
     createdAt: string;
     totalProjects: number;
     totalContributedProjects: number;

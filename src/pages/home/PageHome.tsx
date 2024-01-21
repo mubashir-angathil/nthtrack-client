@@ -62,7 +62,7 @@ const PageHome: React.FC = () => {
         response: (response) => {
           handleCloseAlert();
           if (response === "accept") {
-            cookieServices.clearAuthDetails();
+            Promise.resolve(cookieServices.clearAuthDetails());
             setAuthDetails(initialAuthDetailsState);
           }
         },
@@ -279,6 +279,7 @@ const PageHome: React.FC = () => {
                     background: `rgb(${labelColors.yellow})`,
                     color: "inherit",
                   }}
+                  src={user?.picture && user.picture}
                 >
                   {user.username?.charAt(0)}
                 </Avatar>
