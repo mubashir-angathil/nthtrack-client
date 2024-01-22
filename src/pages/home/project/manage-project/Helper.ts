@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Params, useParams } from "react-router-dom";
-import { GetProjectByIdResponse } from "../../../../services/project-services/Helper";
 import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
 import { useProjectContextHelpers } from "../../../../utils/helpers/context/project-context/Helper";
+import { useProjectContext } from "../../../../utils/helpers/context/project-context/ProjectContext";
 
 export interface ManageProjectProps {
   type: "create" | "update";
@@ -10,11 +10,10 @@ export interface ManageProjectProps {
 
 export const useUpdateProject = ({ type }: ManageProjectProps) => {
   const params: Params = useParams();
-  const [projectId] = useState<number>(
-    params?.projectId ? parseInt(params.projectId) : 0,
-  );
+  const projectId = params?.projectId ? parseInt(params.projectId) : 0;
+  const { project } = useProjectContext();
+
   // State variables for project and tasks, as well as API configuration
-  const [project] = useState<GetProjectByIdResponse["data"]>();
   const { fetchProjectById } = useProjectContextHelpers();
 
   useEffect(() => {
