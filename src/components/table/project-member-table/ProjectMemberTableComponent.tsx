@@ -1,3 +1,4 @@
+import { FC } from "react";
 import {
   Paper,
   Table,
@@ -17,27 +18,37 @@ import {
   Tooltip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { FC } from "react";
-import { useManageProjectMembers } from "./Helper";
+import {
+  ProjectMemberTableComponentProps,
+  useManageProjectMembers,
+} from "./Helper";
 import AvatarComponent from "../../common/avatar/AvatarComponent";
-import { labelColors } from "../../../utils/helpers/configs/Colors";
-import { Add } from "@mui/icons-material";
+import { Add, Block } from "@mui/icons-material";
+import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 
 // Function Component for Managing Project Members
-const ProjectMemberTableComponent: FC = () => {
+const ProjectMemberTableComponent: FC<ProjectMemberTableComponentProps> = (
+  props,
+) => {
   // Destructuring values from custom hook
   const {
     tableConfig,
     permissionOptions,
+    componentPermission,
     handleRemoveMember,
     handlePermissionChange,
     handleOpenDialog,
     handleChangePage,
     handleChangeRowsPerPage,
-  } = useManageProjectMembers();
+  } = useManageProjectMembers(props);
 
   // Media query
   const matches = useMediaQuery("(min-width:600px)");
+
+  // Extracting permissions for member management from the componentPermission context
+  const addMemberPermission = componentPermission["addNewMember"]?.permitted;
+  const updateMemberPermission = componentPermission["updateMember"]?.permitted;
+  const deleteMemberPermission = componentPermission["deleteMember"]?.permitted;
 
   return (
     <TableContainer component={Paper}>
@@ -50,26 +61,27 @@ const ProjectMemberTableComponent: FC = () => {
       >
         <Typography variant="h4">Members</Typography>
         {/* Button to add a new member */}
-        {matches ? (
-          <Button
-            variant="contained"
-            sx={{ fontSize: 12 }}
-            size="small"
-            onClick={handleOpenDialog}
-          >
-            New Member
-          </Button>
-        ) : (
-          <Tooltip title="Add New Member">
-            <IconButton
+        {addMemberPermission &&
+          (matches ? (
+            <Button
+              variant="contained"
+              sx={{ fontSize: 12 }}
               size="small"
               onClick={handleOpenDialog}
-              sx={{ backgroundColor: "primary.main" }}
             >
-              <Add fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        )}
+              New Member
+            </Button>
+          ) : (
+            <Tooltip title="Add New Member">
+              <IconButton
+                size="small"
+                onClick={handleOpenDialog}
+                sx={{ backgroundColor: "primary.main" }}
+              >
+                <Add fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          ))}
       </Box>
       <Table sx={{ minWidth: 650 }} aria-label="members-table">
         {/* Table Header */}
@@ -81,7 +93,7 @@ const ProjectMemberTableComponent: FC = () => {
             <TableCell>Email</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Permission</TableCell>
-            <TableCell>Actions</TableCell>
+            {deleteMemberPermission && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
 
@@ -94,7 +106,7 @@ const ProjectMemberTableComponent: FC = () => {
               <TableCell>
                 <AvatarComponent
                   {...row.user}
-                  color={`rgb(${Object.values(labelColors).at(index)})`}
+                  color={generalFunctions.getColor(index)}
                   width={30}
                   height={30}
                 />
@@ -111,8 +123,8 @@ const ProjectMemberTableComponent: FC = () => {
 
               {/* Permission Selection Dropdown */}
               <TableCell>
-                {row.status === "Super Admin" ? (
-                  "Super Admin"
+                {row.status === "Super Admin" || !updateMemberPermission ? (
+                  row.status
                 ) : (
                   <Select
                     value={row.permission.id}
@@ -136,22 +148,27 @@ const ProjectMemberTableComponent: FC = () => {
               </TableCell>
 
               {/* Delete Member Button */}
-              <TableCell>
-                <IconButton
-                  disabled={row.permission.name.includes("Super Admin")}
-                  size="small"
-                  aria-label="delete"
-                  color="error"
-                  onClick={() =>
-                    handleRemoveMember({
-                      memberId: row.id,
-                      userId: row.user.id,
-                    })
-                  }
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </TableCell>
+              {deleteMemberPermission && (
+                <TableCell>
+                  {row.permission.name.includes("Super Admin") ? (
+                    <Block />
+                  ) : (
+                    <IconButton
+                      size="small"
+                      aria-label="delete"
+                      color="error"
+                      onClick={() =>
+                        handleRemoveMember({
+                          memberId: row.id,
+                          userId: row.user.id,
+                        })
+                      }
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

@@ -209,4 +209,21 @@ export interface GetProjectStatusesRequest extends ApiRequestWithPagination {
 export interface GetProjectStatusesResponse extends ApiResponseWithPagination {
   data: StatusInterface[];
 }
-// Comments provide explanations for each interface, making the code more readable and understandable.
+
+export type Permission = {
+  [key: string]: boolean | Permission | PermissionMethod;
+};
+
+interface PermissionMethod {
+  [key: string]: boolean;
+}
+
+export interface GetPermissionResponse extends NormalApiSuccessResponse {
+  data: {
+    id: number;
+    permission: {
+      name: string;
+      json: Permission;
+    };
+  };
+}

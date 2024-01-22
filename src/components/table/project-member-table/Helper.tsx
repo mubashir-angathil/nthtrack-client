@@ -18,18 +18,34 @@ import projectServices from "../../../services/project-services/ProjectServices"
 import { ApiError } from "../../../services/Helper";
 import dataServices from "../../../services/data-services/DataServices";
 import ManageProjectMember from "../../form/manage-project-member/ManageProjectMember";
+import { useAuthContext } from "../../../utils/helpers/context/auth-context/AuthContext";
+import { useComponentPermissionContext } from "../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
+import { useRefreshContext } from "../../../utils/helpers/context/refresh-context/RefreshContext";
 
 // Defining the interface for table data
 interface TableData extends ApiRequestWithPaginationAndSearch {
   totalRows: number;
   members: GetProjectMembersResponse["data"] | [];
 }
-export const useManageProjectMembers = () => {
+
+export interface ProjectMemberTableComponentProps {
+  setReload: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+}
+export const useManageProjectMembers = ({
+  setReload,
+}: ProjectMemberTableComponentProps) => {
   // Destructuring and initializing state and context hooks
   const { setAlert } = useAlertContext();
   const { handleCloseAlert } = useAlert();
   const { setDialog } = useDialogContext();
   const { project } = useProjectContext();
+  const { refresh } = useRefreshContext();
+  const [initialRender, setInitialRender] = useState<boolean>();
+
+  const {
+    authDetails: { user },
+  } = useAuthContext();
+  const { componentPermission } = useComponentPermissionContext();
 
   const [tableLoading, setTableLoading] = useState<boolean | undefined>(
     undefined,
@@ -153,7 +169,7 @@ export const useManageProjectMembers = () => {
       });
 
       // If the API call is successful, update the table configuration
-      if (response.data.success) {
+      if (response.data.success && response.status === 200) {
         setTableConfig((prevConfig) => {
           return {
             ...prevConfig,
@@ -174,9 +190,27 @@ export const useManageProjectMembers = () => {
       // Call the dataServices API to get permissions
       const response = await dataServices.getPermissions();
 
-      // If the API call is successful, update the permission options
-      if (response.data.success) {
-        setPermissionOptions(response.data.data);
+      // If the API call is successful (status 200) and returns valid data,
+      // update the permission options based on the response data.x
+
+      if (response.data.success && response.status === 200) {
+        // Extract permissions from the response data
+        let permissions = response.data.data;
+
+        // Check if the author is present in the member list as a "Super Admin"
+        const isAuthorSuperAdmin = tableConfig.members.some(
+          (member) => member.status === "Super Admin",
+        );
+
+        // If the author is a "Super Admin," filter out the corresponding permission option
+        if (isAuthorSuperAdmin) {
+          permissions = permissions.filter(
+            (permission) => permission.name !== "Super Admin",
+          );
+        }
+
+        // Update the state with the filtered permission options
+        setPermissionOptions(permissions);
       }
     } catch (error) {
       // Handle errors by throwing them
@@ -197,6 +231,13 @@ export const useManageProjectMembers = () => {
 
       // If the update is successful, set table loading and show a success notification
       if (success) {
+        // reload permission from parent
+        if (props.userId === user?.id) {
+          setReload((prevState) =>
+            prevState === undefined ? true : !prevState,
+          );
+        }
+
         setTableLoading(true);
         enqueueSnackbar({ message, variant: "success" });
       }
@@ -239,7 +280,7 @@ export const useManageProjectMembers = () => {
   // useEffect to fetch members when project, limit, or page is updated
   useEffect(() => {
     if (project?.id) {
-      Promise.resolve([
+      Promise.all([
         fetchPermission(),
         fetchMembers({
           projectId: project.id,
@@ -264,6 +305,21 @@ export const useManageProjectMembers = () => {
     }
   }, [tableLoading]);
 
+  // useEffect to handle component initialization and table loading on refresh
+  useEffect(() => {
+    // Check if refresh is not triggered and it's the initial render
+    if (refresh.reload === false && initialRender === undefined) {
+      setInitialRender(false); // Marking initial render as complete
+    }
+
+    // Check if refresh is triggered and it's not the initial render
+    if (refresh.reload && !initialRender) {
+      setTableLoading((prevState) =>
+        prevState === undefined ? true : !prevState,
+      ); // Toggle table loading state
+    }
+  }, [refresh]);
+
   return {
     tableConfig,
     permissionOptions,
@@ -272,5 +328,6 @@ export const useManageProjectMembers = () => {
     handlePermissionChange,
     handleOpenDialog,
     handleRemoveMember,
+    componentPermission,
   };
 };

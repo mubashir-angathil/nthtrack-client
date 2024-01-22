@@ -24,6 +24,7 @@ const AvatarComponent: FC<AvatarComponentProps> = ({
           color: "#ffff",
           background: color,
         }}
+        src={rest?.picture}
       >
         {rest.username?.charAt(0)}
       </Avatar>

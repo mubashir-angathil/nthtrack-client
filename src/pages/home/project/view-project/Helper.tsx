@@ -17,6 +17,11 @@ import {
 } from "../../../../services/data-services/Helper";
 import { useProjectContext } from "../../../../utils/helpers/context/project-context/ProjectContext";
 import { useProjectContextHelpers } from "../../../../utils/helpers/context/project-context/Helper";
+import { usePermissionHook } from "../../../../utils/helpers/hooks/validatePermission";
+import { useUserPermissionContext } from "../../../../utils/helpers/context/user-permission-context/UserPermissionContext";
+import { permissionJSON } from "../../../../utils/helpers/constants/Constants";
+import { useComponentPermissionContext } from "../../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
+import { useUserPermissionHelpers } from "../../../../utils/helpers/context/user-permission-context/Helper";
 
 // Define the shape of the API configuration
 
@@ -30,6 +35,12 @@ export const useViewProject = () => {
   const navigate: NavigateFunction = useNavigate();
   const { project } = useProjectContext();
   const { fetchProjectById } = useProjectContextHelpers();
+  const { validatePermissionWithPermissionJSON } = usePermissionHook();
+  const { permission } = useUserPermissionContext();
+  const { componentPermission, setComponentPermission } =
+    useComponentPermissionContext();
+  const { fetchUserProjectPermission } = useUserPermissionHelpers();
+
   const [projectMembers, setProjectMembers] = useState<
     GetProjectMemberResponse["data"]
   >([]);
@@ -37,14 +48,19 @@ export const useViewProject = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+  // Function to handle opening the menu
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+    setAnchorEl(event.currentTarget); // Set the anchor element for the menu
   };
 
+  // Function to handle closing the menu
+  const handleMenuClose = () => {
+    setAnchorEl(null); // Reset the anchor element to close the menu
+  };
+
+  // Function to handle updating the project
   const handleUpdateProject = () => {
+    // Navigate to the update project route if available
     if (routes.projects.update?.path) {
       navigate(routes.projects.update.path);
     }
@@ -80,8 +96,9 @@ export const useViewProject = () => {
     }
   };
 
-  // Function to navigate to settings
+  // Function to handle navigation to project settings
   const handleSettingsNavigation = () => {
+    // Navigate to the project settings route with project information
     navigate(routes.projectSettings.path, {
       state: {
         project: { id: project?.id, name: project?.name },
@@ -89,18 +106,38 @@ export const useViewProject = () => {
     });
   };
 
+  // useEffect to fetch project-related data on component mount
   useEffect(() => {
+    // Extract projectId from params or set it to null
     const projectId = params?.projectId ? parseInt(params?.projectId) : null;
+
+    // Check if projectId is available
     if (projectId) {
+      // Fetch project members, project details, and user project permissions
       fetchProjectMembers({ projectId });
       fetchProjectById({ projectId });
+      fetchUserProjectPermission({ projectId });
     }
   }, []);
+
+  // useEffect to validate and update component permissions based on received permission
+  useEffect(() => {
+    // Check if permission is available
+    if (permission) {
+      // Validate and set component permissions based on permission and permissionJSON
+      const newPermission = validatePermissionWithPermissionJSON({
+        permission: permission.permission.json,
+        permissionJSON,
+      });
+      setComponentPermission(newPermission);
+    }
+  }, [permission]);
 
   return {
     project,
     open,
     anchorEl,
+    componentPermission,
     handleSettingsNavigation,
     handleMenuOpen,
     handleMenuClose,

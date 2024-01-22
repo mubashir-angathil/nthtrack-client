@@ -5,6 +5,7 @@ import { socket } from "../../../services/api-instance/Instance";
 import useSocketHelpers from "../../../socket/Socket";
 import { useAuthContext } from "../../../utils/helpers/context/auth-context/AuthContext";
 import { usePushNotificationContext } from "../../../utils/helpers/context/push-notification-context/PushNotificationContext";
+import { useRefreshContext } from "../../../utils/helpers/context/refresh-context/RefreshContext";
 
 // Custom hook for notification component
 export const useNotifications = () => {
@@ -15,6 +16,8 @@ export const useNotifications = () => {
   const { authDetails } = useAuthContext();
   const { pushNotification, setPushNotification } =
     usePushNotificationContext();
+  const { setRefresh } = useRefreshContext();
+
   // Define function to handle menu opening
   const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNotifications(event.currentTarget);
@@ -59,6 +62,7 @@ export const useNotifications = () => {
             ? prevNotificationCount.count + notificationCount
             : prevNotificationCount.count + 1;
 
+        setRefresh({ reload: newNotificationCount > 0 && false });
         return {
           count: newNotificationCount,
         };

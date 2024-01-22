@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import AuthContext from "./AuthContext";
 import { AuthContextProps, initialAuthDetailsState } from "./Helper";
 import cookieServices from "../../../../services/storage-services/CookieServices";
@@ -39,8 +39,8 @@ const AuthContextProvider = ({
     }
   };
 
-  // useEffect to run updateAuthDetailsFromCookie on mount
-  useLayoutEffect(() => {
+  // useMemo to run updateAuthDetailsFromCookie on mount
+  useMemo(() => {
     updateAuthDetailsFromCookie();
   }, []);
 

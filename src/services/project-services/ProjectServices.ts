@@ -32,6 +32,7 @@ import {
   GetProjectStatusesRequest,
   GetProjectStatusesResponse,
   RemoveStatusRequest,
+  GetPermissionResponse,
 } from "./Helper";
 import { ApiError, NormalApiSuccessResponse } from "../Helper";
 import { ManageProjectFormInput } from "../../components/form/manage-project/Helper";
@@ -63,6 +64,7 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
   /**
    * UpdateProject
    *
@@ -88,6 +90,7 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
   /**
    * getAllProjects
    *
@@ -126,6 +129,7 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
   /**
    * getAllTasks
    *
@@ -159,6 +163,7 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
   /**
    * getProjectById
    *
@@ -181,6 +186,7 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
   /**
    * CreateTask
    *
@@ -209,6 +215,7 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
   /**
    * UpdateProject
    *
@@ -234,6 +241,7 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
   /**
    * getTaskById
    *
@@ -261,6 +269,7 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
   /**
    * closeProjectById
    *
@@ -282,29 +291,20 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
   /**
-   * closeTaskById
+   * getTeamProjects
    *
-   * Close task by id .
+   * Fetches team projects based on specified parameters.
    *
-   * @param {number} taskId - taskId.
-   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response containing closed status.
+   * @param {TeamProjectsRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.page - Page number for pagination.
+   * @param {number} request.limit - Number of items per page.
+   * @param {string} request.searchKey - Search key for filtering projects by name.
+   * @param {number} request.teamId - ID of the team for which projects are to be retrieved.
+   * @returns {Promise<AxiosResponse<ProjectsResponse>>} Promise that resolves to the response containing team projects.
+   * @throws {CustomError} Throws a custom error if the API call fails.
    */
-  closeTaskById: async ({
-    taskId,
-    projectId,
-  }: {
-    taskId: number;
-    projectId: number;
-  }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
-    try {
-      return await axios.delete<NormalApiSuccessResponse>(
-        `project/${projectId}/task/${taskId}/close`,
-      );
-    } catch (error) {
-      throw generalFunctions.customError(error as AxiosError<ApiError>);
-    }
-  },
   getTeamProjects: async ({
     page,
     limit,
@@ -337,11 +337,24 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * addNewMember
+   *
+   * Adds a new member to the specified project.
+   *
+   * @param {AddNewMemberRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project to which the new member is added.
+   * @param {...any} request.props - Additional properties for adding a new member.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   addNewMember: async ({
     projectId,
     ...props
   }: AddNewMemberRequest): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
     try {
+      // Make the API request to add a new member to the project
       return await axios.post<NormalApiSuccessResponse>(
         `/project/${projectId}/member/add`,
         props,
@@ -351,11 +364,24 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * updateMember
+   *
+   * Updates a member in the specified project.
+   *
+   * @param {UpdateMemberRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project to which the member belongs.
+   * @param {...any} request.props - Additional properties for updating the member.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   updateMember: async ({
     projectId,
     ...props
   }: UpdateMemberRequest): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
     try {
+      // Make the API request to update the member in the project
       return await axios.put<NormalApiSuccessResponse>(
         `/project/${projectId}/member/update`,
         props,
@@ -365,12 +391,26 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * removeMember
+   *
+   * Removes a member from the specified project.
+   *
+   * @param {RemoveMemberRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project from which the member is removed.
+   * @param {number} request.memberId - ID of the member to be removed.
+   * @param {number} request.userId - ID of the user initiating the removal.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   removeMember: async ({
     projectId,
     memberId,
     userId,
   }: RemoveMemberRequest): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
     try {
+      // Make the API request to remove the member from the project
       return await axios.delete<NormalApiSuccessResponse>(
         `/project/${projectId}/member/${memberId}/delete`,
         {
@@ -384,6 +424,18 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * getProjectMembers
+   *
+   * Fetches members of the specified project based on provided parameters.
+   *
+   * @param {GetProjectMembersRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project for which members are to be fetched.
+   * @param {...any} request.props - Additional properties for the API call.
+   * @returns {Promise<AxiosResponse<GetProjectMembersResponse>>} Promise that resolves to the response containing project members.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   getProjectMembers: async ({
     projectId,
     ...props
@@ -391,6 +443,7 @@ const projectServices = {
     AxiosResponse<GetProjectMembersResponse>
   > => {
     try {
+      // Make the API request to get members of the project
       return await axios.post<GetProjectMembersResponse>(
         `/project/${projectId}/members`,
         { ...props },
@@ -400,8 +453,19 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * deleteProject
+   *
+   * Deletes the specified project.
+   *
+   * @param {number} projectId - ID of the project to be deleted.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   deleteProject: async ({ projectId }: { projectId: number }) => {
     try {
+      // Make the API request to delete the project
       return await axios.delete<NormalApiSuccessResponse>(
         `/project/${projectId}/delete`,
       );
@@ -410,8 +474,19 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * restoreClosedProject
+   *
+   * Restores the specified closed project.
+   *
+   * @param {number} projectId - ID of the closed project to be restored.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   restoreClosedProject: async ({ projectId }: { projectId: number }) => {
     try {
+      // Make the API request to restore the closed project
       return await axios.patch<NormalApiSuccessResponse>(
         `/project/${projectId}/reopen`,
       );
@@ -420,22 +495,18 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
-  restoreClosedTask: async ({
-    projectId,
-    taskId,
-  }: {
-    taskId: number;
-    projectId: number;
-  }) => {
-    try {
-      return await axios.patch<NormalApiSuccessResponse>(
-        `/project/${projectId}/task/${taskId}/reopen`,
-      );
-    } catch (error) {
-      // Throw a custom error using a helper function
-      throw generalFunctions.customError(error as AxiosError<ApiError>);
-    }
-  },
+
+  /**
+   * deleteTask
+   *
+   * Deletes the specified task from the project.
+   *
+   * @param {object} params - Object containing parameters for the API call.
+   * @param {number} params.taskId - ID of the task to be deleted.
+   * @param {number} params.projectId - ID of the project from which the task is deleted.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   deleteTask: async ({
     projectId,
     taskId,
@@ -444,6 +515,7 @@ const projectServices = {
     projectId: number;
   }) => {
     try {
+      // Make the API request to delete the task from the project
       return await axios.delete<NormalApiSuccessResponse>(
         `/project/${projectId}/task/${taskId}/delete`,
       );
@@ -452,12 +524,24 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * createStatus
+   *
+   * Creates a new status for the specified project.
+   *
+   * @param {CreateStatusRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project for which the status is created.
+   * @param {...any} request.props - Additional properties for creating the status.
+   * @returns {Promise<AxiosResponse<CreateStatusResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   createStatus: async ({
     projectId,
     ...props
   }: CreateStatusRequest): Promise<AxiosResponse<CreateStatusResponse>> => {
     try {
-      // Make the API request to get all projects
+      // Make the API request to create a new status for the project
       const response = await axios.post<CreateStatusResponse>(
         `/project/${projectId}/status/create`,
         props,
@@ -470,12 +554,24 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * createLabel
+   *
+   * Creates a new label for the specified project.
+   *
+   * @param {CreateLabelRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project for which the label is created.
+   * @param {...any} request.props - Additional properties for creating the label.
+   * @returns {Promise<AxiosResponse<CreateLabelResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   createLabel: async ({
     projectId,
     ...props
   }: CreateLabelRequest): Promise<AxiosResponse<CreateLabelResponse>> => {
     try {
-      // Make the API request to get all projects
+      // Make the API request to create a new label for the project
       const response = await axios.post<CreateLabelResponse>(
         `/project/${projectId}/label/create`,
         props,
@@ -488,8 +584,21 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * deleteStatus
+   *
+   * Deletes the specified status from the project.
+   *
+   * @param {RemoveStatusRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project from which the status is deleted.
+   * @param {number} request.statusId - ID of the status to be deleted.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   deleteStatus: async ({ projectId, statusId }: RemoveStatusRequest) => {
     try {
+      // Make the API request to delete the status from the project
       return await axios.delete<NormalApiSuccessResponse>(
         `/project/${projectId}/status/${statusId}/delete`,
       );
@@ -498,8 +607,21 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * deleteLabel
+   *
+   * Deletes the specified label from the project.
+   *
+   * @param {RemoveLabelRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project from which the label is deleted.
+   * @param {number} request.labelId - ID of the label to be deleted.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   deleteLabel: async ({ projectId, labelId }: RemoveLabelRequest) => {
     try {
+      // Make the API request to delete the label from the project
       return await axios.delete<NormalApiSuccessResponse>(
         `/project/${projectId}/label/${labelId}/delete`,
       );
@@ -508,13 +630,26 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * updateStatus
+   *
+   * Updates the specified status for the project.
+   *
+   * @param {UpdateStatusRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project for which the status is updated.
+   * @param {number} request.statusId - ID of the status to be updated.
+   * @param {...any} request.props - Additional properties for updating the status.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   updateStatus: async ({
     projectId,
     statusId,
     ...props
   }: UpdateStatusRequest): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
     try {
-      // Make the API request to get all projects
+      // Make the API request to update the status for the project
       const response = await axios.patch<NormalApiSuccessResponse>(
         `/project/${projectId}/status/${statusId}/update`,
         props,
@@ -527,13 +662,26 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * updateLabel
+   *
+   * Updates the specified label for the project.
+   *
+   * @param {UpdateLabelRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project for which the label is updated.
+   * @param {number} request.labelId - ID of the label to be updated.
+   * @param {...any} request.props - Additional properties for updating the label.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   updateLabel: async ({
     projectId,
     labelId,
     ...props
   }: UpdateLabelRequest): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
     try {
-      // Make the API request to get all projects
+      // Make the API request to update the label for the project
       const response = await axios.patch<NormalApiSuccessResponse>(
         `/project/${projectId}/label/${labelId}/update`,
         props,
@@ -546,6 +694,18 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * getProjectLabels
+   *
+   * Retrieves labels for the specified project.
+   *
+   * @param {GetProjectLabelsRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project for which labels are retrieved.
+   * @param {...any} request.props - Additional properties for retrieving project labels.
+   * @returns {Promise<AxiosResponse<GetProjectLabelsResponse>>} Promise that resolves to the response containing project labels.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   getProjectLabels: async ({
     projectId,
     ...props
@@ -553,6 +713,7 @@ const projectServices = {
     AxiosResponse<GetProjectLabelsResponse>
   > => {
     try {
+      // Make the API request to get labels for the project
       return await axios.post<GetProjectLabelsResponse>(
         `/project/${projectId}/labels`,
         { ...props },
@@ -562,6 +723,18 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * getProjectStatuses
+   *
+   * Retrieves statuses for the specified project.
+   *
+   * @param {GetProjectStatusesRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project for which statuses are retrieved.
+   * @param {...any} request.props - Additional properties for retrieving project statuses.
+   * @returns {Promise<AxiosResponse<GetProjectStatusesResponse>>} Promise that resolves to the response containing project statuses.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   getProjectStatuses: async ({
     projectId,
     ...props
@@ -569,6 +742,7 @@ const projectServices = {
     AxiosResponse<GetProjectStatusesResponse>
   > => {
     try {
+      // Make the API request to get statuses for the project
       return await axios.post<GetProjectStatusesResponse>(
         `/project/${projectId}/statuses`,
         { ...props },
@@ -578,29 +752,81 @@ const projectServices = {
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * acceptInvitation
+   *
+   * Accepts an invitation to join the specified project.
+   *
+   * @param {AcceptInvitationRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project for which the invitation is accepted.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   acceptInvitation: async ({
     projectId,
   }: {
     projectId: number;
   }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
     try {
+      // Make the API request to accept the project invitation
       return await axios.patch<NormalApiSuccessResponse>(
         `/project/${projectId}/invitation/accept`,
       );
     } catch (error) {
+      // Throw a custom error using a helper function
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },
+
+  /**
+   * rejectInvitation
+   *
+   * Rejects an invitation to join the specified project.
+   *
+   * @param {RejectInvitationRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project for which the invitation is rejected.
+   * @returns {Promise<AxiosResponse<NormalApiSuccessResponse>>} Promise that resolves to the response indicating success.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
   rejectInvitation: async ({
     projectId,
   }: {
     projectId: number;
   }): Promise<AxiosResponse<NormalApiSuccessResponse>> => {
     try {
+      // Make the API request to reject the project invitation
       return await axios.patch<NormalApiSuccessResponse>(
         `/project/${projectId}/invitation/reject`,
       );
     } catch (error) {
+      // Throw a custom error using a helper function
+      throw generalFunctions.customError(error as AxiosError<ApiError>);
+    }
+  },
+
+  /**
+   * getProjectPermission
+   *
+   * Retrieves the project permission for the authenticated user.
+   *
+   * @param {GetProjectPermissionRequest} request - Request object containing parameters for the API call.
+   * @param {number} request.projectId - ID of the project for which the user's permission is retrieved.
+   * @returns {Promise<AxiosResponse<GetPermissionResponse>>} Promise that resolves to the response containing the user's project permission.
+   * @throws {CustomError} Throws a custom error if the API call fails.
+   */
+  getProjectPermission: async ({
+    projectId,
+  }: {
+    projectId: number;
+  }): Promise<AxiosResponse<GetPermissionResponse>> => {
+    try {
+      // Make the API request to get the user's project permission
+      return await axios.get<GetPermissionResponse>(
+        `/project/${projectId}/permission/user`,
+      );
+    } catch (error) {
+      // Throw a custom error using a helper function
       throw generalFunctions.customError(error as AxiosError<ApiError>);
     }
   },

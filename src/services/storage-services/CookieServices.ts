@@ -54,15 +54,33 @@ const cookieServices = {
     }
     return undefined;
   },
+
+  /**
+   * updateUserName
+   *
+   * Updates the username in the user's authentication details stored in cookies.
+   *
+   * @param {string} username - New username to be set.
+   * @returns {AuthContextProps["authDetails"]["user"] | undefined} Updated user details if successful, undefined otherwise.
+   */
   updateUserName: (
     username: string,
   ): AuthContextProps["authDetails"]["user"] | undefined => {
+    // Get existing authentication details from cookies
     const authDetails = cookie.get(authDetailsCookie);
+
+    // Check if authentication details exist
     if (authDetails) {
+      // Create new authentication details with updated username
       const newAuthDetails = { ...authDetails, username };
+
+      // Set updated authentication details in cookies
       cookieServices.setAuthDetails(newAuthDetails);
-      return newAuthDetails;
+
+      // Return the updated user details
+      return newAuthDetails.user;
     }
+    // Return undefined if authentication details are not found
   },
 
   /**

@@ -35,6 +35,7 @@ import RhfLabelAutocomplete from "../../common/textfield/autocomplete/label-auto
 import { colors as Colors } from "../../../utils/helpers/configs/Colors";
 import { taskCardStyle } from "./Style";
 import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
+import { useComponentPermissionContext } from "../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
 
 // Functional component for rendering the Task Card
 const TaskCardComponent: React.FC = () => {
@@ -64,6 +65,7 @@ const TaskCardComponent: React.FC = () => {
     dropHandler,
     removeDragEffect,
   } = useTaskComponent();
+  const { componentPermission } = useComponentPermissionContext();
   // Media query
   const matches = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
@@ -109,6 +111,14 @@ const TaskCardComponent: React.FC = () => {
     />
   );
   const style = taskCardStyle;
+  const addTaskPermission = componentPermission["addNewTask"]?.permitted;
+  const viewTaskPermission = componentPermission["viewTask"]?.permitted;
+  const deleteTaskPermission = componentPermission["deleteTask"]?.permitted;
+  const updateTaskPermission = componentPermission["updateTask"]?.permitted;
+  const addStatusPermission = componentPermission["addNewStatus"]?.permitted;
+  const updateStatusPermission = componentPermission["updateStatus"]?.permitted;
+  const deleteStatusPermission = componentPermission["deleteStatus"]?.permitted;
+
   return (
     <Grid container spacing={2}>
       {/* Search and Label Filter Section */}
@@ -201,9 +211,11 @@ const TaskCardComponent: React.FC = () => {
                   />
                 </Box>
                 {/* Menu button for status actions */}
-                <IconButton onClick={(e) => handleOpenStatusMenu(e, status)}>
-                  <MoreHoriz />
-                </IconButton>
+                {(updateStatusPermission || deleteStatusPermission) && (
+                  <IconButton onClick={(e) => handleOpenStatusMenu(e, status)}>
+                    <MoreHoriz />
+                  </IconButton>
+                )}
               </Box>
 
               {/* Task Cards within each status column */}
@@ -220,6 +232,12 @@ const TaskCardComponent: React.FC = () => {
                       key={task.id}
                       sx={{
                         ...style.taskCardStyle,
+                        "&:hover": {
+                          cursor: updateTaskPermission ? "grab" : "auto",
+                        },
+                        "&:active": {
+                          cursor: updateTaskPermission ? "grabbing" : "auto",
+                        },
                         boxShadow: theme.palette.mode === "light" ? 1 : 0,
                         borderColor:
                           activeTask?.id === task.id
@@ -228,18 +246,19 @@ const TaskCardComponent: React.FC = () => {
                       }}
                       elevation={0}
                       component="div"
-                      draggable
+                      draggable={updateTaskPermission}
                       onDragEnd={(event: any) => {
-                        if (event) {
+                        if (event && updateTaskPermission) {
                           event.target.style.border = "initial";
                         }
                       }}
                       onDragStart={(event: any) => {
-                        if (event) {
-                          event.target.style.border = "1.2px solid red";
-                        }
+                        if (updateTaskPermission) {
+                          event &&
+                            (event.target.style.border = "1.2px solid red");
 
-                        dragHandler(task, status);
+                          dragHandler(task, status);
+                        }
                       }}
                     >
                       {/* Task Details Section */}
@@ -260,20 +279,31 @@ const TaskCardComponent: React.FC = () => {
                             }}
                           />
                         </Box>
-                        <IconButton
-                          size="small"
-                          onClick={(e) =>
-                            handleOpenTaskMenu(e, task.id, status)
-                          }
-                        >
-                          <MoreVert fontSize="small" />
-                        </IconButton>
+                        {deleteTaskPermission && (
+                          <IconButton
+                            size="small"
+                            onClick={(e) =>
+                              handleOpenTaskMenu(e, task.id, status)
+                            }
+                          >
+                            <MoreVert fontSize="small" />
+                          </IconButton>
+                        )}
                       </Box>
                       <Typography
-                        sx={style.taskTitle}
-                        onClick={() =>
-                          navigate(routes.tasks.path.concat(task.id.toString()))
-                        }
+                        sx={{
+                          ...style.taskTitle,
+                          ":hover": {
+                            color: viewTaskPermission ? "Highlight" : "none",
+                            cursor: viewTaskPermission ? "pointer" : "auto",
+                          },
+                        }}
+                        onClick={() => {
+                          if (viewTaskPermission)
+                            navigate(
+                              routes.tasks.path.concat(task.id.toString()),
+                            );
+                        }}
                         title={task.task}
                       >
                         {task.task}
@@ -301,19 +331,23 @@ const TaskCardComponent: React.FC = () => {
                   );
                 })}
               </Box>
-              <Button
-                variant="outlined"
-                onClick={() => handleCreateTask(status)}
-              >
-                New Task
-              </Button>
+              {addTaskPermission && (
+                <Button
+                  variant="outlined"
+                  onClick={() => handleCreateTask(status)}
+                >
+                  New Task
+                </Button>
+              )}
             </Card>
           );
         })}
         {/* Button for adding a new status column */}
-        <ToggleButton value="new-column" onClick={handleAddNewStatus}>
-          <Add />
-        </ToggleButton>
+        {addStatusPermission && (
+          <ToggleButton value="new-column" onClick={handleAddNewStatus}>
+            <Add />
+          </ToggleButton>
+        )}
       </Grid>
 
       {/* Context Menus for Status and Task Actions */}
@@ -333,12 +367,16 @@ const TaskCardComponent: React.FC = () => {
         onClose={handleCloseStatusMenu}
       >
         {/* Menu items for status actions */}
-        <MenuItem onClick={() => handleCloseStatusMenu("Manage status")}>
-          Manage status
-        </MenuItem>
-        <MenuItem onClick={() => handleCloseStatusMenu("Delete status")}>
-          Delete status
-        </MenuItem>
+        {componentPermission["updateStatus"]?.permitted && (
+          <MenuItem onClick={() => handleCloseStatusMenu("Manage status")}>
+            Manage status
+          </MenuItem>
+        )}
+        {componentPermission["deleteStatus"]?.permitted && (
+          <MenuItem onClick={() => handleCloseStatusMenu("Delete status")}>
+            Delete status
+          </MenuItem>
+        )}
       </Menu>
       <Menu
         open={Boolean(anchorElTaskMenu)}

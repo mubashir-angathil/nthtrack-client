@@ -33,12 +33,6 @@ export const taskCardStyle = {
     p: 2,
     mb: 1,
     border: 1,
-    "&:hover": {
-      cursor: "grab",
-    },
-    "&:active": {
-      cursor: "grabbing",
-    },
   },
   taskTitle: {
     lineHeight: 1.5,
@@ -47,9 +41,6 @@ export const taskCardStyle = {
     textOverflow: "ellipsis",
     overflow: "hidden",
     cursor: "pointer",
-    ":hover": {
-      color: "Highlight",
-    },
   },
   additionalAvatar: {
     additionalAvatar: {

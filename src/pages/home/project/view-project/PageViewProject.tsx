@@ -24,8 +24,8 @@ import { FC } from "react";
 import { useViewProject } from "./Helper";
 import AvatarComponent from "../../../../components/common/avatar/AvatarComponent";
 
-import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
 import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
+import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
 
 /**
  * Functional component representing the view of a project page.
@@ -37,6 +37,7 @@ const PageViewProject: FC = () => {
     project,
     open,
     anchorEl,
+    componentPermission,
     handleMenuClose,
     handleMenuOpen,
     handleSettingsNavigation,
@@ -46,6 +47,19 @@ const PageViewProject: FC = () => {
 
   // Media query
   const matches = useMediaQuery("(min-width:600px)");
+
+  // Extracted permissions from componentPermission object
+  const updateProjectPermission =
+    componentPermission["updateProject"]?.permitted;
+  const viewTasksPermission = componentPermission["viewTasks"]?.permitted;
+  const viewMembersPermission = componentPermission["viewMembers"]?.permitted;
+  const viewLabelsPermission = componentPermission["viewLabels"]?.permitted;
+  const viewStatusesPermission = componentPermission["viewStatuses"]?.permitted;
+
+  // Combined settings permission based on individual permissions
+  const settingsPermission =
+    viewLabelsPermission || viewMembersPermission || viewStatusesPermission;
+
   return (
     <Grid container spacing={2} display="flex">
       {/* Project Details Section */}
@@ -64,20 +78,24 @@ const PageViewProject: FC = () => {
           {project &&
             (matches ? (
               <ButtonGroup>
-                <Button
-                  endIcon={<Update />}
-                  color="inherit"
-                  onClick={handleUpdateProject}
-                >
-                  Update
-                </Button>
-                <Button
-                  endIcon={<Settings />}
-                  color="inherit"
-                  onClick={handleSettingsNavigation}
-                >
-                  Settings
-                </Button>
+                {updateProjectPermission && (
+                  <Button
+                    endIcon={<Update />}
+                    color="inherit"
+                    onClick={handleUpdateProject}
+                  >
+                    Update
+                  </Button>
+                )}
+                {settingsPermission && (
+                  <Button
+                    endIcon={<Settings />}
+                    color="inherit"
+                    onClick={handleSettingsNavigation}
+                  >
+                    Settings
+                  </Button>
+                )}
               </ButtonGroup>
             ) : (
               <IconButton
@@ -164,7 +182,7 @@ const PageViewProject: FC = () => {
       {/* Task Cards Section */}
       <Grid item xs={12} display="flex">
         {/* Include TaskCardComponent */}
-        <TaskCardComponent />
+        {viewTasksPermission && <TaskCardComponent />}
       </Grid>
       <Menu
         id="long-menu"
@@ -175,22 +193,26 @@ const PageViewProject: FC = () => {
         open={open}
         onClose={handleMenuClose}
       >
-        <MenuItem
-          onClick={() => {
-            handleMenuClose();
-            handleUpdateProject();
-          }}
-        >
-          Update
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleMenuClose();
-            handleSettingsNavigation();
-          }}
-        >
-          Settings
-        </MenuItem>
+        {updateProjectPermission && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              handleUpdateProject();
+            }}
+          >
+            Update
+          </MenuItem>
+        )}
+        {settingsPermission && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              handleSettingsNavigation();
+            }}
+          >
+            Settings
+          </MenuItem>
+        )}
       </Menu>
     </Grid>
   );

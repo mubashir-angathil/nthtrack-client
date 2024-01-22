@@ -8,10 +8,10 @@ export interface RefreshContextProps {
 
 // Defining the properties of the refresh state
 interface RefreshProps {
-  reload: boolean; // A boolean property indicating whether to trigger a reload
+  reload?: boolean; // A boolean property indicating whether to trigger a reload
 }
 
 // Initial state for the refresh context
 export const initialRefreshState: RefreshProps = {
-  reload: false, // Initial value for the reload property
+  reload: undefined, // Initial value for the reload property
 };

@@ -17,6 +17,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { FC } from "react";
 import { useManageProjectLabels } from "./Helper";
 import { Edit } from "@mui/icons-material";
+import { useComponentPermissionContext } from "../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
 
 // Function Component for Managing Project labels
 const ProjectLabelTableComponent: FC = () => {
@@ -29,6 +30,12 @@ const ProjectLabelTableComponent: FC = () => {
     handleChangePage,
     handleChangeRowsPerPage,
   } = useManageProjectLabels();
+  const { componentPermission } = useComponentPermissionContext();
+
+  // Extracting permissions for label management from the componentPermission context
+  const addLabelPermission = componentPermission["addNewLabel"]?.permitted;
+  const updateLabelPermission = componentPermission["updateLabel"]?.permitted;
+  const deleteLabelPermission = componentPermission["deleteLabel"]?.permitted;
 
   return (
     <TableContainer component={Paper}>
@@ -41,14 +48,16 @@ const ProjectLabelTableComponent: FC = () => {
       >
         <Typography variant="h4">Labels</Typography>
         {/* Button to add a new label */}
-        <Button
-          variant="contained"
-          sx={{ fontSize: 12 }}
-          size="small"
-          onClick={handleCreateLabel}
-        >
-          New Label
-        </Button>
+        {addLabelPermission && (
+          <Button
+            variant="contained"
+            sx={{ fontSize: 12 }}
+            size="small"
+            onClick={handleCreateLabel}
+          >
+            New Label
+          </Button>
+        )}
       </Box>
       <Table sx={{ minWidth: 650 }} aria-label="labels-table">
         {/* Table Header */}
@@ -57,7 +66,9 @@ const ProjectLabelTableComponent: FC = () => {
             <TableCell align="center">Serial No</TableCell>
             <TableCell align="center">ID</TableCell>
             <TableCell align="center">Label</TableCell>
-            <TableCell align="center">Actions</TableCell>
+            {(updateLabelPermission || deleteLabelPermission) && (
+              <TableCell align="center">Actions</TableCell>
+            )}
           </TableRow>
         </TableHead>
 
@@ -79,31 +90,37 @@ const ProjectLabelTableComponent: FC = () => {
               </TableCell>
 
               {/* Delete label Button */}
-              <TableCell align="center">
-                <IconButton
-                  size="small"
-                  aria-label="edit"
-                  onClick={() =>
-                    handleUpdateLabel({
-                      row,
-                    })
-                  }
-                >
-                  <Edit />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  aria-label="delete"
-                  color="error"
-                  onClick={() =>
-                    handleRemoveLabel({
-                      labelId: row.id,
-                    })
-                  }
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </TableCell>
+              {(updateLabelPermission || deleteLabelPermission) && (
+                <TableCell align="center">
+                  {updateLabelPermission && (
+                    <IconButton
+                      size="small"
+                      aria-label="edit"
+                      onClick={() =>
+                        handleUpdateLabel({
+                          row,
+                        })
+                      }
+                    >
+                      <Edit />
+                    </IconButton>
+                  )}
+                  {deleteLabelPermission && (
+                    <IconButton
+                      size="small"
+                      aria-label="delete"
+                      color="error"
+                      onClick={() =>
+                        handleRemoveLabel({
+                          labelId: row.id,
+                        })
+                      }
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
