@@ -18,7 +18,7 @@ const localStorageServices = {
    *
    * @returns {object | null} Theme mode if found, null otherwise.
    */
-  getTheme: (): object | null => {
+  getTheme: (): { mode: "dark" | "light" } | null => {
     const mode = localStorage.getItem(theme);
     return mode ? JSON.parse(mode) : null;
   },
