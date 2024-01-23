@@ -4,7 +4,7 @@ import projectServices from "../../../../services/project-services/ProjectServic
 import { ApiError } from "../../../../services/Helper";
 import { GetTaskByIdResponse } from "../../../../services/project-services/Helper";
 import { enqueueSnackbar } from "notistack";
-import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
+import { useGeneralHooks } from "../../../../utils/helpers/hooks/Hooks";
 
 export interface ManageTaskProps {
   type: "create" | "update";
@@ -12,6 +12,7 @@ export interface ManageTaskProps {
 
 export const useUpdateTask = ({ type }: ManageTaskProps) => {
   const params: Params = useParams();
+  const { customNavigate } = useGeneralHooks();
   const [ids] = useState<{ taskId: number; projectId: number }>({
     taskId: params.taskId ? parseInt(params.taskId) : 0,
     projectId: params.projectId ? parseInt(params.projectId) : 0,
@@ -51,7 +52,7 @@ export const useUpdateTask = ({ type }: ManageTaskProps) => {
 
   useEffect(() => {
     if ((ids.taskId === 0 || ids.projectId === 0) && type === "update")
-      return generalFunctions.goBack();
+      return customNavigate("Backward");
     else if (type === "update") fetchTaskById();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ids.taskId]);

@@ -8,3 +8,9 @@ export interface CustomButtonComponentProps {
   disabled?: boolean;
   fullWidth?: boolean;
 }
+
+export interface GoogleAuthButtonProps {
+  children: string;
+  onClick: () => void;
+  sx?: SxProps;
+}

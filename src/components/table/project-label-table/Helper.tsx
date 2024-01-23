@@ -18,6 +18,7 @@ import { ApiError } from "../../../services/Helper";
 import { enqueueSnackbar } from "notistack";
 import { useModalContext } from "../../../utils/helpers/context/modal-context/ModalContext";
 import ManageLabelForm from "../../form/manage-label/ManageLabelForm";
+import { useRefreshContext } from "../../../utils/helpers/context/refresh-context/RefreshContext";
 
 // Defining the interface for table data
 interface TableData extends ApiRequestWithPaginationAndSearch {
@@ -30,7 +31,9 @@ export const useManageProjectLabels = () => {
   const { handleCloseAlert } = useAlert();
   const { setModal } = useModalContext();
   const { project } = useProjectContext();
+  const { refresh } = useRefreshContext();
 
+  const [initialRender, setInitialRender] = useState<boolean>();
   const [tableLoading, setTableLoading] = useState<boolean | undefined>(
     undefined,
   );
@@ -193,6 +196,21 @@ export const useManageProjectLabels = () => {
       ]);
     }
   }, [tableLoading]);
+
+  // useEffect to handle component initialization and table loading on refresh
+  useEffect(() => {
+    // Check if refresh is not triggered and it's the initial render
+    if (refresh.reload === false && initialRender === undefined) {
+      setInitialRender(false); // Marking initial render as complete
+    }
+
+    // Check if refresh is triggered and it's not the initial render
+    if (refresh.reload && !initialRender) {
+      setTableLoading((prevState) =>
+        prevState === undefined ? true : !prevState,
+      ); // Toggle table loading state
+    }
+  }, [refresh]);
 
   return {
     tableConfig,

@@ -1,3 +1,4 @@
+import { useGoogleLogin } from "@react-oauth/google";
 import authenticationServices from "../../services/auth-services/AuthServices";
 import { SubmitHandler } from "react-hook-form";
 import { InferType, object, string } from "yup";
@@ -17,6 +18,7 @@ export const signUpFormSchema = object({
   email: string().email().required(),
   password: string().min(4).required(),
   confirmPassword: string().min(4).required(),
+  picture: string().url(),
 }).required();
 
 // Define the type for the form inputs based on the schema
@@ -28,15 +30,16 @@ export const useSignUp = () => {
   const [isVisiblePassword, setIsVisiblePassword] = useState<boolean>(false);
 
   // Initialize the React Hook Form with validation resolver and default values
-  const { handleSubmit, control, setError } = useForm<SignUpFormInputs>({
-    resolver: yupResolver(signUpFormSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
+  const { handleSubmit, control, setError, setValue } =
+    useForm<SignUpFormInputs>({
+      resolver: yupResolver(signUpFormSchema),
+      defaultValues: {
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      },
+    });
   const {
     setAuthDetails,
     authDetails: { auth },
@@ -60,6 +63,7 @@ export const useSignUp = () => {
         username: generalFunctions.capitalizeString(props.username),
         email: props.email,
         password: props.password,
+        picture: props?.picture,
       });
 
       // If sign-up is successful, set authentication details in cookies
@@ -82,6 +86,31 @@ export const useSignUp = () => {
     }
   };
 
+  // Use Google login hook from @react-oauth/google
+  const doGoogleSignUp = useGoogleLogin({
+    // Handle successful Google login
+    onSuccess: async (response) => {
+      try {
+        // Get user information from the server
+        const userInfo = await authenticationServices.googleAuth(
+          response.access_token,
+        );
+
+        // If user information is available, store it and navigate to the home page
+        if (userInfo) {
+          setValue("username", userInfo.name);
+          setValue("email", userInfo.email);
+          if (userInfo?.picture) setValue("picture", userInfo.picture);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   useEffect(() => {
     if (auth)
       if (location.state) {
@@ -101,5 +130,6 @@ export const useSignUp = () => {
     control,
     handleSubmit,
     onSubmit,
+    doGoogleSignUp,
   };
 };

@@ -1,7 +1,7 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import PageHome from "../../../pages/home/PageHome";
 import PageTaskView from "../../../pages/home/task/PageTaskView";
 import PageProjects from "../../../pages/home/project/PageProjects";
-import PageViewProject from "../../../pages/home/project/view-project/PageViewProject";
 import { PageAuthentication } from "../../../pages/public/authentication/PageAuthentication";
 import { RouteConfigsType } from "./Helper";
 import PageTeamProjects from "../../../pages/home/team/project/PageTeamProjects";
@@ -10,13 +10,19 @@ import PageManageTask from "../../../pages/home/task/manage-task/PageManageTask"
 import PageProjectSettings from "../../../pages/home/project/settings/PageProjectSettings";
 import PageProfile from "../../../pages/home/profile/PageProfile";
 import PageNotification from "../../../pages/home/notification/PageNotification";
+import { CLIENT_ID } from "../configs/Configs";
+import PageViewProject from "../../../pages/home/project/view-project/PageViewProject";
 
 // Define your routes using the RouteConfigsType
 const routes: RouteConfigsType = {
   // Authentication Route
   authentication: {
     path: "/",
-    element: <PageAuthentication />, // React component to render
+    element: (
+      <GoogleOAuthProvider clientId={CLIENT_ID}>
+        <PageAuthentication />
+      </GoogleOAuthProvider>
+    ), // React component to render
   },
 
   // Home Route

@@ -11,8 +11,6 @@ import { useDialogContext } from "../../../utils/helpers/context/dialog-context/
 import { DialogContextProps } from "../../../utils/helpers/context/dialog-context/Helper";
 import ManageProjectForm from "../../../components/form/manage-project/ManageProjectForm";
 import { enqueueSnackbar } from "notistack";
-import dataServices from "../../../services/data-services/DataServices";
-import { Teams } from "../../../services/data-services/Helper";
 import routes from "../../../utils/helpers/routes/Routes";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
@@ -32,7 +30,6 @@ export const useProjects = () => {
   const navigate: NavigateFunction = useNavigate();
   // State for storing projects and API configuration
   const [projects, setProjects] = useState<ProjectsResponse["data"]>([]);
-  const [teams, setTeams] = useState<Teams["data"]>([]);
   const [apiConfig, setApiConfig] = useState<ApiConfig>(
     initialApiConfiguration,
   );
@@ -117,34 +114,6 @@ export const useProjects = () => {
     }
   };
 
-  // Function to fetch teams from the API
-  const fetchTeams = async () => {
-    try {
-      // Call the API to get projects based on the current API configuration
-      const response = await dataServices.getTeams();
-      const {
-        status,
-        data: { data, message, success },
-      } = response;
-
-      // If the API call is successful, update projects and API configuration
-      if (status === 200 && success) {
-        setTeams(data);
-      } else {
-        // If there's an error, log the error message
-        throw { data: message };
-      }
-    } catch (error) {
-      // Handle API errors
-      const { data } = error as ApiError;
-
-      enqueueSnackbar({
-        message: data?.message,
-        variant: "error",
-      });
-    }
-  };
-
   const handleCreateProject = () => {
     if (routes.projects.create?.path) {
       navigate(routes.projects.create?.path);
@@ -179,15 +148,9 @@ export const useProjects = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiConfig.page, apiConfig.searchKey]);
 
-  useLayoutEffect(() => {
-    sessionStorage.removeItem("project");
-    fetchTeams();
-  }, []);
-
   // Return the necessary values and functions for component usage
   return {
     dialog,
-    teams,
     setDialog,
     apiConfig,
     projects,

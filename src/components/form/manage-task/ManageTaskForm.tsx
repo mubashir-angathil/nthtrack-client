@@ -8,6 +8,7 @@ import { ManageTaskFormProps, useManageTask } from "./Helper";
 import RhfMultiUsersAutocomplete from "../../common/textfield/autocomplete/multi-autocomplete/RhfMultiUsersAutocomplete";
 import RhfTextfieldComponent from "../../common/textfield/RhfTextFieldComponent";
 import RhfLabelAutocomplete from "../../common/textfield/autocomplete/label-autocomplete/RhfLabelAutocomplete";
+import { useComponentPermissionContext } from "../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
 
 // Functional component for managing task form
 const ManageTaskForm: FC<ManageTaskFormProps> = ({
@@ -26,28 +27,45 @@ const ManageTaskForm: FC<ManageTaskFormProps> = ({
     handleSubmit,
     onSubmit,
   } = useManageTask({ values, activeStatus, setTasks, setRefresh });
+  const { componentPermission } = useComponentPermissionContext();
+
+  // Extracting updateLabel permission status from componentPermission
+  const updateLabelPermission = componentPermission["updateLabel"]?.permitted;
+
+  // Extracting createLabel permission status from componentPermission
+  const createLabelPermission = componentPermission["addNewLabel"]?.permitted;
+
+  // Determine the visibility of the label field based on permissions and values
+  // If values exist, use updateLabelPermission; otherwise, use createLabelPermission
+  const isVisibleLabelField = values
+    ? updateLabelPermission
+    : createLabelPermission;
 
   // Rendering the task form
   return (
     <Box
       component="form"
       display="flex"
-      p={2}
+      paddingInline={{ md: 1, xs: 0 }}
       onSubmit={handleSubmit(onSubmit)}
     >
       <Grid container spacing={2}>
         <Grid item xs={12} gap={2}>
           {/* Form helper text for label */}
-          <FormHelperText sx={{ fontSize: 15 }}>Label *</FormHelperText>
-          {/* Label autocomplete component */}
-          <RhfLabelAutocomplete
-            control={control}
-            name="labelId"
-            size="small"
-            required
-            defaultValue={values?.label}
-            label=""
-          />
+          {isVisibleLabelField && (
+            <>
+              <FormHelperText sx={{ fontSize: 15 }}>Label *</FormHelperText>
+              {/* Label autocomplete component */}
+              <RhfLabelAutocomplete
+                control={control}
+                name="labelId"
+                size="small"
+                required
+                defaultValue={values?.label}
+                label=""
+              />
+            </>
+          )}
           {/* Form helper text for task */}
           <FormHelperText sx={{ fontSize: 15 }}>Task *</FormHelperText>
           {/* Textfield component for entering task */}
@@ -71,7 +89,7 @@ const ManageTaskForm: FC<ManageTaskFormProps> = ({
             apiDetails={assigneesApiDetails}
           />
         </Grid>
-        <Grid item md={10} xs={12}>
+        <Grid item xs={12}>
           {/* Box for displaying buttons with close and submit actions */}
           <Box display="flex" justifyContent="end" columnGap={1}>
             {/* Button for closing the dialog */}

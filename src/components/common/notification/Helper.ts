@@ -5,6 +5,7 @@ import { socket } from "../../../services/api-instance/Instance";
 import useSocketHelpers from "../../../socket/Socket";
 import { useAuthContext } from "../../../utils/helpers/context/auth-context/AuthContext";
 import { usePushNotificationContext } from "../../../utils/helpers/context/push-notification-context/PushNotificationContext";
+import { useRefreshContext } from "../../../utils/helpers/context/refresh-context/RefreshContext";
 
 // Custom hook for notification component
 export const useNotifications = () => {
@@ -15,6 +16,11 @@ export const useNotifications = () => {
   const { authDetails } = useAuthContext();
   const { pushNotification, setPushNotification } =
     usePushNotificationContext();
+  const { setRefresh } = useRefreshContext();
+
+  // Track initial render
+  const [isInitialRender, setIsInitialRender] = useState(true);
+
   // Define function to handle menu opening
   const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNotifications(event.currentTarget);
@@ -59,15 +65,24 @@ export const useNotifications = () => {
             ? prevNotificationCount.count + notificationCount
             : prevNotificationCount.count + 1;
 
+        // Trigger refresh only after the initial render
+        if (!isInitialRender) {
+          setRefresh({ reload: newNotificationCount > 0 ? false : undefined });
+        }
+
         return {
           count: newNotificationCount,
         };
       });
+
+      // Update initial render status after the first update
+      setIsInitialRender(false);
     });
+
     return () => {
       socket.off("push-notifications");
     };
-  }, [socket]);
+  }, [socket, isInitialRender]);
 
   return {
     pushNotification,

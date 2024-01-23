@@ -1,10 +1,10 @@
 import React from "react";
-import { Box, Button, FormControl, IconButton, useTheme } from "@mui/material";
+import { Box, FormControl, IconButton } from "@mui/material";
 import SubmitButtonComponent from "../common/buttons/SubmitButtonComponent";
 import { useSignIn } from "./Helper";
 import RhfTextfieldComponent from "../common/textfield/RhfTextFieldComponent";
 import { Lock, Person, Visibility, VisibilityOff } from "@mui/icons-material";
-import GoogleSvg from "../../assets/google.svg";
+import GoogleAuthButtonComponent from "../common/buttons/GoogleAuthButtonComponent";
 /**
  * SignInFormComponent
  *
@@ -28,8 +28,8 @@ const SignInFormComponent: React.FC = () => {
     setIsVisible,
     handleSubmit,
     onSubmit,
+    doGoogleSignIn,
   } = useSignIn();
-  const theme = useTheme();
   return (
     <Box
       component="form"
@@ -39,10 +39,8 @@ const SignInFormComponent: React.FC = () => {
       onSubmit={handleSubmit(onSubmit)}
       sx={{
         "& .MuiOutlinedInput-root": {
-          // background: colors.grey[700],
           height: "45px",
           borderRadius: 5,
-          // color: "white",
         },
       }}
     >
@@ -89,19 +87,9 @@ const SignInFormComponent: React.FC = () => {
         sx={{ mt: 1, height: "40px", borderRadius: 5, boxShadow: 0 }}
         loading={isLoading}
       />
-      <Button
-        sx={{
-          height: "40px",
-          background:
-            theme.palette.mode === "light" ? "rgba(0,0,0,0.05)" : "white",
-          color: "black",
-          borderRadius: 5,
-        }}
-        variant="outlined"
-        startIcon={<img src={GoogleSvg} width={28} height={28} />}
-      >
-        Sign in with google
-      </Button>
+      <GoogleAuthButtonComponent onClick={() => doGoogleSignIn()}>
+        Google sign in
+      </GoogleAuthButtonComponent>
     </Box>
   );
 };

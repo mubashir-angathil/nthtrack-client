@@ -1,6 +1,7 @@
 import { AxiosError, AxiosResponse } from "axios";
 import { ApiError, ApiResponse } from "../../../services/Helper";
 import { UseFormSetError } from "react-hook-form";
+import { labelColors } from "../configs/Colors";
 
 /**
  * General Functions Module
@@ -132,6 +133,13 @@ const generalFunctions = {
         })
       );
     }
+  },
+  getColor: (index?: number) => {
+    const currentColor = index
+      ? Object.values(labelColors).at(index)
+      : "51, 171, 5";
+
+    return `rgb(${currentColor})`;
   },
 };
 

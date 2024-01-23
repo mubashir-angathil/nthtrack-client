@@ -12,7 +12,12 @@ const ManageProjectMember: FC<{
   const { control, handleDialogClose, handleSubmit, onSubmit } =
     useManageProjectMember(refresh);
   return (
-    <Stack gap={1} p={2} component="form" onSubmit={handleSubmit(onSubmit)}>
+    <Stack
+      gap={1}
+      p={{ md: 2 }}
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <AsynchronousRhfAutocomplete
         control={control}
         name="userId"
@@ -21,7 +26,7 @@ const ManageProjectMember: FC<{
         apiDetails={{
           api: dataServices.getUsers,
         }}
-        sx={{ minWidth: 300 }}
+        sx={{ minWidth: { xs: 230, md: 300 } }}
       />
       <RhfSelectComponent
         control={control}
@@ -32,7 +37,13 @@ const ManageProjectMember: FC<{
           api: dataServices.getPermissions,
         }}
       />
-      <Box display="flex" flexDirection="row" justifyContent="center" gap={1}>
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="center"
+        gap={1}
+        mt={2}
+      >
         <Button
           onClick={handleDialogClose}
           color="error"

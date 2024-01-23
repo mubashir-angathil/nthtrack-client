@@ -9,17 +9,22 @@ import {
   AccordionDetails,
   Divider,
   ButtonGroup,
+  useMediaQuery,
+  Menu,
+  MenuItem,
+  IconButton,
 } from "@mui/material";
 import {
   ExpandMore as ExpandMoreIcon,
+  MoreVert,
   Settings,
   Update,
 } from "@mui/icons-material";
 import { FC } from "react";
 import { useViewProject } from "./Helper";
 import AvatarComponent from "../../../../components/common/avatar/AvatarComponent";
-import routes from "../../../../utils/helpers/routes/Routes";
 
+import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
 import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
 
 /**
@@ -28,8 +33,32 @@ import TaskCardComponent from "../../../../components/card/task-card/TaskCardCom
  */
 const PageViewProject: FC = () => {
   // Destructure values from the custom hook
-  const { project, navigate, projectMembers, handleUpdateProject } =
-    useViewProject();
+  const {
+    project,
+    open,
+    anchorEl,
+    componentPermission,
+    handleMenuClose,
+    handleMenuOpen,
+    handleSettingsNavigation,
+    projectMembers,
+    handleUpdateProject,
+  } = useViewProject();
+
+  // Media query
+  const matches = useMediaQuery("(min-width:600px)");
+
+  // Extracted permissions from componentPermission object
+  const updateProjectPermission =
+    componentPermission["updateProject"]?.permitted;
+  const viewTasksPermission = componentPermission["viewTasks"]?.permitted;
+  const viewMembersPermission = componentPermission["viewMembers"]?.permitted;
+  const viewLabelsPermission = componentPermission["viewLabels"]?.permitted;
+  const viewStatusesPermission = componentPermission["viewStatuses"]?.permitted;
+
+  // Combined settings permission based on individual permissions
+  const settingsPermission =
+    viewLabelsPermission || viewMembersPermission || viewStatusesPermission;
 
   return (
     <Grid container spacing={2} display="flex">
@@ -46,30 +75,40 @@ const PageViewProject: FC = () => {
         )}
         {/* Buttons for project update and settings */}
         <Box>
-          {project && (
-            <ButtonGroup>
-              <Button
-                endIcon={<Update />}
-                color="inherit"
-                onClick={handleUpdateProject}
+          {project &&
+            (matches ? (
+              <ButtonGroup>
+                {updateProjectPermission && (
+                  <Button
+                    endIcon={<Update />}
+                    color="inherit"
+                    onClick={handleUpdateProject}
+                  >
+                    Update
+                  </Button>
+                )}
+                {settingsPermission && (
+                  <Button
+                    endIcon={<Settings />}
+                    color="inherit"
+                    onClick={handleSettingsNavigation}
+                  >
+                    Settings
+                  </Button>
+                )}
+              </ButtonGroup>
+            ) : (
+              <IconButton
+                aria-label="more"
+                id="long-button"
+                aria-controls={open ? "long-menu" : undefined}
+                aria-expanded={open ? "true" : undefined}
+                aria-haspopup="true"
+                onClick={handleMenuOpen}
               >
-                Update
-              </Button>
-              <Button
-                endIcon={<Settings />}
-                color="inherit"
-                onClick={() =>
-                  navigate(routes.projectSettings.path, {
-                    state: {
-                      project: { id: project?.id, name: project?.name },
-                    },
-                  })
-                }
-              >
-                Settings
-              </Button>
-            </ButtonGroup>
-          )}
+                <MoreVert />
+              </IconButton>
+            ))}
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -79,7 +118,7 @@ const PageViewProject: FC = () => {
       <Grid item xs={12} display="flex" columnGap={5}>
         {/* Project Description Section */}
         <Grid item mb={2} xs={12}>
-          <Accordion defaultExpanded>
+          <Accordion defaultExpanded={false}>
             <AccordionSummary
               aria-controls="panel1d-content"
               id="panel1d-header"
@@ -87,48 +126,54 @@ const PageViewProject: FC = () => {
             >
               <Typography variant="h6">Meta data</Typography>
             </AccordionSummary>
-            <AccordionDetails sx={{ display: "flex" }}>
-              <Grid item md={10}>
+            <AccordionDetails>
+              <Grid item xs={12}>
                 {/* Display project description */}
                 <Typography>Description</Typography>
                 <Box
                   dangerouslySetInnerHTML={{
                     __html: project?.description ? project?.description : "",
                   }}
-                  sx={{ overflow: "auto", textAlign: "justify", pr: 2 }}
+                  sx={{ overflow: "auto", textAlign: "justify" }}
                 />
               </Grid>
-              {projectMembers.length > 0 && (
-                // Contributors section
-                <Grid item md={2}>
-                  <Typography variant="subtitle1">Contributors</Typography>
-                  <Box
-                    mt={1}
-                    display="flex"
-                    flexWrap="wrap"
-                    alignItems="center"
-                    sx={{ height: "auto", overflowY: "auto" }}
-                    gap={2}
-                  >
-                    {/* Display contributors */}
-                    {projectMembers.map((profileDetails, index) => {
-                      return (
-                        <Box key={profileDetails.id} pt={index > 0 ? 1 : 0}>
-                          <AvatarComponent
-                            profile
-                            width={28}
-                            height={28}
-                            {...profileDetails}
-                          />
-                          <Typography variant="subtitle2">
-                            {profileDetails.username}
-                          </Typography>
-                        </Box>
-                      );
-                    })}
-                  </Box>
-                </Grid>
-              )}
+              {/* Contributors section */}
+              <Grid item flex={1}>
+                <Typography variant="subtitle1">Contributors</Typography>
+                <Box
+                  mt={1}
+                  display="flex"
+                  alignItems="center"
+                  // justifyContent="center"
+                  flexWrap="wrap"
+                  // sx={{ height: "auto", overflowY: "auto" }}
+                  gap={2}
+                >
+                  {/* Display contributors */}
+                  {projectMembers.map((profileDetails, index) => {
+                    return (
+                      <Box
+                        key={profileDetails.id}
+                        display="flex"
+                        alignItems="center"
+                        flexBasis={130}
+                        gap={1}
+                      >
+                        <AvatarComponent
+                          profile
+                          width={28}
+                          height={28}
+                          color={generalFunctions.getColor(index)}
+                          {...profileDetails}
+                        />
+                        <Typography variant="subtitle2">
+                          {profileDetails.username}
+                        </Typography>
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </Grid>
             </AccordionDetails>
           </Accordion>
         </Grid>
@@ -137,8 +182,38 @@ const PageViewProject: FC = () => {
       {/* Task Cards Section */}
       <Grid item xs={12} display="flex">
         {/* Include TaskCardComponent */}
-        <TaskCardComponent />
+        {viewTasksPermission && <TaskCardComponent />}
       </Grid>
+      <Menu
+        id="long-menu"
+        MenuListProps={{
+          "aria-labelledby": "long-button",
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleMenuClose}
+      >
+        {updateProjectPermission && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              handleUpdateProject();
+            }}
+          >
+            Update
+          </MenuItem>
+        )}
+        {settingsPermission && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              handleSettingsNavigation();
+            }}
+          >
+            Settings
+          </MenuItem>
+        )}
+      </Menu>
     </Grid>
   );
 };

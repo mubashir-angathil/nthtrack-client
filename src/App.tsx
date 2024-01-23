@@ -14,6 +14,9 @@ import GeneralModal from "./components/common/modal/GeneralModal";
 import { useThemeContext } from "./utils/helpers/context/theme-context/ThemeContext";
 import { DrawerContextProvider } from "./utils/helpers/context/drawer-context/DrawerContextProvider";
 import { PushNotificationContextProvider } from "./utils/helpers/context/push-notification-context/PushNotificationContextProvider";
+import { UserPermissionProvider } from "./utils/helpers/context/user-permission-context/UserPermissionContextProvider";
+import { RefreshContextProvider } from "./utils/helpers/context/refresh-context/RefreshContextProvider";
+import { ComponentPermissionContextProvider } from "./utils/helpers/context/component-permission-context/ComponentPermissionContextProvider";
 
 const App: React.FC = () => {
   const { theme } = useThemeContext();
@@ -27,7 +30,7 @@ const App: React.FC = () => {
           maxSnack={3}
           action={(snackbarId) => (
             <IconButton size="small" onClick={() => closeSnackbar(snackbarId)}>
-              <Close sx={{ color: "white" }} />
+              <Close fontSize="small" sx={{ color: "white" }} />
             </IconButton>
           )}
           anchorOrigin={{
@@ -35,102 +38,130 @@ const App: React.FC = () => {
             vertical: "bottom",
           }}
         >
-          <PushNotificationContextProvider>
-            <ProjectContextProvider>
-              <AlertContextProvider>
-                <ModalContextProvider>
-                  <DialogContextProvider>
-                    <DrawerContextProvider>
-                      <Routes>
-                        <Route index element={routes.authentication.element} />
-                        <Route
-                          path={routes.home.path}
-                          element={routes.home.default}
-                        >
-                          <Route index element={routes.home.element} />
-                          <Route
-                            path={routes.profile.path}
-                            element={routes.profile.element}
-                          />
-                          <Route
-                            path={routes.notification.path}
-                            element={routes.notification.element}
-                          />
-                          <Route
-                            path={routes.projects.create?.path}
-                            element={routes.projects.create?.element}
-                          />
-                          <Route
-                            path={routes.projects.path.concat(":projectId")}
-                          >
-                            <Route index element={routes.projects.element} />
-                            <Route
-                              path={routes.projectSettings.path}
-                              element={routes.projectSettings.element}
-                            />
-                            <Route
-                              path={routes.projects.update?.path}
-                              element={routes.projects.update?.element}
-                            />
-                            <Route path={routes.tasks.path}>
-                              <Route path=":taskId">
-                                <Route index element={routes.tasks.element} />
+          <RefreshContextProvider>
+            <PushNotificationContextProvider>
+              <ProjectContextProvider>
+                <ComponentPermissionContextProvider>
+                  <UserPermissionProvider>
+                    <AlertContextProvider>
+                      <ModalContextProvider>
+                        <DialogContextProvider>
+                          <DrawerContextProvider>
+                            <Routes>
+                              <Route
+                                index
+                                element={routes.authentication.element}
+                              />
+                              <Route
+                                path={routes.home.path}
+                                element={routes.home.default}
+                              >
+                                <Route index element={routes.home.element} />
                                 <Route
-                                  path={routes.tasks.update?.path}
-                                  element={routes.tasks.update?.element}
+                                  path={routes.profile.path}
+                                  element={routes.profile.element}
                                 />
-                              </Route>
-                              <Route
-                                path={routes.tasks.create?.path}
-                                element={routes.tasks.create?.element}
-                              />
-                            </Route>
-                          </Route>
-                          <Route path={routes.team.path.concat(":team")}>
-                            <Route index element={routes.team.element} />
-                            <Route
-                              path={routes.projects.create?.path}
-                              element={routes.projects.create?.element}
-                            />
-                            <Route
-                              path={routes.projects.path.concat(":projectId")}
-                            >
-                              <Route index element={routes.projects.element} />
-                              <Route
-                                path={routes.projectSettings.path}
-                                element={routes.projectSettings.element}
-                              />
-                              <Route
-                                path={routes.projects.update?.path}
-                                element={routes.projects.update?.element}
-                              />
-                              <Route path={routes.tasks.path}>
-                                <Route path=":taskId">
-                                  <Route index element={routes.tasks.element} />
+                                <Route
+                                  path={routes.notification.path}
+                                  element={routes.notification.element}
+                                />
+                                <Route
+                                  path={routes.projects.create?.path}
+                                  element={routes.projects.create?.element}
+                                />
+                                <Route
+                                  path={routes.projects.path.concat(
+                                    ":projectId",
+                                  )}
+                                >
                                   <Route
-                                    path={routes.tasks.update?.path}
-                                    element={routes.tasks.update?.element}
+                                    index
+                                    element={routes.projects.element}
                                   />
+                                  <Route
+                                    path={routes.projectSettings.path}
+                                    element={routes.projectSettings.element}
+                                  />
+                                  <Route
+                                    path={routes.projects.update?.path}
+                                    element={routes.projects.update?.element}
+                                  />
+                                  <Route path={routes.tasks.path}>
+                                    <Route path=":taskId">
+                                      <Route
+                                        index
+                                        element={routes.tasks.element}
+                                      />
+                                      <Route
+                                        path={routes.tasks.update?.path}
+                                        element={routes.tasks.update?.element}
+                                      />
+                                    </Route>
+                                    <Route
+                                      path={routes.tasks.create?.path}
+                                      element={routes.tasks.create?.element}
+                                    />
+                                  </Route>
                                 </Route>
-                                <Route
-                                  path={routes.tasks.create?.path}
-                                  element={routes.tasks.create?.element}
-                                />
+                                <Route path={routes.team.path.concat(":team")}>
+                                  <Route index element={routes.team.element} />
+                                  <Route
+                                    path={routes.projects.create?.path}
+                                    element={routes.projects.create?.element}
+                                  />
+                                  <Route
+                                    path={routes.projects.path.concat(
+                                      ":projectId",
+                                    )}
+                                  >
+                                    <Route
+                                      index
+                                      element={routes.projects.element}
+                                    />
+                                    <Route
+                                      path={routes.projectSettings.path}
+                                      element={routes.projectSettings.element}
+                                    />
+                                    <Route
+                                      path={routes.projects.update?.path}
+                                      element={routes.projects.update?.element}
+                                    />
+                                    <Route path={routes.tasks.path}>
+                                      <Route path=":taskId">
+                                        <Route
+                                          index
+                                          element={routes.tasks.element}
+                                        />
+                                        <Route
+                                          path={routes.tasks.update?.path}
+                                          element={routes.tasks.update?.element}
+                                        />
+                                      </Route>
+                                      <Route
+                                        path={routes.tasks.create?.path}
+                                        element={routes.tasks.create?.element}
+                                      />
+                                    </Route>
+                                  </Route>
+                                </Route>
                               </Route>
-                            </Route>
-                          </Route>
-                        </Route>
-                        <Route path="*" element={<h1>Page Not Found</h1>} />
-                      </Routes>
-                      <AlertComponent />
-                      <GeneralDialog />
-                      <GeneralModal />
-                    </DrawerContextProvider>
-                  </DialogContextProvider>
-                </ModalContextProvider>
-              </AlertContextProvider>
-            </ProjectContextProvider>
-          </PushNotificationContextProvider>
+                              <Route
+                                path="*"
+                                element={<h1>Page Not Found</h1>}
+                              />
+                            </Routes>
+                            <AlertComponent />
+                            <GeneralDialog />
+                            <GeneralModal />
+                          </DrawerContextProvider>
+                        </DialogContextProvider>
+                      </ModalContextProvider>
+                    </AlertContextProvider>
+                  </UserPermissionProvider>
+                </ComponentPermissionContextProvider>
+              </ProjectContextProvider>
+            </PushNotificationContextProvider>
+          </RefreshContextProvider>
         </SnackbarProvider>
       </AuthContextProvider>
     </ThemeProvider>

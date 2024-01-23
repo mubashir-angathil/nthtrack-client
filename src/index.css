@@ -55,12 +55,11 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .appear {
   animation: appear 1s forwards;
-  /* scale: 0; */
 }
 
-.alert {
-  animation: alert 1s forwards;
-  scale: 0;
+.profile {
+  animation: profile 1s forwards;
+  transform: translate(-50%, -50%);
 }
 
 .drag-and-drop {
@@ -79,14 +78,14 @@ input[type="search"]::-webkit-search-cancel-button {
   }
 }
 
-@keyframes alert {
+@keyframes profile {
   0%,
   50% {
-    scale: 0;
+    transform: translate(-50%, -50%) scaleX(-1);
   }
 
   50%,
   100% {
-    scale: 1;
+    transform: translate(-50%, -50%);
   }
 }

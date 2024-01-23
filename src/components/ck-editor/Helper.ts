@@ -5,8 +5,8 @@ import {
   Path,
   ControllerRenderProps,
 } from "react-hook-form";
-import { colors } from "../../utils/helpers/configs/Colors";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { useTheme } from "@mui/material";
 
 // Define an interface that extends EditorConfig
 export interface RhfCkEditorProps<TField extends FieldValues> {
@@ -37,6 +37,7 @@ export const editorConfiguration = {
 
 // Custom hook for CKEditor functionality
 export const useCkEditorComponent = () => {
+  const theme = useTheme();
   // Handle editor content blur
   const handleEditorBlur = <TField extends FieldValues>(
     _: any,
@@ -63,7 +64,7 @@ export const useCkEditorComponent = () => {
   const handleEditorOnFocus = (_: any, editor: ClassicEditor) => {
     editor.editing.view.change((writer: any) => {
       writer.setStyle(
-        { border: `2px solid ${colors.primary}` },
+        { border: `2px solid ${theme.palette.primary.main}` },
         editor.editing.view.document.getRoot(),
       );
     });
@@ -75,8 +76,9 @@ export const useCkEditorComponent = () => {
       writer.setStyle(
         {
           height: height ? height : "200px",
-          color: "white",
           "background-color": "transparent",
+          "border-radius": 4,
+          color: theme.palette.mode === "dark" ? "white" : "text.primary",
         },
         editor.editing.view.document.getRoot(),
       );

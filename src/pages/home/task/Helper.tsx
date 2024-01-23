@@ -8,7 +8,6 @@ import {
   StatusInterface,
   UpdateTaskRequest,
 } from "../../../services/project-services/Helper";
-import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
 import { enqueueSnackbar } from "notistack";
 import { useAlertContext } from "../../../utils/helpers/context/alert-context/AlertContext";
 import { useAlert } from "../../../components/common/alert/Helper";
@@ -20,6 +19,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType, array, number, object, string } from "yup";
 import ManageTaskForm from "../../../components/form/manage-task/ManageTaskForm";
 import { useDialogContext } from "../../../utils/helpers/context/dialog-context/DialogContext";
+import { useProjectContextHelpers } from "../../../utils/helpers/context/project-context/Helper";
+import { useGeneralHooks } from "../../../utils/helpers/hooks/Hooks";
+import { useUserPermissionContext } from "../../../utils/helpers/context/user-permission-context/UserPermissionContext";
+import { useComponentPermissionContext } from "../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
+import { usePermissionHook } from "../../../utils/helpers/hooks/ValidatePermission";
+import { permissionJSON } from "../../../utils/helpers/constants/Constants";
 
 interface UpdateTaskInput {
   task?: string;
@@ -46,9 +51,18 @@ export const useTask = () => {
   const { setAlert } = useAlertContext();
   const { setDialog } = useDialogContext();
   const { handleCloseAlert } = useAlert();
+  const { fetchProjectById } = useProjectContextHelpers();
+  const { permission } = useUserPermissionContext();
+  const { componentPermission, setComponentPermission } =
+    useComponentPermissionContext();
+  const { validatePermissionWithPermissionJSON } = usePermissionHook();
+
   const { project } = useProjectContext();
+  const { customNavigate } = useGeneralHooks();
   const [refresh, setRefresh] = useState<boolean>(false);
   const [task, setTask] = useState<GetTaskByIdResponse["data"] | undefined>();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   // Initialize the React Hook Form with validation resolver and default values
   const { control, watch, setValue, reset, resetField } =
@@ -56,6 +70,12 @@ export const useTask = () => {
       resolver: yupResolver(manageTaskFormSchema),
     });
 
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
   const handelSetFormValues = ({
     key,
     value,
@@ -183,7 +203,7 @@ export const useTask = () => {
           message: response.data.message,
           variant: "success",
         });
-        generalFunctions.goBack();
+        customNavigate("Backward");
       } else {
         throw { data: { message: response.data.message } };
       }
@@ -220,6 +240,7 @@ export const useTask = () => {
     }
   };
 
+  // Function to open ManageTaskForm
   const handleTaskFormUpdate = () => {
     setDialog({
       open: true,
@@ -235,14 +256,36 @@ export const useTask = () => {
     const taskId = params?.taskId && parseInt(params.taskId);
     if (project && taskId) {
       fetchTaskById({ projectId: project.id, taskId });
+    } else {
+      if (project === null) {
+        const projectId = params?.projectId && parseInt(params.projectId);
+        projectId && fetchProjectById({ projectId });
+      }
     }
   }, [project, refresh]);
+
+  // useEffect to validate and update component permissions based on the received permission
+  useEffect(() => {
+    // Check if permission is available and component permissions are not set
+    if (permission && Object.entries(componentPermission).length === 0) {
+      // Validate and set component permissions based on permission and permissionJSON
+      const newPermission = validatePermissionWithPermissionJSON({
+        permission: permission.permission.json,
+        permissionJSON,
+      });
+      setComponentPermission(newPermission);
+    }
+  }, [permission]);
 
   return {
     task,
     control,
+    open,
+    anchorEl,
     watch,
     resetField,
+    handleMenuClose,
+    handleMenuOpen,
     handelSetFormValues,
     handleTaskUpdate,
     handleTaskFormUpdate,

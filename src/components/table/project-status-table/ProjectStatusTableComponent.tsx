@@ -12,11 +12,14 @@ import {
   Typography,
   TablePagination,
   Chip,
+  Tooltip,
+  useMediaQuery,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FC } from "react";
 import { useManageProjectStatuses } from "./Helper";
-import { Edit } from "@mui/icons-material";
+import { Add, Edit } from "@mui/icons-material";
+import { useComponentPermissionContext } from "../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
 
 // Function Component for Managing Project statuses
 const ProjectStatusTableComponent: FC = () => {
@@ -29,6 +32,15 @@ const ProjectStatusTableComponent: FC = () => {
     handleChangePage,
     handleChangeRowsPerPage,
   } = useManageProjectStatuses();
+  const { componentPermission } = useComponentPermissionContext();
+
+  // Media query
+  const matches = useMediaQuery("(min-width:600px)");
+
+  // Extracting permissions for status management from the componentPermission context
+  const addStatusPermission = componentPermission["addNewStatus"]?.permitted;
+  const updateStatusPermission = componentPermission["updateStatus"]?.permitted;
+  const deleteStatusPermission = componentPermission["deleteStatus"]?.permitted;
 
   return (
     <TableContainer component={Paper}>
@@ -41,14 +53,27 @@ const ProjectStatusTableComponent: FC = () => {
       >
         <Typography variant="h4">Statuses</Typography>
         {/* Button to add a new status */}
-        <Button
-          variant="contained"
-          sx={{ fontSize: 12 }}
-          size="small"
-          onClick={handleCreateStatus}
-        >
-          New Status
-        </Button>
+        {addStatusPermission &&
+          (matches ? (
+            <Button
+              variant="contained"
+              sx={{ fontSize: 12 }}
+              size="small"
+              onClick={handleCreateStatus}
+            >
+              New Status
+            </Button>
+          ) : (
+            <Tooltip title="New Status">
+              <IconButton
+                size="small"
+                onClick={handleCreateStatus}
+                sx={{ backgroundColor: "primary.main" }}
+              >
+                <Add fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          ))}
       </Box>
       <Table sx={{ minWidth: 650 }} aria-label="status-table">
         {/* Table Header */}
@@ -57,7 +82,9 @@ const ProjectStatusTableComponent: FC = () => {
             <TableCell align="center">Serial No</TableCell>
             <TableCell align="center">ID</TableCell>
             <TableCell align="center">Status</TableCell>
-            <TableCell align="center">Actions</TableCell>
+            {(updateStatusPermission || deleteStatusPermission) && (
+              <TableCell align="center">Actions</TableCell>
+            )}
           </TableRow>
         </TableHead>
 
@@ -79,31 +106,37 @@ const ProjectStatusTableComponent: FC = () => {
               </TableCell>
 
               {/* Delete status Button */}
-              <TableCell align="center">
-                <IconButton
-                  size="small"
-                  aria-Status="edit"
-                  onClick={() =>
-                    handleUpdateStatus({
-                      row,
-                    })
-                  }
-                >
-                  <Edit />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  aria-Status="delete"
-                  color="error"
-                  onClick={() =>
-                    handleRemoveStatus({
-                      statusId: row.id,
-                    })
-                  }
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </TableCell>
+              {(updateStatusPermission || deleteStatusPermission) && (
+                <TableCell align="center">
+                  {updateStatusPermission && (
+                    <IconButton
+                      size="small"
+                      aria-label="edit"
+                      onClick={() =>
+                        handleUpdateStatus({
+                          row,
+                        })
+                      }
+                    >
+                      <Edit />
+                    </IconButton>
+                  )}
+                  {deleteStatusPermission && (
+                    <IconButton
+                      size="small"
+                      aria-label="delete"
+                      color="error"
+                      onClick={() =>
+                        handleRemoveStatus({
+                          statusId: row.id,
+                        })
+                      }
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

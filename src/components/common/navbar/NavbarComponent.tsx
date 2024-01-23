@@ -15,7 +15,6 @@ import {
   Tooltip,
   useMediaQuery,
 } from "@mui/material";
-import { NavigateFunction, useNavigate } from "react-router-dom";
 import {
   DarkMode,
   Diversity2,
@@ -30,7 +29,6 @@ import { darkTheme, lightTheme } from "../../../utils/helpers/configs/Theme";
 import { useDrawerContext } from "../../../utils/helpers/context/drawer-context/DrawerContext";
 export const NavbarComponent = () => {
   const styles = navbarStyes;
-  const navigate: NavigateFunction = useNavigate();
   const { authDetails } = useAuthContext();
   const { theme, setTheme } = useThemeContext();
   const { refresh, setRefresh } = useRefreshContext();
@@ -41,7 +39,9 @@ export const NavbarComponent = () => {
   return (
     <AppBar position="fixed" elevation={0}>
       <Container maxWidth="xl">
+        {/* Toolbar */}
         <Toolbar disableGutters variant="dense" sx={{ p: "0.2em" }}>
+          {/* Logo section */}
           <IconButton
             size="small"
             sx={{ display: !matches ? "flex" : "none" }}
@@ -54,6 +54,8 @@ export const NavbarComponent = () => {
             <Menu fontSize="small" />
           </IconButton>
           <Diversity2 sx={{ display: "flex", mr: 1 }} />
+
+          {/* Title section */}
           <Typography
             variant="h5"
             noWrap
@@ -64,6 +66,7 @@ export const NavbarComponent = () => {
             {TitleHelper.appName}
           </Typography>
 
+          {/* Profile and icon section */}
           <Box
             sx={{
               flexGrow: 0,
@@ -102,6 +105,7 @@ export const NavbarComponent = () => {
                   background: `rgb(${labelColors.yellow})`,
                   color: "inherit",
                 }}
+                src={authDetails.user?.picture}
               >
                 {authDetails.user.username?.charAt(0)}
               </Avatar>
@@ -117,7 +121,9 @@ export const NavbarComponent = () => {
             </Box>
           </Box>
         </Toolbar>
-        {refresh.reload && (
+
+        {/* General Refresh button */}
+        {refresh.reload === false && (
           <Button
             sx={{
               position: "absolute",
@@ -129,8 +135,8 @@ export const NavbarComponent = () => {
             }}
             size="small"
             onClick={() => {
-              navigate(0);
-              setRefresh({ reload: false });
+              setRefresh({ reload: true });
+              setTimeout(() => setRefresh({ reload: undefined }), 1000);
             }}
             endIcon={<Refresh />}
           >

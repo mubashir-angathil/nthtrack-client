@@ -30,6 +30,7 @@ export interface RhfStatusAutocompleteProps<TField extends FieldValues> {
   variant?: "outlined" | "standard" | "filled";
   fullWidth?: boolean;
   autoFocus?: boolean;
+  addNewOption?: boolean;
   onBlur?: (value?: StatusAutocompleteOptionType) => void;
 }
 

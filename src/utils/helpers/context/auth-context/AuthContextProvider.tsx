@@ -39,7 +39,7 @@ const AuthContextProvider = ({
     }
   };
 
-  // useEffect to run updateAuthDetailsFromCookie on mount
+  // useMemo to run updateAuthDetailsFromCookie on mount
   useMemo(() => {
     updateAuthDetailsFromCookie();
   }, []);
