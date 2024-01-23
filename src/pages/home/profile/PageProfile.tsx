@@ -39,7 +39,7 @@ const PageProfile: React.FC = () => {
         gap={3}
         display="flex"
         flexWrap="wrap"
-        justifyContent="center"
+        justifyContent={{ xs: "center", md: "start" }}
       >
         <Avatar sx={style.avatarStyle} src={profileDetails?.picture}>
           {profileDetails.username.charAt(0)}

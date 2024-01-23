@@ -7,4 +7,6 @@ export interface AvatarComponentProps extends MemberProfile {
   width?: number;
   height?: number;
   color?: string;
+  fontColor?: string;
+  border?: string;
 }

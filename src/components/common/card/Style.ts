@@ -1,0 +1,33 @@
+export const styles = {
+  cardWrapper: {
+    height: 220,
+    minWidth: 250,
+    maxWidth: 300,
+    backgroundColor: "primary.main",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    borderRadius: 5,
+    boxShadow: 24,
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "start",
+    justifyContent: "end",
+    gap: 1,
+  },
+  avatar: {
+    fontSize: 50,
+    top: 20,
+    left: 20,
+    position: "absolute",
+  },
+  detailSectionWrapper: {
+    backgroundColor: "background.paper",
+    width: "100%",
+    height: "65%",
+    borderTopRightRadius: 100,
+    pt: 5,
+    paddingInline: 2,
+  },
+};

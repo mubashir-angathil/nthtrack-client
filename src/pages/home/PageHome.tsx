@@ -124,57 +124,63 @@ const PageHome: React.FC = () => {
           </ListItemButton>
         ))}
       </List>
-      <ListSubheader sx={{ lineHeight: 1.5 }}>Organizations</ListSubheader>
-      <List
-        sx={{
-          width: 230,
-          flex: 1,
-          overflowY: "auto",
-        }}
-      >
-        {teams.map((item, index) => (
-          <ListItemButton
-            key={item.id}
-            sx={{ borderRadius: 8, m: 1 }}
-            onClick={() => {
-              navigate(routes.team.path.concat(item.team), {
-                state: { team: item },
-              });
-            }}
-          >
-            <Box mr={2}>
-              <Avatar
-                alt={item.team}
-                sx={{
-                  height: 28,
-                  width: 28,
-                  background: Object.entries(labelColors).at(index),
-                  color: "inherit",
-                }}
-              >
-                {item.team.charAt(0)}
-              </Avatar>
-            </Box>
-            <Tooltip
-              title={item.team}
-              arrow
-              disableInteractive
-              placement="right"
+      <Box flex={1}>
+        {teams?.length == 0 && (
+          <>
+            <ListSubheader sx={{ lineHeight: 1.5 }}>Teams</ListSubheader>
+            <List
+              sx={{
+                width: 230,
+                flex: 1,
+                overflowY: "auto",
+              }}
             >
-              <Typography
-                style={{
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-                variant="body2"
-              >
-                {item.team}
-              </Typography>
-            </Tooltip>
-          </ListItemButton>
-        ))}
-      </List>
+              {teams.map((item, index) => (
+                <ListItemButton
+                  key={item.id}
+                  sx={{ borderRadius: 8, m: 1 }}
+                  onClick={() => {
+                    navigate(routes.team.path.concat(item.team), {
+                      state: { team: item },
+                    });
+                  }}
+                >
+                  <Box mr={2}>
+                    <Avatar
+                      alt={item.team}
+                      sx={{
+                        height: 28,
+                        width: 28,
+                        background: Object.entries(labelColors).at(index),
+                        color: "inherit",
+                      }}
+                    >
+                      {item.team.charAt(0)}
+                    </Avatar>
+                  </Box>
+                  <Tooltip
+                    title={item.team}
+                    arrow
+                    disableInteractive
+                    placement="right"
+                  >
+                    <Typography
+                      style={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      variant="body2"
+                    >
+                      {item.team}
+                    </Typography>
+                  </Tooltip>
+                </ListItemButton>
+              ))}
+            </List>
+          </>
+        )}
+      </Box>
       <Box
         display="flex"
         gap={1}
@@ -196,7 +202,7 @@ const PageHome: React.FC = () => {
             background: `rgb(${labelColors.yellow})`,
             color: "inherit",
           }}
-          src={user?.picture && user.picture}
+          src={user?.picture}
         >
           {user.username?.charAt(0)}
         </Avatar>
