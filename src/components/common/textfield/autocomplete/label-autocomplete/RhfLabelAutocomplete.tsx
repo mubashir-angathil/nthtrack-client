@@ -13,6 +13,7 @@ import {
 import { Add } from "@mui/icons-material";
 import { RhfLabelAutocompleteProps, useRhfLabelAutocomplete } from "./Helper";
 import { LabelAutocompleteOptionType } from "../../../../../services/data-services/Helper";
+import { useComponentPermissionContext } from "../../../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
 
 // Component for handling a labeled autocomplete input using react-hook-form
 const RhfLabelAutocomplete = <TField extends FieldValues>({
@@ -33,6 +34,8 @@ const RhfLabelAutocomplete = <TField extends FieldValues>({
   // Destructuring values and functions from the custom hook
   const { open, labels, loading, setOpen, setLoading, handleAddNewOption } =
     useRhfLabelAutocomplete(defaultValue);
+  const { componentPermission } = useComponentPermissionContext();
+  const addLabelPermission = componentPermission["addNewLabel"]?.permitted;
 
   return (
     <>
@@ -117,16 +120,17 @@ const RhfLabelAutocomplete = <TField extends FieldValues>({
                         {params?.InputProps?.endAdornment}
                       </React.Fragment>
                     ),
-                    endAdornment: addNewOption ? (
-                      // IconButton for adding a new label option
-                      <IconButton
-                        size="small"
-                        title="Add new label"
-                        onClick={handleAddNewOption}
-                      >
-                        <Add fontSize="small" />
-                      </IconButton>
-                    ) : undefined,
+                    endAdornment:
+                      addNewOption && addLabelPermission ? (
+                        // IconButton for adding a new label option
+                        <IconButton
+                          size="small"
+                          title="Add new label"
+                          onClick={handleAddNewOption}
+                        >
+                          <Add fontSize="small" />
+                        </IconButton>
+                      ) : undefined,
                   }}
                 />
               )}

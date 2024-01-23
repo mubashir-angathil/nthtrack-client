@@ -18,6 +18,9 @@ export const useNotifications = () => {
     usePushNotificationContext();
   const { setRefresh } = useRefreshContext();
 
+  // Track initial render
+  const [isInitialRender, setIsInitialRender] = useState(true);
+
   // Define function to handle menu opening
   const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNotifications(event.currentTarget);
@@ -62,16 +65,24 @@ export const useNotifications = () => {
             ? prevNotificationCount.count + notificationCount
             : prevNotificationCount.count + 1;
 
-        setRefresh({ reload: newNotificationCount > 0 && false });
+        // Trigger refresh only after the initial render
+        if (!isInitialRender) {
+          setRefresh({ reload: newNotificationCount > 0 ? false : undefined });
+        }
+
         return {
           count: newNotificationCount,
         };
       });
+
+      // Update initial render status after the first update
+      setIsInitialRender(false);
     });
+
     return () => {
       socket.off("push-notifications");
     };
-  }, [socket]);
+  }, [socket, isInitialRender]);
 
   return {
     pushNotification,

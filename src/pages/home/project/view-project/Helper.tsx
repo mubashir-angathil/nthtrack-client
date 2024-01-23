@@ -17,7 +17,7 @@ import {
 } from "../../../../services/data-services/Helper";
 import { useProjectContext } from "../../../../utils/helpers/context/project-context/ProjectContext";
 import { useProjectContextHelpers } from "../../../../utils/helpers/context/project-context/Helper";
-import { usePermissionHook } from "../../../../utils/helpers/hooks/validatePermission";
+import { usePermissionHook } from "../../../../utils/helpers/hooks/ValidatePermission";
 import { useUserPermissionContext } from "../../../../utils/helpers/context/user-permission-context/UserPermissionContext";
 import { permissionJSON } from "../../../../utils/helpers/constants/Constants";
 import { useComponentPermissionContext } from "../../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
@@ -113,9 +113,12 @@ export const useViewProject = () => {
 
     // Check if projectId is available
     if (projectId) {
-      // Fetch project members, project details, and user project permissions
+      // Fetch project details only if the project state is null
+      if (project === null) {
+        fetchProjectById({ projectId });
+      }
+      // Fetch project members, and user project permissions
       fetchProjectMembers({ projectId });
-      fetchProjectById({ projectId });
       fetchUserProjectPermission({ projectId });
     }
   }, []);

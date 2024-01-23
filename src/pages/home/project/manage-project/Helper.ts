@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Params, useParams } from "react-router-dom";
-import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
 import { useProjectContextHelpers } from "../../../../utils/helpers/context/project-context/Helper";
 import { useProjectContext } from "../../../../utils/helpers/context/project-context/ProjectContext";
+import { useGeneralHooks } from "../../../../utils/helpers/hooks/Hooks";
 
 export interface ManageProjectProps {
   type: "create" | "update";
@@ -10,6 +10,7 @@ export interface ManageProjectProps {
 
 export const useUpdateProject = ({ type }: ManageProjectProps) => {
   const params: Params = useParams();
+  const { customNavigate } = useGeneralHooks();
   const projectId = params?.projectId ? parseInt(params.projectId) : 0;
   const { project } = useProjectContext();
 
@@ -17,7 +18,7 @@ export const useUpdateProject = ({ type }: ManageProjectProps) => {
   const { fetchProjectById } = useProjectContextHelpers();
 
   useEffect(() => {
-    if (projectId === 0 && type === "update") return generalFunctions.goBack();
+    if (projectId === 0 && type === "update") return customNavigate("Backward");
     else if (type === "update" && projectId !== 0)
       fetchProjectById({ projectId });
     // eslint-disable-next-line react-hooks/exhaustive-deps

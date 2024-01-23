@@ -7,13 +7,15 @@ import { useManageProject } from "./Helper";
 import RhfTextfieldComponent from "../../common/textfield/RhfTextFieldComponent";
 import SubmitButtonComponent from "../../common/buttons/SubmitButtonComponent";
 import { GetProjectByIdResponse } from "../../../services/project-services/Helper";
-import generalFunctions from "../../../utils/helpers/functions/GeneralFunctions";
+import { useGeneralHooks } from "../../../utils/helpers/hooks/Hooks";
 
-const ManageProjectForm: FC<{ values?: GetProjectByIdResponse["data"] }> = ({
-  values,
-}) => {
+const ManageProjectForm: FC<{
+  values?: GetProjectByIdResponse["data"] | null;
+}> = ({ values }) => {
   const { control, isSubmitting, handleSubmit, onSubmit } =
     useManageProject(values);
+  const { customNavigate } = useGeneralHooks();
+
   return (
     <Box p={2} component="form" onSubmit={handleSubmit(onSubmit)}>
       <Stack gap={2} mt={2} mb={2}>
@@ -34,7 +36,7 @@ const ManageProjectForm: FC<{ values?: GetProjectByIdResponse["data"] }> = ({
           <Button
             variant="outlined"
             color="error"
-            onClick={generalFunctions.goBack}
+            onClick={() => customNavigate("Backward")}
           >
             Close
           </Button>

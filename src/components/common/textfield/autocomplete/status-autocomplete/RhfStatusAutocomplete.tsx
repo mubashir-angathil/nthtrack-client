@@ -13,6 +13,7 @@ import {
 import { Add } from "@mui/icons-material";
 import { RhfStatusAutocompleteProps, useRhfStatusAutocomplete } from "./Helper";
 import { StatusAutocompleteOptionType } from "../../../../../services/data-services/Helper";
+import { useComponentPermissionContext } from "../../../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
 
 // Component for handling a status-labeled autocomplete input using react-hook-form
 const RhfStatusAutocomplete = <TField extends FieldValues>({
@@ -27,12 +28,15 @@ const RhfStatusAutocomplete = <TField extends FieldValues>({
   fullWidth = false,
   variant = "outlined",
   autoFocus = false,
+  addNewOption = true,
   onBlur,
 }: RhfStatusAutocompleteProps<TField>): JSX.Element => {
   // Destructuring values and functions from the custom hook
   const { open, statuses, loading, setOpen, setLoading, handleAddNewOption } =
     useRhfStatusAutocomplete(defaultValue);
 
+  const { componentPermission } = useComponentPermissionContext();
+  const addStatusPermission = componentPermission["addNewStatus"]?.permitted;
   // Using the Controller component from react-hook-form
   return (
     <>
@@ -115,16 +119,17 @@ const RhfStatusAutocomplete = <TField extends FieldValues>({
                         {params?.InputProps?.endAdornment}
                       </React.Fragment>
                     ),
-                    endAdornment: (
-                      // IconButton for adding a new status option
-                      <IconButton
-                        size="small"
-                        title="Add new Status"
-                        onClick={handleAddNewOption}
-                      >
-                        <Add fontSize="small" />
-                      </IconButton>
-                    ),
+                    endAdornment:
+                      addNewOption && addStatusPermission ? (
+                        // IconButton for adding a new status option
+                        <IconButton
+                          size="small"
+                          title="Add new Status"
+                          onClick={handleAddNewOption}
+                        >
+                          <Add fontSize="small" />
+                        </IconButton>
+                      ) : undefined,
                   }}
                 />
               )}

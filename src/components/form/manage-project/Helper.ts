@@ -11,6 +11,7 @@ import {
   UpdateProjectRequest,
 } from "../../../services/project-services/Helper";
 import useSocketHelpers from "../../../socket/Socket";
+import { useGeneralHooks } from "../../../utils/helpers/hooks/Hooks";
 
 export interface ManageProjectFormProps {
   updateProjects: () => Promise<void>;
@@ -25,8 +26,11 @@ export const manageProjectFormSchema = object({
 export type ManageProjectFormInput = InferType<typeof manageProjectFormSchema>;
 
 // Custom hook for handling sign-up logic
-export const useManageProject = (values?: GetProjectByIdResponse["data"]) => {
+export const useManageProject = (
+  values?: GetProjectByIdResponse["data"] | null,
+) => {
   const { pushNotification } = useSocketHelpers();
+  const { customNavigate } = useGeneralHooks();
 
   // Initialize the React Hook Form with validation resolver and default values
   const {
@@ -78,7 +82,7 @@ export const useManageProject = (values?: GetProjectByIdResponse["data"]) => {
     try {
       const { data, status } = await projectServices.createProject(newProject);
       if (data?.success && status === 201) {
-        generalFunctions.goBack();
+        customNavigate("Backward");
         enqueueSnackbar({
           message: data?.message,
           variant: "success",
@@ -114,7 +118,7 @@ export const useManageProject = (values?: GetProjectByIdResponse["data"]) => {
           broadcastId: newProject.projectId,
           message,
         });
-        generalFunctions.goBack();
+        customNavigate("Backward");
         enqueueSnackbar({
           message: data?.message,
           variant: "success",

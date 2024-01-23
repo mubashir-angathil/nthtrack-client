@@ -30,7 +30,7 @@ const App: React.FC = () => {
           maxSnack={3}
           action={(snackbarId) => (
             <IconButton size="small" onClick={() => closeSnackbar(snackbarId)}>
-              <Close sx={{ color: "white" }} />
+              <Close fontSize="small" sx={{ color: "white" }} />
             </IconButton>
           )}
           anchorOrigin={{
@@ -38,8 +38,8 @@ const App: React.FC = () => {
             vertical: "bottom",
           }}
         >
-          <PushNotificationContextProvider>
-            <RefreshContextProvider>
+          <RefreshContextProvider>
+            <PushNotificationContextProvider>
               <ProjectContextProvider>
                 <ComponentPermissionContextProvider>
                   <UserPermissionProvider>
@@ -160,8 +160,8 @@ const App: React.FC = () => {
                   </UserPermissionProvider>
                 </ComponentPermissionContextProvider>
               </ProjectContextProvider>
-            </RefreshContextProvider>
-          </PushNotificationContextProvider>
+            </PushNotificationContextProvider>
+          </RefreshContextProvider>
         </SnackbarProvider>
       </AuthContextProvider>
     </ThemeProvider>

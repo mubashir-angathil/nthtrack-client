@@ -12,7 +12,7 @@ import DangerZoneSection from "../../../../components/danger-zone-section/Danger
 import { useRefreshContext } from "../../../../utils/helpers/context/refresh-context/RefreshContext";
 import { useComponentPermissionContext } from "../../../../utils/helpers/context/component-permission-context/ComponentPermissionContext";
 import { useUserPermissionContext } from "../../../../utils/helpers/context/user-permission-context/UserPermissionContext";
-import { usePermissionHook } from "../../../../utils/helpers/hooks/validatePermission";
+import { usePermissionHook } from "../../../../utils/helpers/hooks/ValidatePermission";
 import { permissionJSON } from "../../../../utils/helpers/constants/Constants";
 
 export type PermissionJSONType = {
@@ -30,7 +30,7 @@ export const useManageProjectSettings = () => {
   const { setDialog } = useDialogContext();
   const { project } = useProjectContext();
   const { fetchProjectById } = useProjectContextHelpers();
-  const { refresh, setRefresh } = useRefreshContext();
+  const { refresh } = useRefreshContext();
   const { componentPermission, setComponentPermission } =
     useComponentPermissionContext();
   const { fetchUserProjectPermission } = useUserPermissionHelpers();
@@ -122,7 +122,6 @@ export const useManageProjectSettings = () => {
     // Check if refresh is not triggered and it's the initial render
     if (refresh.reload === false && initialRender === undefined) {
       setInitialRender(false); // Marking initial render as complete
-      setRefresh({ reload: undefined }); // Resetting refresh state
     }
 
     // Check if refresh is triggered and it's not the initial render
