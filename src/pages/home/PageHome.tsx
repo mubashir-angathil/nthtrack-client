@@ -46,7 +46,6 @@ const PageHome: React.FC = () => {
     handleLogout,
     toggleDrawerState,
   } = useHome();
-
   const DrawerComponent = () => (
     <Drawer
       open={drawer.open}

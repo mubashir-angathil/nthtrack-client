@@ -213,7 +213,7 @@ const TaskCardComponent: React.FC = () => {
                 {/* Menu button for status actions */}
                 {(updateStatusPermission || deleteStatusPermission) && (
                   <IconButton onClick={(e) => handleOpenStatusMenu(e, status)}>
-                    <MoreHoriz />
+                    <MoreHoriz sx={{ color: "white" }} />
                   </IconButton>
                 )}
               </Box>
