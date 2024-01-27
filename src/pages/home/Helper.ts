@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiRequestWithPaginationAndSearch } from "../../services/project-services/Helper";
 import { enqueueSnackbar } from "notistack";
 import { ApiError } from "../../services/Helper";
@@ -100,10 +100,13 @@ export const useHome = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matches]);
 
-  // useLayoutEffect to clear project from sessionStorage and fetch teams on component mount
-  useLayoutEffect(() => {
+  // useEffect to clear project from sessionStorage and fetch teams on component mount
+  useEffect(() => {
     sessionStorage.removeItem("project"); // Clear project from sessionStorage
-    fetchTeams(); // Fetch teams on component mount
+    if (auth) {
+      fetchTeams(); // Fetch teams on component mount
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

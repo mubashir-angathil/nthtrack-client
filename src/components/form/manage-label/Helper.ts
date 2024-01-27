@@ -86,7 +86,7 @@ export const useManageLabel = ({
         if (setTableLoading) {
           setTableLoading((prevLoading) => !prevLoading);
         }
-        enqueueSnackbar({ message: response.data.message });
+        enqueueSnackbar({ message: response.data.message, variant: "success" });
       } else {
         throw new Error(response.data.message);
       }
