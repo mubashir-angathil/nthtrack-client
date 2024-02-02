@@ -3,7 +3,10 @@ import {
   ApiResponseWithPagination,
   NormalApiSuccessResponse,
 } from "../Helper";
-import { ByUserDetails } from "../project-services/Helper";
+import {
+  ApiRequestWithPaginationAndSearch,
+  ByUserDetails,
+} from "../project-services/Helper";
 
 export interface SelectFieldInterface {
   id: number;
@@ -52,4 +55,8 @@ export interface GetNotificationResponse extends ApiResponseWithPagination {
 export interface GetEnrolledProjectIdsResponse
   extends NormalApiSuccessResponse {
   data: number[];
+}
+
+export interface GetUsersRequest extends ApiRequestWithPaginationAndSearch {
+  projectId?: number;
 }

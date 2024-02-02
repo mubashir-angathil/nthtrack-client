@@ -124,7 +124,7 @@ const PageHome: React.FC = () => {
         ))}
       </List>
       <Box flex={1}>
-        {teams?.length == 0 && (
+        {teams?.length > 0 && (
           <>
             <ListSubheader sx={{ lineHeight: 1.5 }}>Teams</ListSubheader>
             <List

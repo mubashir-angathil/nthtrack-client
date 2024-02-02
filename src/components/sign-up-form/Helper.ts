@@ -49,7 +49,13 @@ export const useSignUp = () => {
   // Handle form submission
   const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
     if (data.password === data.confirmPassword) {
-      await handleSignUp(data);
+      const response = await handleSignUp(data);
+      if (response) {
+        location.state.from = routes.home.path.concat(
+          "/",
+          routes.projects.path,
+        );
+      }
     } else {
       setError("confirmPassword", { message: "Password does not match!!" });
     }
@@ -68,21 +74,19 @@ export const useSignUp = () => {
 
       // If sign-up is successful, set authentication details in cookies
       if (data && success) {
-        location.state.from = routes.home.path.concat(
-          "/",
-          routes.projects.path,
-        );
         cookieServices.setAuthDetails(data);
         setAuthDetails({
           auth: true,
           user: data,
         });
+        return true;
       }
     } catch (error) {
       // Handle errors from the sign-up API
       generalFunctions.fieldErrorsHandler(error as ApiError, setError);
 
       console.error("SignUp:", error);
+      return false;
     }
   };
 

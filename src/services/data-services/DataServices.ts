@@ -7,6 +7,7 @@ import {
   GetNotificationResponse,
   GetProjectMemberRequest,
   GetProjectMemberResponse,
+  GetUsersRequest,
   LabelAutocompleteResponse,
   SelectFieldApiResponse,
   StatusAutocompleteResponse,
@@ -14,7 +15,6 @@ import {
 } from "./Helper";
 import generalFunctions from "../../utils/helpers/functions/GeneralFunctions";
 import { ApiError } from "../Helper";
-import { ApiRequestWithPaginationAndSearch } from "../project-services/Helper";
 const dataServices = {
   /**
    * getAllTrackers
@@ -114,9 +114,8 @@ const dataServices = {
     page,
     searchKey,
     cancelToken,
-  }: ApiRequestWithPaginationAndSearch): Promise<
-    AxiosResponse<AutocompleteOptionType>
-  > => {
+    projectId,
+  }: GetUsersRequest): Promise<AxiosResponse<AutocompleteOptionType>> => {
     try {
       // Make the API request to get the list of users
       return await axios.post<AutocompleteOptionType>(
@@ -125,6 +124,7 @@ const dataServices = {
           limit,
           page,
           searchKey,
+          projectId,
         },
         {
           cancelToken,

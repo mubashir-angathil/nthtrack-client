@@ -28,6 +28,7 @@ export declare type AutocompleteOptionAPI = (
 ) => Promise<AxiosResponse<AutocompleteOptionType, any>>;
 export interface ApiDetailsType {
   api?: AutocompleteOptionAPI;
+  params?: any;
 }
 interface DependedFieldDetailsType {
   id?: number | null;
@@ -98,13 +99,14 @@ export const ASYNCHRONOUS_RHF_AUTOCOMPLETE_UTIL_HELPERS = {
       if (apiDetails?.api) {
         setLoading(true); // set loading true
         const { api } = apiDetails; // destruct apiDetails
-
+        const params = apiDetails?.params ? apiDetails.params : {};
         // Make api call for fetching data
         const response = await api({
           limit: fetch.limit,
           page: fetch.page,
           searchKey: fetch?.searchKey,
           cancelToken,
+          ...params,
         });
 
         const { data, success, totalRows } =

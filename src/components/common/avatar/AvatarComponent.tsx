@@ -1,4 +1,4 @@
-import { Avatar } from "@mui/material";
+import { Avatar, Popover } from "@mui/material";
 import { FC, useState } from "react";
 import MemberProfileCardComponent from "../card/MemberProfileCardComponent";
 import { AvatarComponentProps } from "./Helper";
@@ -13,28 +13,56 @@ const AvatarComponent: FC<AvatarComponentProps> = ({
   border,
   ...rest
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   return (
     <>
       <Avatar
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         sx={{
           ...sx,
           width,
           height,
           color: fontColor ?? "#ffff",
           backgroundColor: color,
-          cursor: profile ? "default" : "auto",
+          cursor: profile ? "pointer" : "auto",
         }}
+        onMouseOverCapture={profile ? handleClick : undefined}
+        onClick={profile ? handleClose : undefined}
         src={rest?.picture}
         style={{ border }}
       >
         {rest.username?.charAt(0)}
       </Avatar>
-
-      {isHovered && profile && <MemberProfileCardComponent {...rest} />}
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        slotProps={{
+          paper: {
+            style: {
+              borderRadius: 20,
+            },
+          },
+        }}
+      >
+        <MemberProfileCardComponent {...rest} />
+      </Popover>
     </>
   );
 };

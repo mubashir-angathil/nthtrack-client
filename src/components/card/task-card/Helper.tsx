@@ -73,7 +73,6 @@ export const useTaskComponent = () => {
     search: false,
     filter: false,
   });
-  const [initialRender, setInitialRender] = useState<boolean>(false);
   const [anchorElStatusMenu, setAnchorElStatusMenu] =
     useState<null | HTMLElement>(null);
   const { getValues, control, watch, register } = useForm({
@@ -479,7 +478,7 @@ export const useTaskComponent = () => {
 
   // Use memoization to fetch tasks when dependencies change
   useEffect(() => {
-    if (project && initialRender) {
+    if (project) {
       const labelId = getValues("labelId");
       fetchTasks({
         projectId: project.id,
@@ -487,7 +486,6 @@ export const useTaskComponent = () => {
         labelId: labelId === -1 ? undefined : labelId,
       });
     }
-    setInitialRender(true);
   }, [differedProject, search, watch("labelId")]);
 
   return {
