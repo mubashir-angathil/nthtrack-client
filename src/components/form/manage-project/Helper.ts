@@ -19,7 +19,7 @@ export interface ManageProjectFormProps {
 // Define the validation schema for the sign-in form
 export const manageProjectFormSchema = object({
   name: string().min(2).max(52).required(),
-  description: string().min(2).max(1002).required(),
+  description: string().min(2).max(1000).required(),
 }).required();
 
 // Define the type for the form inputs based on the schema

@@ -76,6 +76,8 @@ const ManageTaskForm: FC<ManageTaskFormProps> = ({
             label="Description"
             name="description"
             height="150px"
+            required
+            maxLength={500}
           />
           {/* Input label for assignees */}
           <InputLabel id="assignees-autocomplete">Assignees</InputLabel>

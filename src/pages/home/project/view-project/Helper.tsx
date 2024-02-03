@@ -114,9 +114,10 @@ export const useViewProject = () => {
     // Check if projectId is available
     if (projectId) {
       // Fetch project details only if the project state is null
+      if (project === null) fetchProjectById({ projectId });
+
       // Fetch project members, and user project permissions
       Promise.all([
-        fetchProjectById({ projectId }),
         fetchProjectMembers({ projectId }),
         fetchUserProjectPermission({ projectId }),
       ]);

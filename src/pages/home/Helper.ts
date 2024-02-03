@@ -11,6 +11,7 @@ import cookieServices from "../../services/storage-services/CookieServices";
 import { initialAuthDetailsState } from "../../utils/helpers/context/auth-context/Helper";
 import { useDrawerContext } from "../../utils/helpers/context/drawer-context/DrawerContext";
 import { useMediaQuery } from "@mui/material";
+import sessionServices from "../../services/storage-services/SessionServices";
 
 // Define the shape of the API configuration
 export interface ApiConfig extends ApiRequestWithPaginationAndSearch {
@@ -102,7 +103,7 @@ export const useHome = () => {
 
   // useEffect to clear project from sessionStorage and fetch teams on component mount
   useEffect(() => {
-    sessionStorage.removeItem("project"); // Clear project from sessionStorage
+    sessionServices.removeProject(); // Clear project from sessionStorage
     if (auth) {
       fetchTeams(); // Fetch teams on component mount
     }
