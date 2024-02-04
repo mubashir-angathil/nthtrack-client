@@ -86,10 +86,16 @@ const dataServices = {
    * @returns {Promise<AxiosResponse<SelectFieldApiResponse>>} Promise that resolves to the response containing the list of permissions.
    * @throws {CustomError} Throws a custom error if the API call fails.
    */
-  getPermissions: async (): Promise<AxiosResponse<SelectFieldApiResponse>> => {
+  getPermissions: async ({
+    projectId,
+  }: {
+    projectId: number;
+  }): Promise<AxiosResponse<SelectFieldApiResponse>> => {
     try {
       // Make the API request to get the list of permissions
-      return await axios.get<SelectFieldApiResponse>("data/permissions");
+      return await axios.get<SelectFieldApiResponse>(
+        `data/project/${projectId}/permissions`,
+      );
     } catch (error) {
       // Throw a custom error using a helper function
       throw generalFunctions.customError(error as AxiosError<ApiError>);

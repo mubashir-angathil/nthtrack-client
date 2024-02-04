@@ -13,6 +13,7 @@ const ManageProjectMember: FC<{
   const { control, handleDialogClose, handleSubmit, onSubmit } =
     useManageProjectMember(refresh);
   const { project } = useProjectContext();
+
   return (
     <Stack
       gap={1}
@@ -38,6 +39,7 @@ const ManageProjectMember: FC<{
         size="small"
         apidetails={{
           api: dataServices.getPermissions,
+          params: { projectId: project?.id },
         }}
       />
       <Box

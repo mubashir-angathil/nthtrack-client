@@ -185,10 +185,10 @@ export const useManageProjectMembers = ({
   };
 
   // Fetch permissions and update the permission options
-  const fetchPermission = async () => {
+  const fetchPermission = async ({ projectId }: { projectId: number }) => {
     try {
       // Call the dataServices API to get permissions
-      const response = await dataServices.getPermissions();
+      const response = await dataServices.getPermissions({ projectId });
 
       // If the API call is successful (status 200) and returns valid data,
       // update the permission options based on the response data.x
@@ -280,14 +280,13 @@ export const useManageProjectMembers = ({
   // useEffect to fetch members when project, limit, or page is updated
   useEffect(() => {
     if (project?.id) {
-      Promise.all([
-        fetchPermission(),
+      Promise.resolve(fetchPermission({ projectId: project.id })).then(() => {
         fetchMembers({
           projectId: project.id,
           limit: tableConfig.limit,
           page: tableConfig.page,
-        }),
-      ]);
+        });
+      });
     }
   }, [project, tableConfig.limit, tableConfig.page]);
 

@@ -87,7 +87,10 @@ const PageHome: React.FC = () => {
         <ListItemButton
           sx={{ borderRadius: 8, m: 1 }}
           selected={location.pathname === routes.home.path}
-          onClick={() => navigate(routes.home.path)}
+          onClick={() => {
+            navigate(routes.home.path);
+            if (!matches) toggleDrawerState();
+          }}
         >
           <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
             <Source fontSize="small" />
@@ -113,7 +116,10 @@ const PageHome: React.FC = () => {
           <ListItemButton
             key={item.item}
             sx={{ borderRadius: 8, m: 1 }}
-            onClick={() => navigate(item.path)}
+            onClick={() => {
+              navigate(item.path);
+              if (!matches) toggleDrawerState();
+            }}
             selected={item.path === location.pathname.split("/")[2]}
           >
             <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
@@ -139,6 +145,7 @@ const PageHome: React.FC = () => {
                   key={item.id}
                   sx={{ borderRadius: 8, m: 1 }}
                   onClick={() => {
+                    if (!matches) toggleDrawerState();
                     navigate(routes.team.path.concat(item.team), {
                       state: { team: item },
                     });
@@ -151,7 +158,7 @@ const PageHome: React.FC = () => {
                         height: 28,
                         width: 28,
                         background: Object.entries(labelColors).at(index),
-                        color: "inherit",
+                        color: "white",
                       }}
                     >
                       {item.team.charAt(0)}
