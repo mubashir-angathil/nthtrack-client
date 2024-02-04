@@ -27,6 +27,7 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
   required = false,
   rules,
   height,
+  maxLength = 1000,
   onBlur,
 }: RhfCkEditorProps<TField>): JSX.Element => {
   // Custom hook for CKEditor functionality
@@ -42,10 +43,10 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
       name={name}
       control={control}
       rules={{
-        maxLength: 1000,
+        maxLength,
         ...rules,
       }}
-      render={({ field, fieldState: { error } }) => {
+      render={({ field, fieldState }) => {
         // Extracting editor data, word count, and character count
         const editorData = field.value || "";
         const characterCount = editorData.length;
@@ -53,9 +54,10 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
 
         // Styling for error indication
         const errorStyle = {
-          border: `1.7px solid ${error?.message ? "red" : "transparent"}`,
+          border: `1.7px solid ${
+            fieldState.error?.message ? "red" : "transparent"
+          }`,
         };
-
         return (
           <>
             {/* Label and indicator for required field */}
@@ -71,6 +73,7 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
               overflow="hidden"
               borderRadius={5}
               borderColor="rgba(0,0,0,0.1)"
+              {...field}
             >
               <CKEditor
                 editor={ClassicEditor}
@@ -100,9 +103,9 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
                 }}
               >
                 <Box display="-ms-flexbox">
-                  {error && (
+                  {fieldState.error && (
                     <FormHelperText sx={{ color: "error.main", fontSize: 12 }}>
-                      {error.message}
+                      {fieldState.error.message}
                     </FormHelperText>
                   )}
                 </Box>
@@ -112,7 +115,8 @@ const RhfCKEditorComponent = <TField extends FieldValues>({
                   variant="standard"
                   sx={{ fontSize: 12, color: "GrayText" }}
                 >
-                  Word: {wordCount} &nbsp; Characters: {characterCount}/1000
+                  Word: {wordCount} &nbsp; Characters: {characterCount}/
+                  {maxLength}
                 </FormHelperText>
               </Box>
             </Box>

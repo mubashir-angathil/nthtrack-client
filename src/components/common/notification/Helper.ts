@@ -6,6 +6,7 @@ import useSocketHelpers from "../../../socket/Socket";
 import { useAuthContext } from "../../../utils/helpers/context/auth-context/AuthContext";
 import { usePushNotificationContext } from "../../../utils/helpers/context/push-notification-context/PushNotificationContext";
 import { useRefreshContext } from "../../../utils/helpers/context/refresh-context/RefreshContext";
+import { ENV } from "../../../utils/helpers/configs/Configs";
 
 // Custom hook for notification component
 export const useNotifications = () => {
@@ -38,7 +39,7 @@ export const useNotifications = () => {
 
     // listen socket connection event
     socket.on("connect", () => {
-      console.info("User is active on " + socket.id);
+      if (ENV === "development") console.info("User is active on " + socket.id);
     });
 
     // Close connection

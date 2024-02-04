@@ -1,4 +1,5 @@
-import { SyntheticEvent, useLayoutEffect, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { SyntheticEvent, useEffect, useLayoutEffect, useState } from "react";
 import { ApiError } from "../../../services/Helper";
 import projectServices from "../../../services/project-services/ProjectServices";
 import { debounce } from "@mui/material";
@@ -13,6 +14,8 @@ import ManageProjectForm from "../../../components/form/manage-project/ManagePro
 import { enqueueSnackbar } from "notistack";
 import routes from "../../../utils/helpers/routes/Routes";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import sessionServices from "../../../services/storage-services/SessionServices";
+import { useProjectContext } from "../../../utils/helpers/context/project-context/ProjectContext";
 
 // Define the shape of the API configuration
 interface ApiConfig extends ApiRequestWithPaginationAndSearch {
@@ -35,6 +38,7 @@ export const useProjects = () => {
   );
   // Access Dialog context for opening the Dialog
   const { setDialog } = useDialogContext();
+  const { setProject } = useProjectContext();
 
   // Debounced search function to handle search input changes
   const handleSearch = debounce((value: string) => {
@@ -145,8 +149,14 @@ export const useProjects = () => {
     if (apiConfig.hasMore) {
       fetchProjects();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiConfig.page, apiConfig.searchKey]);
+
+  // Clear cached data
+  useEffect(() => {
+    setProject(null);
+    sessionServices.removeProject();
+    sessionServices.removeProjectPermission();
+  }, []);
 
   // Return the necessary values and functions for component usage
   return {

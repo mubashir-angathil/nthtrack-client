@@ -100,16 +100,6 @@ const TaskCardComponent: React.FC = () => {
     />
   );
 
-  const FilterComponent: React.FC = () => (
-    <RhfLabelAutocomplete
-      control={control}
-      name="labelId"
-      label="Label"
-      size="small"
-      fullWidth
-      addNewOption={false}
-    />
-  );
   const style = taskCardStyle;
   const addTaskPermission = componentPermission["addNewTask"]?.permitted;
   const viewTaskPermission = componentPermission["viewTask"]?.permitted;
@@ -128,7 +118,14 @@ const TaskCardComponent: React.FC = () => {
             {/* Search Input Field */}
             <SearchComponent />
             {/* Tracker Filter  */}
-            <FilterComponent />
+            <RhfLabelAutocomplete
+              control={control}
+              name="labelId"
+              label="Label"
+              size="small"
+              fullWidth
+              addNewOption={false}
+            />
           </Grid>
         ) : (
           <>
@@ -163,7 +160,16 @@ const TaskCardComponent: React.FC = () => {
             {!matches && (toggleComponent.search || toggleComponent.filter) && (
               <Grid item xs={12} mt={2} gap={2} display="grid">
                 {toggleComponent.search && <SearchComponent />}
-                {toggleComponent.filter && <FilterComponent />}
+                {toggleComponent.filter && (
+                  <RhfLabelAutocomplete
+                    control={control}
+                    name="labelId"
+                    label="Label"
+                    size="small"
+                    fullWidth
+                    addNewOption={false}
+                  />
+                )}
               </Grid>
             )}
           </>
@@ -213,7 +219,7 @@ const TaskCardComponent: React.FC = () => {
                 {/* Menu button for status actions */}
                 {(updateStatusPermission || deleteStatusPermission) && (
                   <IconButton onClick={(e) => handleOpenStatusMenu(e, status)}>
-                    <MoreHoriz />
+                    <MoreHoriz sx={{ color: "white" }} />
                   </IconButton>
                 )}
               </Box>

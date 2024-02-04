@@ -9,6 +9,7 @@ import {
   Toolbar,
   Tooltip,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { useNotifications } from "./Helper";
 import NotificationPanelComponent from "./notification-panels/NotificationPanelComponent";
@@ -20,6 +21,8 @@ export const NotificationComponent: React.FC = () => {
     anchorElNotifications,
     pushNotification,
   } = useNotifications();
+  const theme = useTheme();
+
   return (
     <>
       <Tooltip title="Notifications">
@@ -39,7 +42,14 @@ export const NotificationComponent: React.FC = () => {
         anchor="right"
         onClose={handleCloseNotifications}
       >
-        <Box minWidth={320} maxWidth={450}>
+        <Box
+          sx={{
+            minWidth: 450,
+            [theme.breakpoints.down("md")]: {
+              minWidth: 320,
+            },
+          }}
+        >
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="h5" fontWeight={600} letterSpacing={1}>
               Notifications

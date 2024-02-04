@@ -11,6 +11,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import routes from "../../../utils/helpers/routes/Routes";
+import { useProjectContext } from "../../../utils/helpers/context/project-context/ProjectContext";
 
 // Custom hook for handling project deletion
 export const useDeleteProject = () => {
@@ -20,6 +21,7 @@ export const useDeleteProject = () => {
   const location: Location = useLocation();
   const navigate: NavigateFunction = useNavigate();
   const project = location.state?.project;
+  const { setProject } = useProjectContext();
 
   // Function to handle input change and check if the project name matches
   const handleChange = (
@@ -37,6 +39,7 @@ export const useDeleteProject = () => {
     try {
       const response = await projectServices.deleteProject({ projectId });
       if (response.data?.success) {
+        setProject(null);
         handleDialogClose();
         enqueueSnackbar({ message: response.data.message, variant: "success" });
         navigate(routes.home.path, { replace: true });

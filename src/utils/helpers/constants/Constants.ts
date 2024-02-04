@@ -8,7 +8,7 @@ export enum MessageHelper {
 }
 
 export enum TitleHelper {
-  appName = "QuickPulse",
+  appName = "NthTrack",
 }
 
 // Component permission JSON

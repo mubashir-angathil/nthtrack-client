@@ -1,6 +1,7 @@
 import { PermissionJSONType } from "../../../pages/home/project/settings/Helper";
 
 export const usePermissionHook = () => {
+  // Function to validate permission using a dot-separated path
   const validatePermissionWithPermissionString = ({
     permission,
     path,
@@ -22,6 +23,7 @@ export const usePermissionHook = () => {
     return current;
   };
 
+  // Function to validate permission using a PermissionJSONType object
   const validatePermissionWithPermissionJSON = ({
     permission,
     permissionJSON,
@@ -29,13 +31,17 @@ export const usePermissionHook = () => {
     permission: any;
     permissionJSON: PermissionJSONType;
   }) => {
+    // Updated JSON object to store permission status
     const updatedJSON: PermissionJSONType = {};
 
+    // Iterate through the entries of permissionJSON and validate permissions
     Object.entries(permissionJSON).map(([key, value]) => {
       const isPermitted = validatePermissionWithPermissionString({
         permission,
         path: value.permission,
       });
+
+      // Store the permission status in the updatedJSON object
       return (updatedJSON[key] = {
         permission: value.permission,
         permitted: isPermitted,

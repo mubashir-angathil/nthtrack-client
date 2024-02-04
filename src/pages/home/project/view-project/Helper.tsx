@@ -110,16 +110,18 @@ export const useViewProject = () => {
   useEffect(() => {
     // Extract projectId from params or set it to null
     const projectId = params?.projectId ? parseInt(params?.projectId) : null;
-
+    // setProject(null);
     // Check if projectId is available
     if (projectId) {
       // Fetch project details only if the project state is null
-      if (project === null) {
-        fetchProjectById({ projectId });
-      }
+      // if (project === null)
+      fetchProjectById({ projectId });
+
       // Fetch project members, and user project permissions
-      fetchProjectMembers({ projectId });
-      fetchUserProjectPermission({ projectId });
+      Promise.all([
+        fetchProjectMembers({ projectId }),
+        fetchUserProjectPermission({ projectId }),
+      ]);
     }
   }, []);
 

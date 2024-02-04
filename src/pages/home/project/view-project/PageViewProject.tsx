@@ -20,12 +20,14 @@ import {
   Settings,
   Update,
 } from "@mui/icons-material";
-import { FC } from "react";
+import { FC, Suspense, lazy } from "react";
 import { useViewProject } from "./Helper";
 import AvatarComponent from "../../../../components/common/avatar/AvatarComponent";
 
 import generalFunctions from "../../../../utils/helpers/functions/GeneralFunctions";
-import TaskCardComponent from "../../../../components/card/task-card/TaskCardComponent";
+const TaskCardComponent = lazy(
+  () => import("../../../../components/card/task-card/TaskCardComponent"),
+);
 
 /**
  * Functional component representing the view of a project page.
@@ -182,7 +184,11 @@ const PageViewProject: FC = () => {
       {/* Task Cards Section */}
       <Grid item xs={12} display="flex">
         {/* Include TaskCardComponent */}
-        {viewTasksPermission && <TaskCardComponent />}
+        {viewTasksPermission && (
+          <Suspense fallback={<>Loading...</>}>
+            <TaskCardComponent />
+          </Suspense>
+        )}
       </Grid>
       <Menu
         id="long-menu"

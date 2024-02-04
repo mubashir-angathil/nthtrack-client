@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ProjectContext } from "./ProjectContext";
 import { GetProjectByIdResponse } from "../../../../services/project-services/Helper";
+import sessionServices from "../../../../services/storage-services/SessionServices";
 
 // Component to provide project context
 export const ProjectContextProvider = ({
@@ -17,14 +18,14 @@ export const ProjectContextProvider = ({
   useEffect(() => {
     // If project is not null, store it in sessionStorage
     if (project !== null) {
-      sessionStorage.setItem("project", JSON.stringify(project));
+      sessionServices.setProjectDetails(project);
     }
 
     // If project is null, retrieve it from sessionStorage
     if (project === null) {
-      const currentProject = sessionStorage.getItem("project");
+      const currentProject = sessionServices.getProjectDetails();
       if (currentProject) {
-        setProject(JSON.parse(currentProject));
+        setProject(currentProject);
       }
     }
   }, [project]);

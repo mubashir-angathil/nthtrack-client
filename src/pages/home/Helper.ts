@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiRequestWithPaginationAndSearch } from "../../services/project-services/Helper";
 import { enqueueSnackbar } from "notistack";
 import { ApiError } from "../../services/Helper";
@@ -11,6 +11,7 @@ import cookieServices from "../../services/storage-services/CookieServices";
 import { initialAuthDetailsState } from "../../utils/helpers/context/auth-context/Helper";
 import { useDrawerContext } from "../../utils/helpers/context/drawer-context/DrawerContext";
 import { useMediaQuery } from "@mui/material";
+import sessionServices from "../../services/storage-services/SessionServices";
 
 // Define the shape of the API configuration
 export interface ApiConfig extends ApiRequestWithPaginationAndSearch {
@@ -100,10 +101,13 @@ export const useHome = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matches]);
 
-  // useLayoutEffect to clear project from sessionStorage and fetch teams on component mount
-  useLayoutEffect(() => {
-    sessionStorage.removeItem("project"); // Clear project from sessionStorage
-    fetchTeams(); // Fetch teams on component mount
+  // useEffect to clear project from sessionStorage and fetch teams on component mount
+  useEffect(() => {
+    sessionServices.removeProject(); // Clear project from sessionStorage
+    if (auth) {
+      fetchTeams(); // Fetch teams on component mount
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

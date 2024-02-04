@@ -78,6 +78,7 @@ export const useProfileManagement = () => {
         if (props.username) {
           setProfileDetails({ ...profileDetails, username: props.username });
           const newAuthDetails = cookieServices.updateUserName(props.username);
+
           if (newAuthDetails) {
             setAuthDetails({
               auth: true,

@@ -16,6 +16,7 @@ export interface RhfCkEditorProps<TField extends FieldValues> {
   rules?: Record<string, unknown>; // Update the type based on your rules
   required?: boolean;
   height?: string;
+  maxLength?: number;
   onBlur?: (description: string) => void;
 }
 

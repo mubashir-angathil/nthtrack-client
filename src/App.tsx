@@ -17,10 +17,11 @@ import { PushNotificationContextProvider } from "./utils/helpers/context/push-no
 import { UserPermissionProvider } from "./utils/helpers/context/user-permission-context/UserPermissionContextProvider";
 import { RefreshContextProvider } from "./utils/helpers/context/refresh-context/RefreshContextProvider";
 import { ComponentPermissionContextProvider } from "./utils/helpers/context/component-permission-context/ComponentPermissionContextProvider";
+import { TitleHelper } from "./utils/helpers/constants/Constants";
 
 const App: React.FC = () => {
   const { theme } = useThemeContext();
-
+  document.title = TitleHelper.appName;
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

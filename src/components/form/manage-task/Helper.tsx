@@ -47,6 +47,7 @@ export const useManageTask = ({
   const { handleDialogClose } = useDialog();
   const [assigneesApiDetails, setAssigneesApiDetails] =
     useState<ApiDetailsType>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { pushNotification } = useSocketHelpers();
   // Initialize the React Hook Form with validation resolver and default values
@@ -56,7 +57,7 @@ export const useManageTask = ({
     setError,
     setValue,
     reset,
-    formState: { touchedFields, isSubmitting },
+    formState: { touchedFields },
   } = useForm<ManageTaskFormInput>({
     resolver: yupResolver(manageTaskFormSchema),
     defaultValues: {
@@ -68,7 +69,11 @@ export const useManageTask = ({
   const onSubmit: SubmitHandler<ManageTaskFormInput> = async (
     newTask: ManageTaskFormInput,
   ) => {
+    setIsSubmitting(true);
     const assigneesId = newTask.assignees.map((value) => value.id);
+    if (newTask.description && newTask.description.length > 500) {
+      return setError("description", { message: "description too long" });
+    }
     if (project && !values && activeStatus) {
       newTask.assignees = assigneesId;
       await createNewTask({
@@ -101,6 +106,7 @@ export const useManageTask = ({
         variant: "error",
       });
     }
+    setIsSubmitting(false);
   };
 
   const createNewTask = async (newTask: ManageTaskRequest) => {

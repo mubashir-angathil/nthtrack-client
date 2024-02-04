@@ -76,9 +76,8 @@ const cookieServices = {
 
       // Set updated authentication details in cookies
       cookieServices.setAuthDetails(newAuthDetails);
-
       // Return the updated user details
-      return newAuthDetails.user;
+      return newAuthDetails;
     }
     // Return undefined if authentication details are not found
   },

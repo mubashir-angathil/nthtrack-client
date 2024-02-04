@@ -8,7 +8,9 @@ import { ApiError } from "../../../../services/Helper";
 import { SxProps } from "@mui/system";
 
 export declare type DataApiDetails = {
-  api: () => Promise<AxiosResponse<SelectFieldApiResponse>>;
+  // eslint-disable-next-line no-unused-vars
+  api: (params: any) => Promise<AxiosResponse<SelectFieldApiResponse>>;
+  params?: any;
 };
 export interface RhfSelectProps<TField extends FieldValues> {
   name: Path<TField>;
@@ -44,7 +46,8 @@ export const useRhfSelect = ({
 
   const fetchData = async () => {
     try {
-      const response = await apidetails.api();
+      const params = apidetails?.params ? apidetails.params : undefined;
+      const response = await apidetails.api({ ...params });
       if (response.status === 200 && response.data.success) {
         setData(response.data.data);
       } else throw Error("Data fetching id failed");

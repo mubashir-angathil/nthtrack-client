@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useDialogContext } from "../../../../utils/helpers/context/dialog-context/DialogContext";
-import { useProjectContext } from "../../../../utils/helpers/context/project-context/ProjectContext";
 import { useParams } from "react-router-dom";
 import { useProjectContextHelpers } from "../../../../utils/helpers/context/project-context/Helper";
 import ProjectMemberTableComponent from "../../../../components/table/project-member-table/ProjectMemberTableComponent";
@@ -28,7 +27,6 @@ export const useManageProjectSettings = () => {
   // Destructuring and initializing state and context hooks
   const params = useParams();
   const { setDialog } = useDialogContext();
-  const { project } = useProjectContext();
   const { fetchProjectById } = useProjectContextHelpers();
   const { refresh } = useRefreshContext();
   const { componentPermission, setComponentPermission } =
@@ -135,9 +133,7 @@ export const useManageProjectSettings = () => {
     // Check if projectId is available
     if (projectId) {
       // Fetch project by projectId if it doesn't exist in the state
-      if (project === null) {
-        fetchProjectById({ projectId });
-      }
+      fetchProjectById({ projectId });
 
       // If reload state is either false or true, update component permissions
       if (reload === false || reload === true) {

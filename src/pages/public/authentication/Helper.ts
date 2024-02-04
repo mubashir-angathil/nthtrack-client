@@ -27,7 +27,7 @@ export const useAuthenticationStyle = (signInPage: boolean) => {
 
     // Styles for the background section
     backgroundStyles: {
-      background: `rgba(${backgroundColor},0.4)`,
+      background: `rgba(${backgroundColor},0.5)`,
       width: "100%",
       transition: "0.3s all",
 

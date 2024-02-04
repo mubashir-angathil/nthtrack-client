@@ -32,7 +32,7 @@ export const useDangerZoneSection = () => {
   const { project } = useProjectContext();
   const { fetchProjectById } = useProjectContextHelpers();
   const { componentPermission } = useComponentPermissionContext();
-
+  const [reload, setReload] = useState(false);
   // Array of items for the danger zone (e.g., reopening, closing, deleting projects)
   const [dangerZoneItems, setDangerZoneItems] = useState<
     DangerZoneItemInterface[]
@@ -123,6 +123,7 @@ export const useDangerZoneSection = () => {
           });
         }
         await fetchProjectById({ projectId });
+        setReload(!reload);
       }
     } catch (error) {
       // Handle API errors during restoration
@@ -155,6 +156,7 @@ export const useDangerZoneSection = () => {
           variant: "success",
         });
         await fetchProjectById({ projectId });
+        setReload(!reload);
       }
     } catch (error) {
       // Handle API errors during project closure
@@ -234,7 +236,7 @@ export const useDangerZoneSection = () => {
       setDangerZoneItems(updatedItems);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [componentPermission]);
+  }, [componentPermission, reload]);
 
   return {
     dangerZoneItems,

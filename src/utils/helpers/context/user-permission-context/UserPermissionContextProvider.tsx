@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { UserPermission } from "./UserPermissionContext";
 import { GetPermissionResponse } from "../../../../services/project-services/Helper";
+import sessionServices from "../../../../services/storage-services/SessionServices";
 
 // Component to provide permission context
 export const UserPermissionProvider = ({
@@ -17,14 +18,14 @@ export const UserPermissionProvider = ({
   useEffect(() => {
     // If permission is not null, store it in sessionStorage
     if (permission !== null) {
-      sessionStorage.setItem("permission", JSON.stringify(permission));
+      sessionServices.setProjectPermission(permission);
     }
 
     // If permission is null, retrieve it from sessionStorage
     if (permission === null) {
-      const currentPermission = sessionStorage.getItem("permission");
+      const currentPermission = sessionServices.getProjectPermission();
       if (currentPermission) {
-        setPermission(JSON.parse(currentPermission));
+        setPermission(currentPermission);
       }
     }
   }, [permission]);

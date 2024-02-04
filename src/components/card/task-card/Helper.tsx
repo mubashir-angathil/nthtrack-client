@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { DragEvent, useDeferredValue, useMemo, useState } from "react";
+import { DragEvent, useDeferredValue, useEffect, useState } from "react";
 import projectServices from "../../../services/project-services/ProjectServices";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { ApiError } from "../../../services/Helper";
@@ -418,18 +418,6 @@ export const useTaskComponent = () => {
     }
   };
 
-  // Use memoization to fetch tasks when dependencies change
-  useMemo(() => {
-    if (project) {
-      const labelId = getValues("labelId");
-      fetchTasks({
-        projectId: project.id,
-        searchKey: search,
-        labelId: labelId === -1 ? undefined : labelId,
-      });
-    }
-  }, [differedProject, search, watch("labelId")]);
-
   // Helper to add `drag-and-drop` class form classList
   const addDragEffect = (statusId: number) => {
     const activeContainer = document.getElementById(`status${statusId}`);
@@ -487,6 +475,18 @@ export const useTaskComponent = () => {
       return { ...prevState, [key]: !prevState[key] };
     });
   };
+
+  // Use memoization to fetch tasks when dependencies change
+  useEffect(() => {
+    if (project) {
+      const labelId = getValues("labelId");
+      fetchTasks({
+        projectId: project.id,
+        searchKey: search,
+        labelId: labelId === -1 ? undefined : labelId,
+      });
+    }
+  }, [differedProject, search, watch("labelId")]);
 
   return {
     removeDragEffect,

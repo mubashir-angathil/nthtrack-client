@@ -37,7 +37,14 @@ export const NavbarComponent = () => {
   const matches = useMediaQuery("(min-width:960px)");
 
   return (
-    <AppBar position="fixed" elevation={0}>
+    <AppBar
+      position="fixed"
+      elevation={0}
+      sx={{
+        background:
+          theme.palette.mode === "light" ? "white" : "background.paper",
+      }}
+    >
       <Container maxWidth="xl">
         {/* Toolbar */}
         <Toolbar disableGutters variant="dense" sx={{ p: "0.2em" }}>
@@ -53,7 +60,7 @@ export const NavbarComponent = () => {
           >
             <Menu fontSize="small" />
           </IconButton>
-          <Diversity2 sx={{ display: "flex", mr: 1 }} />
+          <Diversity2 sx={{ display: "flex", mr: 1 }} color="success" />
 
           {/* Title section */}
           <Typography
@@ -61,7 +68,7 @@ export const NavbarComponent = () => {
             noWrap
             component="a"
             href="/home"
-            sx={styles.logo}
+            sx={{ ...styles.logo, color: "success.main" }}
           >
             {TitleHelper.appName}
           </Typography>
@@ -110,7 +117,11 @@ export const NavbarComponent = () => {
                 {authDetails.user.username?.charAt(0)}
               </Avatar>
               <Box display={{ md: "flex", xs: "none" }} flexDirection="column">
-                <Typography variant="subtitle2" lineHeight={1}>
+                <Typography
+                  variant="subtitle2"
+                  lineHeight={1}
+                  color={theme.palette.mode === "dark" ? "white" : "black"}
+                >
                   {authDetails.user.username}
                 </Typography>
 
