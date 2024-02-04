@@ -1,27 +1,50 @@
-# NthTrack (client)
+<h1> Nth Track (Client)
+    <img src="https://github.com/mubashir-angathil/nthtrack-client/blob/master/public/vite.png" height="40px" alt="Movie Trends Logo"/>
+</h1>
+Welcome to "Nth Track" – an advanced project management system designed to streamline the process of handling permission-based requests for your projects. This comprehensive README guide aims to assist you in seamlessly initiating the project, providing crucial insights for both developers and users.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Table of Contents
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+    - [Clone the Repository](#clone-the-repository)
+    - [Install the Packages](#install-the-packages)
+    - [Setup Environment Variables](#setup-environment-variables)
+  - [Starting the Server](#starting-the-server)
+  - [Technologies Used](#technologies-used)
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Installation
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+#### Clone the Repository
+```bash
+git clone https://github.com/your-username/nthtrack-client.git
+cd issue-tracker
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+#### Install the Packages
+```
+npm install 
+```
+#### Setup Environment Variables
+- Rename ```.env.sample``` to ```.env.development```
+- Update the file with your configuration.
+
+
+#### Prerequisites
+Before running the client, ensure you have the Nth Track server running. Follow the instructions in the [README](https://github.com/mubashir-angathil/nthtrack-server/blob/master/README.md) to set up and start the server.
+
+#### Starting the Server
+- For a normal server:
+  ```
+  npm start
+  ```
+- For a development server:
+  ```
+  npm run dev
+  ```
+#### Technologies Used
+- React Js
+- Typescript
+- Vite
+- Socket.io
