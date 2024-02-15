@@ -44,6 +44,7 @@ export const NotificationComponent: React.FC = () => {
       >
         <Box
           sx={{
+            maxWidth: 500,
             minWidth: 450,
             [theme.breakpoints.down("md")]: {
               minWidth: 320,
